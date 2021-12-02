@@ -5,11 +5,11 @@ const axios = require('axios');
 exports.user_token = async (req, res) => {
   try{  
     const headers = {
-      'Authorization': `Bearer ${process.env.ESTUARY_KEY}`,
+      'Authorization': `Bearer ${process.env.EST_API_KEY}`,
       'Accept': 'application/json',
     };
 
-    const response = await axios.post(`https://api.estuary.tech/user/api-keys?perms=upload&expiry=${req.query.expiry}`, {}, {headers: headers});
+    const response = await axios.post(`https://api.estuary.tech/user/api-keys?perms=upload&expiry=${req.query.expiry_time}`, {}, {headers: headers});
     res.status(200).json(response.data);
 
   } catch(e){
@@ -23,11 +23,11 @@ exports.user_token = async (req, res) => {
 exports.metadata_by_cid = async (req, res) => {
   try{
     const headers = {
-      'Authorization': `Bearer ${process.env.ESTUARY_KEY}`,
+      'Authorization': `Bearer ${process.env.EST_API_KEY}`,
       'Accept': 'application/json',
     };
 
-    const response = await axios.get(`https://api.estuary.tech/content/by-cid/${req.query.cid}`, {headers: headers});
+    const response = await axios.get(`https://api.estuary.tech/content/by-cid/${req.params.cid}`, {headers: headers});
     res.status(200).json(response.data);
 
   } catch(e){
@@ -38,10 +38,11 @@ exports.metadata_by_cid = async (req, res) => {
 }
 
 // list all of the data you have pinned to Estuary
+// example offset=0&limit=10
 exports.list_data = async (req, res) => {
   try{
     const headers = {
-      'Authorization': `Bearer ${process.env.ESTUARY_KEY}`,
+      'Authorization': `Bearer ${process.env.EST_API_KEY}`,
       'Accept': 'application/json',
     };
 
@@ -59,7 +60,7 @@ exports.list_data = async (req, res) => {
 exports.get_deals_filecoin = async (req, res) => {
   try{
     const headers = {
-      'Authorization': `Bearer ${process.env.ESTUARY_KEY}`,
+      'Authorization': `Bearer ${process.env.EST_API_KEY}`,
       'Accept': 'application/json',
     };
 
@@ -77,7 +78,7 @@ exports.get_deals_filecoin = async (req, res) => {
 exports.get_deals = async (req, res) => {
   try{
     const headers = {
-      'Authorization': `Bearer ${process.env.ESTUARY_KEY}`,
+      'Authorization': `Bearer ${process.env.EST_API_KEY}`,
       'Accept': 'application/json',
     };
 
