@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const EstuaryController = require('../controller/estuary/EstuaryController')
+const EstuaryController = require("../controller/estuary/EstuaryController");
 
 router.get("/user_token", EstuaryController.user_token);
 router.get("/metadata_by_cid/:cid", EstuaryController.metadata_by_cid);
