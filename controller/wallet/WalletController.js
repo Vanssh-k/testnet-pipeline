@@ -17,13 +17,19 @@ exports.create_wallet = async(req, res) => {
   res.status(200).json(identity);
 }
 
+// get balance of matic tokens
 exports.get_balance = async(req, res) => {
-  const response = await axios.get(`https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`)
-  for(let i=0; i<response.data.data.items.length; i++){
-    if(response.data.data.items[i].contract_ticker_symbol === 'MATIC'){
-      res.status(200).json({balance: response.data.data.items[i].balance});
-      break;
+  try{
+    const response = await axios.get(`https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`)
+    let balance = 0;
+    for(let i=0; i<response.data.data.items.length; i++){
+      if(response.data.data.items[i].contract_ticker_symbol === 'MATIC'){
+        balance = response.data.data.items[i].balance;
+        break;
+      }
     }
+    res.status(200).json({data: balance});
+  } catch(err){
+    res.status(500);
   }
-  res.status(200).json({data: null});
 }

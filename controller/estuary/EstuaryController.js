@@ -20,7 +20,7 @@ exports.user_token = async (req, res) => {
 }
 
 // get metadata around the storage per CID
-exports.metadata_by_cid = async (req, res) => {
+exports.status = async (req, res) => {
   try{
     const headers = {
       'Authorization': `Bearer ${process.env.EST_API_KEY}`,
@@ -92,3 +92,28 @@ exports.get_deals = async (req, res) => {
   }
 }
 
+// get all of the deals being made for a specific Content ID stored
+exports.get_quote = async (req, res) => {
+  try{
+    const response = await axios.get(`https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`);
+    let current_balance = 0
+    for(let i=0; i<response.data.data.items.length; i++){
+      if(response.data.data.items[i].contract_ticker_symbol === 'MATIC'){
+        current_balance = response.data.data.items[i].balance
+        break;
+      }
+    }
+    const fileSize = parseInt(req.body.fileSize)/(1024*1024*1024);
+    const cost = fileSize*7;
+
+    res.status(200).json({
+      fileSize: fileSize,
+      cost: cost,
+      current_balance: current_balance,
+    });
+  } catch(e){
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+}
