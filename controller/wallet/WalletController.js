@@ -1,21 +1,20 @@
-const axios = require('axios');
-const EthCrypto = require('eth-crypto');
-const CryptoJS = require('crypto-js');
+const axios = require("axios");
+const EthCrypto = require("eth-crypto");
+const CryptoJS = require("crypto-js");
 
 // generate public private key pair here
-exports.create_wallet = async(req, res) => {
+exports.create_wallet = async (req, res) => {
   const identity = EthCrypto.createIdentity();
-  identity['privateKeyEncrypted'] = CryptoJS.AES.encrypt(identity['privateKey'], req.body.password).toString();
-  const publicKey = EthCrypto.publicKeyByPrivateKey(
-    identity['privateKey']
-  );
-  const address = EthCrypto.publicKey.toAddress(
-    publicKey
-  );
-  identity['publicKey'] = address
-  delete identity['address']
+  identity["privateKeyEncrypted"] = CryptoJS.AES.encrypt(
+    identity["privateKey"],
+    req.body.password
+  ).toString();
+  const publicKey = EthCrypto.publicKeyByPrivateKey(identity["privateKey"]);
+  const address = EthCrypto.publicKey.toAddress(publicKey);
+  identity["publicKey"] = address;
+  delete identity["address"];
   res.status(200).json(identity);
-}
+};
 
 // get balance of matic tokens
 exports.get_balance = async(req, res) => {
