@@ -1,4 +1,6 @@
 const axios = require("axios");
+var ethers = require('ethers');
+const { abi } = require("../../contract_abi/abi");
 
 // temporary key for client
 // query example - 24h
@@ -106,20 +108,32 @@ exports.get_deals = async (req, res) => {
 exports.get_quote = async (req, res) => {
   try{
     const response = await axios.get(`https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`);
+    
+    let matic_price_usd = 0
     let current_balance = 0
     for(let i=0; i<response.data.data.items.length; i++){
       if(response.data.data.items[i].contract_ticker_symbol === 'MATIC'){
         current_balance = response.data.data.items[i].balance
+        matic_price_usd = response.data.data.items[i].quote_rate
         break;
       }
     }
+    
     const fileSize = parseInt(req.body.fileSize)/(1024*1024*1024);
-    const cost = fileSize*7;
+    const cost_usd = fileSize*7;
+    const cost_matic = cost_usd/matic_price_usd;
 
+    const address = "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579";
+    const provider = ethers.getDefaultProvider();
+    const erc20 = new ethers.Contract(address, abi, provider);
+    
+    const gasFee = (await erc20.estimateGas.store(req.body.ipfs_hash, {})).toNumber();
+    
     res.status(200).json({
       fileSize: fileSize,
-      cost: cost,
+      cost: cost_matic,
       current_balance: current_balance,
+      gasFee: gasFee,
     });
   } catch(e){
     res.status(500).send({

@@ -1,4 +1,4 @@
-[
+exports.abi = [
   {
     "anonymous": false,
     "inputs": [
