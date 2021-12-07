@@ -1,5 +1,5 @@
 const axios = require("axios");
-const ethers = require('ethers');
+const ethers = require("ethers");
 const { abi } = require("../../contract_abi/abi");
 
 const contract_address = "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579";
@@ -28,7 +28,7 @@ exports.user_token = async (req, res) => {
 
 // get metadata around the storage per CID
 exports.status = async (req, res) => {
-  try{
+  try {
     const headers = {
       Authorization: `Bearer ${process.env.EST_API_KEY}`,
       Accept: "application/json",
@@ -104,55 +104,63 @@ exports.get_deals = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-}
+};
 
 // get all of the deals being made for a specific Content ID stored
 exports.get_quote = async (req, res) => {
-  try{
-    const response = await axios.get(`https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`);
-    
-    let matic_price_usd = 0
-    let current_balance = 0
-    for(let i=0; i<response.data.data.items.length; i++){
-      if(response.data.data.items[i].contract_ticker_symbol === 'MATIC'){
-        current_balance = response.data.data.items[i].balance
-        matic_price_usd = response.data.data.items[i].quote_rate
+  try {
+    const response = await axios.get(
+      `https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`
+    );
+
+    let matic_price_usd = 0;
+    let current_balance = 0;
+    for (let i = 0; i < response.data.data.items.length; i++) {
+      if (response.data.data.items[i].contract_ticker_symbol === "MATIC") {
+        current_balance = response.data.data.items[i].balance;
+        matic_price_usd = response.data.data.items[i].quote_rate;
         break;
       }
     }
-    
-    const fileSize = parseInt(req.body.fileSize)/(1024*1024*1024);
-    const cost_usd = fileSize*7;
-    const cost_matic = cost_usd/matic_price_usd;
 
-    const POKTprovider = new ethers.providers.JsonRpcProvider(process.env.POKT_PROVIDER_MATIC);
+    const fileSize = parseInt(req.body.fileSize) / (1024 * 1024 * 1024);
+    const cost_usd = fileSize * 7;
+    const cost_matic = cost_usd / matic_price_usd;
+
+    const POKTprovider = new ethers.providers.JsonRpcProvider(
+      process.env.POKT_PROVIDER_MATIC
+    );
     const erc20 = new ethers.Contract(contract_address, abi, POKTprovider);
-    
-    const gasFee = (await erc20.estimateGas.store(req.body.ipfs_hash, {})).toNumber();
-    
+
+    const gasFee = (
+      await erc20.estimateGas.store(req.body.ipfs_hash, {})
+    ).toNumber();
+
     res.status(200).json({
       fileSize: fileSize,
       cost: cost_matic,
       current_balance: current_balance,
       gasFee: gasFee,
     });
-  } catch(e){
+  } catch (e) {
     res.status(500).send({
       message: "Internal Server Error",
     });
   }
-}
+};
 
 exports.push_cid_tochain = async (req, res) => {
-  try{
-  // const POKTprovider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
-  const POKTprovider = new ethers.providers.JsonRpcProvider(process.env.POKT_PROVIDER_MATIC);
-  const wallet = new ethers.Wallet(req.body.privateKey, POKTprovider);
-  
-  const contract = new ethers.Contract(contract_address, abi, wallet);
-  const response = await contract.store(req.body.cid, {});
-  res.status(200).json(response);
-  } catch(e){
-    res.status(500)
+  try {
+    // const POKTprovider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
+    const POKTprovider = new ethers.providers.JsonRpcProvider(
+      process.env.POKT_PROVIDER_MATIC
+    );
+    const wallet = new ethers.Wallet(req.body.privateKey, POKTprovider);
+
+    const contract = new ethers.Contract(contract_address, abi, wallet);
+    const response = await contract.store(req.body.cid, {});
+    res.status(200).json(response);
+  } catch (e) {
+    res.status(500);
   }
-}
+};
