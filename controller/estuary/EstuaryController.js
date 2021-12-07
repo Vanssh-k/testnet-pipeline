@@ -1,6 +1,8 @@
 const axios = require("axios");
-var ethers = require('ethers');
+const ethers = require('ethers');
 const { abi } = require("../../contract_abi/abi");
+
+const contract_address = "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579";
 
 // temporary key for client
 // query example - 24h
@@ -123,9 +125,8 @@ exports.get_quote = async (req, res) => {
     const cost_usd = fileSize*7;
     const cost_matic = cost_usd/matic_price_usd;
 
-    const address = "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579";
-    const provider = ethers.getDefaultProvider();
-    const erc20 = new ethers.Contract(address, abi, provider);
+    const POKTprovider = new ethers.providers.JsonRpcProvider(process.env.POKT_PROVIDER_MATIC);
+    const erc20 = new ethers.Contract(contract_address, abi, POKTprovider);
     
     const gasFee = (await erc20.estimateGas.store(req.body.ipfs_hash, {})).toNumber();
     
@@ -139,5 +140,19 @@ exports.get_quote = async (req, res) => {
     res.status(500).send({
       message: "Internal Server Error",
     });
+  }
+}
+
+exports.push_cid_tochain = async (req, res) => {
+  try{
+  // const POKTprovider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
+  const POKTprovider = new ethers.providers.JsonRpcProvider(process.env.POKT_PROVIDER_MATIC);
+  const wallet = new ethers.Wallet(req.body.privateKey, POKTprovider);
+  
+  const contract = new ethers.Contract(contract_address, abi, wallet);
+  const response = await contract.store(req.body.cid, {});
+  res.status(200).json(response);
+  } catch(e){
+    res.status(500)
   }
 }
