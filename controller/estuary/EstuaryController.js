@@ -2,7 +2,7 @@ const axios = require("axios");
 const ethers = require("ethers");
 const { abi } = require("../../contract_abi/abi");
 
-const contract_address = "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579";
+const contract_address = "0x801206f0db68A8CBaEdCCe1346127331E326dBE5";
 
 // temporary key for client
 // query example - 24h
