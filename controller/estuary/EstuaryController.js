@@ -151,15 +151,22 @@ exports.get_quote = async (req, res) => {
 
 exports.push_cid_tochain = async (req, res) => {
   try {
-    // const POKTprovider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
-    const POKTprovider = new ethers.providers.JsonRpcProvider(
-      process.env.POKT_PROVIDER_MATIC
+    // const provider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
+    const provider = new ethers.providers.JsonRpcProvider(
+      process.env.POLYGON_RPC
     );
-    const wallet = new ethers.Wallet(req.body.privateKey, POKTprovider);
-
+    const wallet = new ethers.Wallet(req.body.privateKey, provider);
     const contract = new ethers.Contract(contract_address, abi, wallet);
-    const response = await contract.store(req.body.cid, {});
-    res.status(200).json(response);
+
+    const txResponse = await contract.store(
+      req.body.cid,
+      { cost: req.body.cost },
+      { value: ethers.utils.parseEther(req.body.cost) }
+    );
+
+    const txReceipt = await txResponse.wait();
+
+    res.status(200).json(txReceipt);
   } catch (e) {
     res.status(500);
   }
