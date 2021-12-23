@@ -137,7 +137,6 @@ exports.get_quote = async (req, res) => {
     ).toNumber();
 
     res.status(200).json({
-      fileSize: fileSize,
       cost: cost_matic,
       current_balance: current_balance,
       gasFee: gasFee,
