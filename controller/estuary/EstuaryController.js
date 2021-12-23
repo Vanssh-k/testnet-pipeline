@@ -159,7 +159,7 @@ exports.push_cid_tochain = async (req, res) => {
 
     const txResponse = await contract.store(
       req.body.cid,
-      { cost: req.body.cost }//,
+      {}//,
       // { value: ethers.utils.parseEther(req.body.cost) }
     );
 
