@@ -1,8 +1,7 @@
 const axios = require("axios");
 const ethers = require("ethers");
+const config = require("../../config");
 const { abi } = require("../../contract_abi/abi");
-
-const contract_address = "0x801206f0db68A8CBaEdCCe1346127331E326dBE5";
 
 // temporary key for client
 // query example - 24h
@@ -110,7 +109,7 @@ exports.get_deals = async (req, res) => {
 exports.get_quote = async (req, res) => {
   try {
     const response = await axios.get(
-      `https://api.covalenthq.com/v1/137/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`
+      `https://api.covalenthq.com/v1/${config[req.body.chain]['chain_id']}/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`
     );
 
     let matic_price_usd = 0;
@@ -128,9 +127,9 @@ exports.get_quote = async (req, res) => {
     const cost_matic = cost_usd / matic_price_usd;
 
     const POKTprovider = new ethers.providers.JsonRpcProvider(
-      process.env.POKT_PROVIDER_MATIC
+      config[req.body.chain]['rpc']
     );
-    const erc20 = new ethers.Contract(contract_address, abi, POKTprovider);
+    const erc20 = new ethers.Contract(config[req.body.chain]['contract_address'], abi, POKTprovider);
 
     const gasFee = (
       await erc20.estimateGas.store(req.body.ipfs_hash, {})
@@ -152,10 +151,10 @@ exports.push_cid_tochain = async (req, res) => {
   try {
     // const provider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
     const provider = new ethers.providers.JsonRpcProvider(
-      process.env.POLYGON_RPC
+      config[req.body.chain]['rpc']
     );
     const wallet = new ethers.Wallet(req.body.privateKey, provider);
-    const contract = new ethers.Contract(contract_address, abi, wallet);
+    const contract = new ethers.Contract(config[req.body.chain]['contract_address'], abi, wallet);
 
     const txResponse = await contract.store(
       req.body.cid,
