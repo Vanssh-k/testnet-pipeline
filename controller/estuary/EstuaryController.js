@@ -108,39 +108,33 @@ exports.get_deals = async (req, res) => {
 // get all of the deals being made for a specific Content ID stored
 exports.get_quote = async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://api.covalenthq.com/v1/${config[req.body.chain]['chain_id']}/address/${req.body.publicKey}/balances_v2/?key=${process.env.COVALENT_API_KEY}`
+    const provider = new ethers.providers.JsonRpcProvider(
+      config[req.body.chain]['rpc']
     );
+    const current_balance = await provider.getBalance(req.body.publicKey);
 
-    let matic_price_usd = 0;
-    let current_balance = 0;
-    for (let i = 0; i < response.data.data.items.length; i++) {
-      if (response.data.data.items[i].contract_ticker_symbol === "MATIC") {
-        current_balance = response.data.data.items[i].balance;
-        matic_price_usd = response.data.data.items[i].quote_rate;
-        break;
-      }
-    }
+    const token_prices = await axios.get(
+      `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&tickers=${config[req.body.chain]['symbol']}&page-size=1&key=${process.env.COVALENT_API_KEY}`
+    );
+    const token_price_usd = token_prices.data.data.items[0]["quote_rate"];
 
     const fileSize = parseInt(req.body.fileSize) / (1024 * 1024 * 1024);
     const cost_usd = fileSize * 7;
-    const cost_matic = cost_usd / matic_price_usd;
-
-    const POKTprovider = new ethers.providers.JsonRpcProvider(
-      config[req.body.chain]['rpc']
-    );
-    const erc20 = new ethers.Contract(config[req.body.chain]['contract_address'], abi, POKTprovider);
-
+    const file_cost = cost_usd / token_price_usd;
+    
+    const contract = new ethers.Contract(config[req.body.chain]['contract_address'], abi, provider);
+    
     const gasFee = (
-      await erc20.estimateGas.store(req.body.ipfs_hash, {})
+      await contract.estimateGas.store(req.body.ipfs_hash, {})
     ).toNumber();
-
+    
     res.status(200).json({
-      cost: cost_matic,
-      current_balance: current_balance,
+      cost: file_cost,
+      current_balance: Number(current_balance),
       gasFee: gasFee,
     });
   } catch (e) {
+    console.log(e);
     res.status(500).send({
       message: "Internal Server Error",
     });
