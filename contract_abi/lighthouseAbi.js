@@ -1,4 +1,4 @@
-exports.abi = [
+exports.lighthouseAbi = [
   {
     anonymous: false,
     inputs: [

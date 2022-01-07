@@ -18,16 +18,16 @@ exports.create_wallet = async (req, res) => {
 };
 
 // get balance of matic tokens
-exports.get_balance = async(req, res) => {
-  try{
+exports.get_balance = async (req, res) => {
+  try {
     const provider = new ethers.providers.JsonRpcProvider(
-      config[req.body.chain]['rpc']
+      config[req.body.network][req.body.chain]["rpc"]
     );
 
     const balance = await provider.getBalance(req.body.publicKey);
     // balance = ethers.utils.formatEther(balance);
-    res.status(200).json({data: Number(balance)});
-  } catch(err){
+    res.status(200).json({ data: Number(balance) });
+  } catch (err) {
     res.status(500);
   }
-}
+};

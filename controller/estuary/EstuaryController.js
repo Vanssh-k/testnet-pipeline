@@ -1,23 +1,44 @@
 const axios = require("axios");
 const ethers = require("ethers");
 const config = require("../../config");
-const { abi } = require("../../contract_abi/abi");
+const { depositAbi } = require("../../contract_abi/depositAbi");
+// const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
+const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
 
 // temporary key for client
 // query example - 24h
 exports.user_token = async (req, res) => {
   try {
-    const headers = {
-      Authorization: `Bearer ${process.env.EST_API_KEY}`,
-      Accept: "application/json",
-    };
-
-    const response = await axios.post(
-      `https://api.estuary.tech/user/api-keys?perms=upload&expiry=${req.query.expiry_time}`,
-      {},
-      { headers: headers }
+    const provider = new ethers.providers.JsonRpcProvider(
+      config[req.body.network][req.body.chain]["rpc"]
     );
-    res.status(200).json(response.data);
+    const contract = new ethers.Contract(
+      config[req.body.network][req.body.chain]["deposit_contract_address"],
+      depositAbi,
+      provider
+    );
+    // const wallet = new ethers.Wallet(req.body.privateKey, provider);
+    const txResponse = await contract.deposits(req.body.signer.address);
+
+    const deposit = Number(txResponse[1]);
+
+    if (deposit > 0) {
+      const headers = {
+        Authorization: `Bearer ${process.env.EST_API_KEY}`,
+        Accept: "application/json",
+      };
+
+      const response = await axios.post(
+        `https://api.estuary.tech/user/api-keys?perms=upload&expiry=${req.body.expiry_time}`,
+        {},
+        { headers: headers }
+      );
+      res.status(200).json(response.data);
+    } else {
+      res.status(403).json({
+        message: "User has no deposit",
+      });
+    }
   } catch (e) {
     res.status(500).send({
       message: "Internal Server Error",
@@ -109,25 +130,32 @@ exports.get_deals = async (req, res) => {
 exports.get_quote = async (req, res) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      config[req.body.chain]['rpc']
+      config[req.body.network][req.body.chain]["rpc"]
     );
     const current_balance = await provider.getBalance(req.body.publicKey);
 
     const token_prices = await axios.get(
-      `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&tickers=${config[req.body.chain]['symbol']}&page-size=1&key=${process.env.COVALENT_API_KEY}`
+      `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
+        config[req.body.network][req.body.chain]["symbol"]
+      }&key=${process.env.COVALENT_API_KEY}`
     );
+
     const token_price_usd = token_prices.data.data.items[0]["quote_rate"];
 
     const fileSize = parseInt(req.body.fileSize) / (1024 * 1024 * 1024);
     const cost_usd = fileSize * 7;
     const file_cost = cost_usd / token_price_usd;
-    
-    const contract = new ethers.Contract(config[req.body.chain]['contract_address'], abi, provider);
-    
+
+    const contract = new ethers.Contract(
+      config[req.body.network][req.body.chain]["lighthouse_contract_address"],
+      lighthouseAbi,
+      provider
+    );
+
     const gasFee = (
       await contract.estimateGas.store(req.body.ipfs_hash, {})
     ).toNumber();
-    
+
     res.status(200).json({
       cost: file_cost,
       current_balance: Number(current_balance),
@@ -138,28 +166,5 @@ exports.get_quote = async (req, res) => {
     res.status(500).send({
       message: "Internal Server Error",
     });
-  }
-};
-
-exports.push_cid_tochain = async (req, res) => {
-  try {
-    // const provider = new ethers.providers.EtherscanProvider(network = "homestead", apiKey = process.env.ETHERSCAN_API_KEY);
-    const provider = new ethers.providers.JsonRpcProvider(
-      config[req.body.chain]['rpc']
-    );
-    const wallet = new ethers.Wallet(req.body.privateKey, provider);
-    const contract = new ethers.Contract(config[req.body.chain]['contract_address'], abi, wallet);
-
-    const txResponse = await contract.store(
-      req.body.cid,
-      {}//,
-      // { value: ethers.utils.parseEther(req.body.cost) }
-    );
-
-    const txReceipt = await txResponse.wait();
-
-    res.status(200).json(txReceipt);
-  } catch (e) {
-    res.status(500);
   }
 };
