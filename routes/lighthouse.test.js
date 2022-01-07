@@ -7,10 +7,11 @@ test("Polygon Chain: POST /get_quote", async () => {
     ipfs_hash: "QmQXyQZQQ7QZ7Q7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7",
     fileSize: "1144000",
     chain: "polygon",
+    network: "testnet",
   };
 
   await supertest(app)
-    .post("/api/estuary/get_quote")
+    .post("/api/lighthouse/get_quote")
     .send(data)
     .expect(200)
     .then((response) => {
@@ -32,10 +33,11 @@ test("Fantom Chain: POST /get_quote", async () => {
     ipfs_hash: "QmQXyQZQQ7QZ7Q7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7",
     fileSize: "1144000",
     chain: "fantom",
+    network: "testnet",
   };
 
   await supertest(app)
-    .post("/api/estuary/get_quote")
+    .post("/api/lighthouse/get_quote")
     .send(data)
     .expect(200)
     .then((response) => {
@@ -57,10 +59,11 @@ test("Binance Chain: POST /get_quote", async () => {
     ipfs_hash: "bafkreifibfqymtttqefhzbnhgripifo2ay52mknvtzfjgs72nunvvy5zc4",
     fileSize: "1144000",
     chain: "binance",
+    network: "testnet",
   };
 
   await supertest(app)
-    .post("/api/estuary/get_quote")
+    .post("/api/lighthouse/get_quote")
     .send(data)
     .expect(200)
     .then((response) => {
@@ -73,62 +76,5 @@ test("Binance Chain: POST /get_quote", async () => {
 
       expect(quote).toHaveProperty("gasFee");
       expect(typeof quote.gasFee).toBe("number");
-    });
-}, 30000);
-
-test("Polygon Chain: POST /push_cid_tochain", async () => {
-  const data = {
-    privateKey:
-      "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
-    cid: "bafkreifibfqymtttqefhzbnhgripifo2ay52mknvtzfjgs72nunvvy5zc4",
-    chain: "polygon",
-  };
-
-  await supertest(app)
-    .post("/api/estuary/push_cid_tochain")
-    .send(data)
-    .expect(200)
-    .then((response) => {
-      const tx = JSON.parse(response.text);
-      expect(tx).toHaveProperty("transactionHash");
-      expect(typeof tx.transactionHash).toBe("string");
-    });
-}, 30000);
-
-test("Fantom Chain: POST /push_cid_tochain", async () => {
-  const data = {
-    privateKey:
-      "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
-    cid: "bafkreifibfqymtttqefhzbnhgripifo2ay52mknvtzfjgs72nunvvy5zc4",
-    chain: "fantom",
-  };
-
-  await supertest(app)
-    .post("/api/estuary/push_cid_tochain")
-    .send(data)
-    .expect(200)
-    .then((response) => {
-      const tx = JSON.parse(response.text);
-      expect(tx).toHaveProperty("transactionHash");
-      expect(typeof tx.transactionHash).toBe("string");
-    });
-}, 30000);
-
-test("Binance Chain: POST /push_cid_tochain", async () => {
-  const data = {
-    privateKey:
-      "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
-    cid: "bafkreifibfqymtttqefhzbnhgripifo2ay52mknvtzfjgs72nunvvy5zc4",
-    chain: "binance",
-  };
-
-  await supertest(app)
-    .post("/api/estuary/push_cid_tochain")
-    .send(data)
-    .expect(200)
-    .then((response) => {
-      const tx = JSON.parse(response.text);
-      expect(tx).toHaveProperty("transactionHash");
-      expect(typeof tx.transactionHash).toBe("string");
     });
 }, 30000);

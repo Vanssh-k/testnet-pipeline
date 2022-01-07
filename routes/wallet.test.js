@@ -4,6 +4,7 @@ const supertest = require("supertest");
 test("Polygon Chain: POST /get_balance", async () => {
   const data = {
     publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
+    network: "testnet",
     chain: "polygon",
   };
 
@@ -21,6 +22,7 @@ test("Polygon Chain: POST /get_balance", async () => {
 test("Fantom Chain: POST /get_balance", async () => {
   const data = {
     publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
+    network: "testnet",
     chain: "fantom",
   };
 
@@ -38,6 +40,7 @@ test("Fantom Chain: POST /get_balance", async () => {
 test("Binance Chain: POST /get_balance", async () => {
   const data = {
     publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
+    network: "testnet",
     chain: "binance",
   };
 

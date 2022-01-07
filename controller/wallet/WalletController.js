@@ -21,7 +21,7 @@ exports.create_wallet = async (req, res) => {
 exports.get_balance = async (req, res) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      config[process.env.NETWORK][req.body.chain]["rpc"]
+      config[req.body.network][req.body.chain]["rpc"]
     );
 
     const balance = await provider.getBalance(req.body.publicKey);
