@@ -14,6 +14,5 @@ app.use(morgan("dev"));
 app.use(cors());
 
 app.use("/api/lighthouse", require("./routes/lighthouse"));
-app.use("/api/wallet", require("./routes/wallet"));
 
 module.exports = app;
