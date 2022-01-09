@@ -48,8 +48,8 @@ exports.user_token = async (req, res) => {
     //   provider
     // );
     // const wallet = new ethers.Wallet(req.body.privateKey, provider);
-    const whitelisted = await check_deposit(req.body.signer.address);
-
+    // const whitelisted = await check_deposit(req.body.signer.address);
+    const whitelisted = true;
     if (whitelisted) {
       const headers = {
         Authorization: `Bearer ${process.env.EST_API_KEY}`,
