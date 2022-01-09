@@ -1,28 +1,56 @@
 const axios = require("axios");
 const ethers = require("ethers");
+
 const config = require("../../config");
 const { depositAbi } = require("../../contract_abi/depositAbi");
-// const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
 const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
+
+const check_deposit = async (publicKey) => {
+  try {
+    const provider = new ethers.providers.JsonRpcProvider(
+      config["mainnet"]["polygon"]["rpc"]
+    );
+
+    const contract = new ethers.Contract(
+      config["mainnet"]["polygon"]["deposit_contract_address"],
+      depositAbi,
+      provider
+    );
+
+    const txResponse = await contract.listWhitelistAddresses();
+
+    let whitelisted = false;
+    for (let i = 0; i < txResponse.length; i++) {
+      if (publicKey === txResponse[i]) {
+        whitelisted = true;
+        break;
+      }
+    }
+
+    return whitelisted;
+  } catch (e) {
+    return {
+      message: "Internal Server Error",
+    };
+  }
+};
 
 // temporary key for client
 // query example - 24h
 exports.user_token = async (req, res) => {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      config[req.body.network][req.body.chain]["rpc"]
-    );
-    const contract = new ethers.Contract(
-      config[req.body.network][req.body.chain]["deposit_contract_address"],
-      depositAbi,
-      provider
-    );
+    // const provider = new ethers.providers.JsonRpcProvider(
+    //   config[req.body.network][req.body.chain]["rpc"]
+    // );
+    // const contract = new ethers.Contract(
+    //   config[req.body.network][req.body.chain]["deposit_contract_address"],
+    //   depositAbi,
+    //   provider
+    // );
     // const wallet = new ethers.Wallet(req.body.privateKey, provider);
-    const txResponse = await contract.deposits(req.body.signer.address);
+    const whitelisted = await check_deposit(req.body.signer.address);
 
-    const deposit = Number(txResponse[1]);
-
-    if (deposit > 0) {
+    if (whitelisted) {
       const headers = {
         Authorization: `Bearer ${process.env.EST_API_KEY}`,
         Accept: "application/json",
