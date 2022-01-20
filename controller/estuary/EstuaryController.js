@@ -94,6 +94,30 @@ exports.status = async (req, res) => {
   }
 };
 
+exports.add_cid = async (req, res) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${process.env.EST_API_KEY}`,
+      Accept: "application/json",
+    };
+
+    const response = await axios.post(
+      `https://api.estuary.tech/content/add-ipfs`,
+      {
+        name: req.body.name,
+        root: req.body.cid,
+      },
+      { headers: headers }
+    );
+
+    res.status(200).json(response.data);
+  } catch (e) {
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
+
 // list all of the data you have pinned to Estuary
 // example offset=0&limit=10
 exports.list_data = async (req, res) => {
