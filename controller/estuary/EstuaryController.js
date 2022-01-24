@@ -186,13 +186,15 @@ exports.get_quote = async (req, res) => {
     );
     const current_balance = await provider.getBalance(req.body.publicKey);
 
-    const token_prices = await axios.get(
-      `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
-        config[req.body.network][req.body.chain]["symbol"]
-      }&key=${process.env.COVALENT_API_KEY}`
-    );
+    // const token_prices = await axios.get(
+    //   `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
+    //     config[req.body.network][req.body.chain]["symbol"]
+    //   }&key=${process.env.COVALENT_API_KEY}`
+    // );
 
-    const token_price_usd = token_prices.data.data.items[0]["quote_rate"];
+    const token_prices = await axios.get(`https://data.messari.io/api/v1/assets/${config[req.body.network][req.body.chain]["symbol"]}/metrics/market-data`);
+
+    const token_price_usd = token_prices.data.data.market_data.price_usd;
 
     const fileSize = parseInt(req.body.fileSize) / (1024 * 1024 * 1024);
     const cost_usd = fileSize * 7;
