@@ -1,39 +1,4 @@
 const axios = require("axios");
-const ethers = require("ethers");
-
-const config = require("../../config");
-const { depositAbi } = require("../../contract_abi/depositAbi");
-const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
-
-const check_deposit = async (publicKey) => {
-  try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      config["mainnet"]["polygon"]["rpc"]
-    );
-
-    const contract = new ethers.Contract(
-      config["mainnet"]["polygon"]["deposit_contract_address"],
-      depositAbi,
-      provider
-    );
-
-    const txResponse = await contract.listWhitelistAddresses();
-
-    let whitelisted = false;
-    for (let i = 0; i < txResponse.length; i++) {
-      if (publicKey === txResponse[i]) {
-        whitelisted = true;
-        break;
-      }
-    }
-
-    return whitelisted;
-  } catch (e) {
-    return {
-      message: "Internal Server Error",
-    };
-  }
-};
 
 // temporary key for client
 // query example - 24h
@@ -118,6 +83,29 @@ exports.add_cid = async (req, res) => {
   }
 };
 
+// get all of the deals being made for a specific Content ID stored
+exports.get_ticker = async (req, res) => {
+  try {
+    // const token_prices = await axios.get(
+    //   `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
+    //     config["mainnet"][req.body.chain]["symbol"]
+    //   }&key=${process.env.COVALENT_API_KEY}`
+    // );
+
+    const token_prices = await axios.get(
+      `https://data.messari.io/api/v1/assets/${req.query.symbol}/metrics/market-data`
+    );
+
+    const token_price_usd = token_prices.data.data.market_data.price_usd;
+
+    res.status(200).json(token_price_usd);
+  } catch (e) {
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
+
 // list all of the data you have pinned to Estuary
 // example offset=0&limit=10
 exports.list_data = async (req, res) => {
@@ -172,51 +160,6 @@ exports.get_deals = async (req, res) => {
     );
     res.status(200).json(response.data);
   } catch (e) {
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
-  }
-};
-
-// get all of the deals being made for a specific Content ID stored
-exports.get_quote = async (req, res) => {
-  try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      config[req.body.network][req.body.chain]["rpc"]
-    );
-    const current_balance = await provider.getBalance(req.body.publicKey);
-
-    // const token_prices = await axios.get(
-    //   `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
-    //     config[req.body.network][req.body.chain]["symbol"]
-    //   }&key=${process.env.COVALENT_API_KEY}`
-    // );
-
-    const token_prices = await axios.get(`https://data.messari.io/api/v1/assets/${config[req.body.network][req.body.chain]["symbol"]}/metrics/market-data`);
-
-    const token_price_usd = token_prices.data.data.market_data.price_usd;
-
-    const fileSize = parseInt(req.body.fileSize) / (1024 * 1024 * 1024);
-    const cost_usd = fileSize * 7;
-    const file_cost = cost_usd / token_price_usd;
-
-    const contract = new ethers.Contract(
-      config[req.body.network][req.body.chain]["lighthouse_contract_address"],
-      lighthouseAbi,
-      provider
-    );
-
-    const gasFee = (
-      await contract.estimateGas.store(req.body.ipfs_hash, {})
-    ).toNumber();
-
-    res.status(200).json({
-      cost: file_cost,
-      current_balance: Number(current_balance),
-      gasFee: gasFee,
-    });
-  } catch (e) {
-    console.log(e);
     res.status(500).send({
       message: "Internal Server Error",
     });

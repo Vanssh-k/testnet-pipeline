@@ -1,80 +1,89 @@
 const app = require("../app");
 const supertest = require("supertest");
 
-test("Polygon Chain: POST /get_quote", async () => {
-  const data = {
-    publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    ipfs_hash: "QmQXyQZQQ7QZ7Q7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7",
-    fileSize: "1144000",
-    chain: "polygon",
-    network: "testnet",
-  };
-
+// get_ticker
+test("Polygon Ticker: GET /get_ticker", async () => {
   await supertest(app)
-    .post("/api/lighthouse/get_quote")
-    .send(data)
+    .get("/api/lighthouse/get_ticker?symbol=matic")
     .expect(200)
     .then((response) => {
-      const quote = JSON.parse(response.text);
-      expect(quote).toHaveProperty("cost");
-      expect(typeof quote.cost).toBe("number");
-
-      expect(quote).toHaveProperty("current_balance");
-      expect(typeof quote.current_balance).toBe("number");
-
-      expect(quote).toHaveProperty("gasFee");
-      expect(typeof quote.gasFee).toBe("number");
+      const ticker = JSON.parse(response.text);
+      expect(typeof ticker).toBe("number");
     });
 }, 30000);
 
-test("Fantom Chain: POST /get_quote", async () => {
-  const data = {
-    publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    ipfs_hash: "QmQXyQZQQ7QZ7Q7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7QZ7",
-    fileSize: "1144000",
-    chain: "fantom",
-    network: "testnet",
-  };
-
+test("Fantom Ticker: GET /get_ticker", async () => {
   await supertest(app)
-    .post("/api/lighthouse/get_quote")
-    .send(data)
+    .get("/api/lighthouse/get_ticker?symbol=ftm")
     .expect(200)
     .then((response) => {
-      const quote = JSON.parse(response.text);
-      expect(quote).toHaveProperty("cost");
-      expect(typeof quote.cost).toBe("number");
-
-      expect(quote).toHaveProperty("current_balance");
-      expect(typeof quote.current_balance).toBe("number");
-
-      expect(quote).toHaveProperty("gasFee");
-      expect(typeof quote.gasFee).toBe("number");
+      const ticker = JSON.parse(response.text);
+      expect(typeof ticker).toBe("number");
     });
 }, 30000);
 
-test("Binance Chain: POST /get_quote", async () => {
+test("Binance Ticker: GET /get_ticker", async () => {
+  await supertest(app)
+    .get("/api/lighthouse/get_ticker?symbol=bnb")
+    .expect(200)
+    .then((response) => {
+      const ticker = JSON.parse(response.text);
+      expect(typeof ticker).toBe("number");
+    });
+}, 30000);
+
+// user_token
+test("User Token: POST /user_token", async () => {
   const data = {
-    publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    ipfs_hash: "bafkreifibfqymtttqefhzbnhgripifo2ay52mknvtzfjgs72nunvvy5zc4",
-    fileSize: "1144000",
-    chain: "binance",
-    network: "testnet",
+    expiry_time: "1h",
   };
 
   await supertest(app)
-    .post("/api/lighthouse/get_quote")
+    .post("/api/lighthouse/user_token")
     .send(data)
     .expect(200)
     .then((response) => {
-      const quote = JSON.parse(response.text);
-      expect(quote).toHaveProperty("cost");
-      expect(typeof quote.cost).toBe("number");
+      const user_token = JSON.parse(response.text);
+      expect(user_token).toHaveProperty("token");
+      expect(typeof user_token.token).toBe("string");
+    });
+}, 30000);
 
-      expect(quote).toHaveProperty("current_balance");
-      expect(typeof quote.current_balance).toBe("number");
+// status
+test("Status: Get /status", async () => {
+  await supertest(app)
+    .get(
+      "/api/lighthouse/status/bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34"
+    )
+    .expect(200)
+    .then((response) => {
+      const status = JSON.parse(response.text);
+      expect(typeof status[0]["content"]["cid"]).toBe("string");
+      expect(typeof status[0]["content"]["name"]).toBe("string");
+      expect(typeof status[0]["content"]["size"]).toBe("number");
+    });
+}, 30000);
 
-      expect(quote).toHaveProperty("gasFee");
-      expect(typeof quote.gasFee).toBe("number");
+// get_uploads
+test("Upload Client: GET /get_uploads", async () => {
+  await supertest(app)
+    .get(
+      "/api/lighthouse/get_uploads?network=testnet&chain=fantom&publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160"
+    )
+    .expect(200)
+    .then((response) => {
+      const get_uploads = JSON.parse(response.text);
+      expect(typeof get_uploads[0].cid).toBe("string");
+    });
+}, 30000);
+
+// upload_client
+test("Upload Client: GET /upload_client", async () => {
+  await supertest(app)
+    .get("/api/lighthouse/upload_client")
+    .expect(200)
+    .then((response) => {
+      const upload_client = JSON.parse(response.text);
+      expect(typeof upload_client).toBe("string");
     });
 }, 30000);

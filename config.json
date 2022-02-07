@@ -30,7 +30,7 @@
     },
     "polygon": {
       "symbol": "MATIC",
-      "rpc": "https://rpc-mumbai.maticvigil.com/",
+      "rpc": "https://rpc-mumbai.matic.today",
       "chain_id": "80001",
       "lighthouse_contract_address": "0xEF5787e17efdC2cc8F6487D1F1aD2A7e04b83F6D",
       "deposit_contract_address": "0x5cd3E10b00b5379e1f0303d2ED77CB3D7662e6e2"
