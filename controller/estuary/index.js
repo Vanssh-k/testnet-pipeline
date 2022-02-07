@@ -1,4 +1,5 @@
 const axios = require("axios");
+require("dotenv").config();
 
 // temporary key for client
 // query example - 24h
