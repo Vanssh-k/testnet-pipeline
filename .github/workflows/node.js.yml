@@ -30,16 +30,13 @@ jobs:
 
 #       - name: Lint 🧐
 #         run: npm run lint
-
-      - name: .env
-        uses: SpicyPizza/create-envfile@v1
-        with:
+        
+      - name: Test 🚨
+        run: npm test
+        env:
           EST_API_KEY: ${{ secrets.EST_API_KEY }}
           COVALENT_API_KEY: ${{ secrets.COVALENT_API_KEY }}
           POKT_PROVIDER_MATIC: ${{ secrets.POKT_PROVIDER_MATIC }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
           INFURA_PROJECT_ID: ${{ secrets.INFURA_PROJECT_ID }}
           INFURA_PROJECT_SECRET: ${{ secrets.INFURA_PROJECT_SECRET }}
-        
-      - name: Test 🚨
-        run: npm test
