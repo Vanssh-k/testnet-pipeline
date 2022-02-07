@@ -52,7 +52,9 @@ test("User Token: POST /user_token", async () => {
 // status
 test("Status: Get /status", async () => {
   await supertest(app)
-    .get("/api/lighthouse/status/bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34")
+    .get(
+      "/api/lighthouse/status/bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34"
+    )
     .expect(200)
     .then((response) => {
       const status = JSON.parse(response.text);
@@ -65,7 +67,9 @@ test("Status: Get /status", async () => {
 // get_uploads
 test("Upload Client: GET /get_uploads", async () => {
   await supertest(app)
-    .get("/api/lighthouse/get_uploads?network=testnet&chain=fantom&publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160")
+    .get(
+      "/api/lighthouse/get_uploads?network=testnet&chain=fantom&publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160"
+    )
     .expect(200)
     .then((response) => {
       const get_uploads = JSON.parse(response.text);

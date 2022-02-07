@@ -93,7 +93,9 @@ exports.get_ticker = async (req, res) => {
     //   }&key=${process.env.COVALENT_API_KEY}`
     // );
 
-    const token_prices = await axios.get(`https://data.messari.io/api/v1/assets/${req.query.symbol}/metrics/market-data`);
+    const token_prices = await axios.get(
+      `https://data.messari.io/api/v1/assets/${req.query.symbol}/metrics/market-data`
+    );
 
     const token_price_usd = token_prices.data.data.market_data.price_usd;
 

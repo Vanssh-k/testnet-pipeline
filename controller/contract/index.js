@@ -8,7 +8,7 @@ exports.get_uploads = async (req, res) => {
     const provider = new ethers.providers.JsonRpcProvider(
       config[req.query.network][req.query.chain]["rpc"]
     );
-    
+
     const contract = new ethers.Contract(
       config[req.query.network][req.query.chain]["lighthouse_contract_address"],
       lighthouseAbi,
@@ -18,8 +18,8 @@ exports.get_uploads = async (req, res) => {
     const response = await contract.queryFilter("StorageRequest");
 
     const walletTransaction = [];
-    for(let i=0; i<response.length; i++){
-      if(response[i]["args"]["uploader"] === req.query.publicKey){
+    for (let i = 0; i < response.length; i++) {
+      if (response[i]["args"]["uploader"] === req.query.publicKey) {
         walletTransaction.push({
           cid: response[i]["args"]["cid"],
           fileCost: Number(response[i]["args"]["fileCost"]),
