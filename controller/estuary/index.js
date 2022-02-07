@@ -1,5 +1,4 @@
 const axios = require("axios");
-require("dotenv").config();
 
 // temporary key for client
 // query example - 24h
@@ -15,6 +14,7 @@ exports.user_token = async (req, res) => {
     // );
     // const wallet = new ethers.Wallet(req.body.privateKey, provider);
     // const whitelisted = await check_deposit(req.body.signer.address);
+    console.log(process.env.EST_API_KEY);
     const whitelisted = true;
     if (whitelisted) {
       const headers = {
