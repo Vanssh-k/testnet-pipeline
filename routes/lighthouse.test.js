@@ -68,7 +68,7 @@ test("Status: Get /status", async () => {
 test("Upload Client: GET /get_uploads", async () => {
   await supertest(app)
     .get(
-      "/api/lighthouse/get_uploads?network=testnet&chain=fantom&publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160"
+      "/api/lighthouse/get_uploads?network=fantom&publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160"
     )
     .expect(200)
     .then((response) => {
