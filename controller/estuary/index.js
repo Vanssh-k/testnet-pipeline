@@ -86,23 +86,25 @@ exports.add_cid = async (req, res) => {
 // get all of the deals being made for a specific Content ID stored
 exports.get_ticker = async (req, res) => {
   try {
-    // const token_prices = await axios.get(
-    //   `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
-    //     config["mainnet"][req.body.chain]["symbol"]
-    //   }&key=${process.env.COVALENT_API_KEY}`
-    // );
-
     const token_prices = await axios.get(
       `https://data.messari.io/api/v1/assets/${req.query.symbol}/metrics/market-data`
     );
 
     const token_price_usd = token_prices.data.data.market_data.price_usd;
-
     res.status(200).json(token_price_usd);
-  } catch (e) {
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
+  } catch{
+    try{
+      const token_prices = await axios.get(
+        `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
+          req.query.symbol
+        }&key=${process.env.COVALENT_API_KEY}`
+      );
+      res.status(200).json(token_prices.data.data["items"][0]["quote_rate"]);
+    } catch (e){
+      res.status(500).send({
+        message: "Internal Server Error",
+      });
+    }
   }
 };
 

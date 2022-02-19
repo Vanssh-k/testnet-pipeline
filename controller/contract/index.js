@@ -1,21 +1,21 @@
 const ethers = require("ethers");
 
-const config = require("../../config");
+const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
 
 exports.get_uploads = async (req, res) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      config[req.query.network][req.query.chain]["rpc"]
+      lighthouse_config[req.query.network]["rpc"]
     );
 
     const contract = new ethers.Contract(
-      config[req.query.network][req.query.chain]["lighthouse_contract_address"],
+      lighthouse_config[req.query.network]["lighthouse_contract_address"],
       lighthouseAbi,
       provider
     );
 
-    const response = await contract.queryFilter("StorageRequest");
+    const response = await contract.queryFilter("StorageRequest", 26228791);
 
     const walletTransaction = [];
     for (let i = 0; i < response.length; i++) {
@@ -29,6 +29,7 @@ exports.get_uploads = async (req, res) => {
 
     res.status(200).json(walletTransaction);
   } catch (e) {
+    console.log(e);
     res.status(500).send({
       message: "Internal Server Error",
     });
