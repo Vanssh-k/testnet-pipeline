@@ -15,7 +15,7 @@ exports.get_uploads = async (req, res) => {
       provider
     );
 
-    const response = await contract.queryFilter("StorageRequest");
+    const response = await contract.queryFilter("StorageRequest", 26228791);
 
     const walletTransaction = [];
     for (let i = 0; i < response.length; i++) {
@@ -29,6 +29,7 @@ exports.get_uploads = async (req, res) => {
 
     res.status(200).json(walletTransaction);
   } catch (e) {
+    console.log(e);
     res.status(500).send({
       message: "Internal Server Error",
     });
