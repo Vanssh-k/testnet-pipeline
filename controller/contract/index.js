@@ -1,16 +1,16 @@
 const ethers = require("ethers");
 
-const config = require("../../config");
+const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../../contract_abi/lighthouseAbi");
 
 exports.get_uploads = async (req, res) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      config[req.query.network][req.query.chain]["rpc"]
+      lighthouse_config[req.query.network]["rpc"]
     );
 
     const contract = new ethers.Contract(
-      config[req.query.network][req.query.chain]["lighthouse_contract_address"],
+      lighthouse_config[req.query.network]["lighthouse_contract_address"],
       lighthouseAbi,
       provider
     );
