@@ -92,15 +92,13 @@ exports.get_ticker = async (req, res) => {
 
     const token_price_usd = token_prices.data.data.market_data.price_usd;
     res.status(200).json(token_price_usd);
-  } catch{
-    try{
+  } catch {
+    try {
       const token_prices = await axios.get(
-        `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${
-          req.query.symbol
-        }&key=${process.env.COVALENT_API_KEY}`
+        `https://api.covalenthq.com/v1/pricing/tickers/?quote-currency=USD&format=JSON&page-size=1&tickers=${req.query.symbol}&key=${process.env.COVALENT_API_KEY}`
       );
       res.status(200).json(token_prices.data.data["items"][0]["quote_rate"]);
-    } catch (e){
+    } catch (e) {
       res.status(500).send({
         message: "Internal Server Error",
       });
