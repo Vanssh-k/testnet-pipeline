@@ -8,7 +8,7 @@ const defaultConfig = {
     rpc: "https://rpc.ftm.tools/",
     scan: "https://ftmscan.com/tx/",
     chain_id: "250",
-    lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
+    lighthouse_contract_address: "0xf468602B34C482f34ca498D9a0DE7957539961d3",
   },
   polygon: {
     symbol: "MATIC",
@@ -29,7 +29,7 @@ const defaultConfig = {
     rpc: "https://rpc.testnet.fantom.network/",
     scan: "https://testnet.ftmscan.com/",
     chain_id: "4002",
-    lighthouse_contract_address: "0x93a347e0fe192a31A0C81E23B4238489043A97f8",
+    lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
   },
   "polygon-testnet": {
     symbol: "MATIC",
