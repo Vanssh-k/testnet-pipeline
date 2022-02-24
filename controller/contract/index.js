@@ -1,6 +1,6 @@
 const ethers = require("ethers");
 
-const Moralis = require('moralis/node');
+const Moralis = require("moralis/node");
 const serverUrl = process.env.serverUrl;
 
 const lighthouseConfig = require("../../lighthouse.config");
@@ -8,16 +8,16 @@ const lighthouseConfig = require("../../lighthouse.config");
 const appId = process.env.appId;
 Moralis.start({ serverUrl, appId });
 
-const getLogs = async(network, contractAddress, publicKey) => {
+const getLogs = async (network, contractAddress, publicKey) => {
   const options = {
     topic1: "0x000000000000000000000000" + publicKey,
     chain: network,
     address: contractAddress,
   };
-  
+
   const events = await Moralis.Web3API.native.getLogsByAddress(options);
-  return(events);
-}
+  return events;
+};
 
 exports.get_uploads = async (req, res) => {
   try {
@@ -27,20 +27,21 @@ exports.get_uploads = async (req, res) => {
     const iface = new ethers.utils.Interface(abi);
 
     const publicKey = req.query.publicKey.toString();
-    const contractAddress = lighthouseConfig[req.query.network]["lighthouse_contract_address"];
+    const contractAddress =
+      lighthouseConfig[req.query.network]["lighthouse_contract_address"];
     const walletTransaction = [];
 
-    const logs = await getLogs(req.query.network, contractAddress, publicKey.substring(2, publicKey.toString().length));
-    
+    const logs = await getLogs(
+      req.query.network,
+      contractAddress,
+      publicKey.substring(2, publicKey.toString().length)
+    );
+
     for (let i = 0; i < logs.result.length; i++) {
-      const log = iface.parseLog(
-        { topics: [
-            logs.result[i].topic0,
-            logs.result[i].topic1,
-          ],
-          data: logs.result[i].data
-        }
-      );
+      const log = iface.parseLog({
+        topics: [logs.result[i].topic0, logs.result[i].topic1],
+        data: logs.result[i].data,
+      });
       walletTransaction.push({
         cid: log.args[1],
         config: log.args[2],
