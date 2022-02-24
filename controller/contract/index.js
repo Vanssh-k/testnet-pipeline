@@ -5,8 +5,8 @@ const serverUrl = process.env.serverUrl;
 
 const lighthouseConfig = require("../../lighthouse.config");
 
-const appId = process.env.appId;
-Moralis.start({ serverUrl, appId });
+const moralisAppId = process.env.moralisAppId;
+Moralis.start({ serverUrl, moralisAppId });
 
 const getLogs = async (network, contractAddress, publicKey) => {
   const options = {
