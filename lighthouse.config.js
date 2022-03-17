@@ -3,6 +3,7 @@
 
 const defaultConfig = {
   URL: "https://api.lighthouse.storage",
+  gbInBytes: 1073741824,
   fantom: {
     symbol: "FTM",
     rpc: "https://rpc.ftm.tools/",
