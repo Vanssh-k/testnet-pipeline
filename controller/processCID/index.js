@@ -81,17 +81,17 @@ const add_cid_estuary = async (name, cid) => {
 
 exports.process_cid = async (req, res) => {
   try {
-    const publicKey = req.query.publicKey.toLowerCase();
+    const publicKey = req.body.publicKey.toLowerCase();
     const record = await user_data_details(publicKey);
 
     if (record) {
-      const fileSizeInGB = req.body.Size / lighthouseConfig.gbInBytes;
+      const fileSizeInGB = req.body.size / lighthouseConfig.gbInBytes;
       if (fileSizeInGB <= record.dataLimit - record.dataUsed) {
         // Update data usage
         update_user_data(publicKey, record, fileSizeInGB);
 
         // Send CID to Estuary
-        const add_cid_response = await add_cid_estuary();
+        const add_cid_response = await add_cid_estuary(req.body.name, req.body.cid);
         res.status(200).json(add_cid_response);
       } else {
         res.status(500).json("Uploaded more than allowed limit");
