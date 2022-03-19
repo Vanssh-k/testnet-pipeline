@@ -2,7 +2,7 @@ const AWS = require("aws-sdk");
 const ethers = require("ethers");
 const { v4: uuidv4 } = require("uuid");
 
-const tableName = "UserAuth";
+const tableName = "user";
 AWS.config.update({
   aws_table_name: tableName,
   accessKeyId: process.env.aws_access_key_id,
@@ -55,15 +55,40 @@ exports.verify_signer = async (req, res) => {
   }
 };
 
+const returning_user = async (publicKey) => {
+  const params = {
+    TableName: tableName,
+    FilterExpression: "publicKey = :p",
+    ExpressionAttributeValues: {
+      ":p": publicKey,
+    },
+  };
+
+  return new Promise(function (resolve, reject) {
+    client.scan(params, function (err, data) {
+      if (err) {
+        reject(false);
+      } else {
+        const { Items } = data;
+        resolve(Items[0]);
+      }
+    });
+  });
+};
+
 exports.get_message = async (req, res) => {
   try {
+    const publicKey = req.query.publicKey.toLowerCase();
+    const record = await returning_user(publicKey);
     const message = uuidv4();
+
     const params = {
       TableName: tableName,
       Item: {
-        ID: message,
-        publicKey: req.query.publicKey,
+        publicKey: publicKey,
         message: message.toString(),
+        dataLimit: record ? record.dataLimit : 1,
+        dataUsed: record ? record.dataUsed : 0,
       },
     };
 
@@ -82,3 +107,4 @@ exports.get_message = async (req, res) => {
     });
   }
 };
+
