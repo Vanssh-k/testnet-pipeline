@@ -1,9 +1,12 @@
 const AWS = require("aws-sdk");
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 
 const lighthouseConfig = require("../../lighthouse.config");
 
 const tableName = "user";
+const fileTable = "FileManagement";
+
 AWS.config.update({
   aws_table_name: tableName,
   accessKeyId: process.env.aws_access_key_id,
@@ -11,6 +14,31 @@ AWS.config.update({
   region: "ap-south-1",
 });
 const client = new AWS.DynamoDB.DocumentClient();
+
+const saveFileMetaData = async (publicKey, cid, fileName, fileSizeInBytes, status) => {
+  const id = uuidv4();
+  const params = {
+    TableName: fileTable,
+    Item: {
+      id: id,
+      publicKey: publicKey,
+      cid: cid,
+      fileName: fileName,
+      fileSizeInBytes: fileSizeInBytes,
+      status: status
+    },
+  };
+
+  client.put(params, function (err, data) {
+    if (err) {
+      console.error(err);
+      return "error";
+    } else {
+      console.log("PutItem succeeded:");
+      return "updated";
+    }
+  });
+};
 
 const user_data_details = async (publicKey) => {
   const params = {
@@ -47,10 +75,10 @@ const update_user_data = async (publicKey, record, fileSizeInGB) => {
   client.put(params, function (err, data) {
     if (err) {
       console.error(err);
-      return "updated";
+      return "error";
     } else {
       console.log("PutItem succeeded:");
-      return "error";
+      return "updated";
     }
   });
 };
@@ -87,6 +115,9 @@ exports.process_cid = async (req, res) => {
     if (record) {
       const fileSizeInGB = req.body.size / lighthouseConfig.gbInBytes;
       if (fileSizeInGB <= record.dataLimit - record.dataUsed) {
+        // Create record of file
+        await saveFileMetaData(publicKey, req.body.cid, req.body.name, req.body.size, "queued");
+        
         // Update data usage
         update_user_data(publicKey, record, fileSizeInGB);
 
@@ -94,6 +125,8 @@ exports.process_cid = async (req, res) => {
         const add_cid_response = await add_cid_estuary(req.body.name, req.body.cid);
         res.status(200).json(add_cid_response);
       } else {
+        // Create record of file
+        await saveFileMetaData(publicKey, req.body.cid, req.body.name, req.body.size, "payment pending");
         res.status(500).json("Uploaded more than allowed limit");
       }
     }
