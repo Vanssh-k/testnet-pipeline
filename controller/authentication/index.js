@@ -35,7 +35,7 @@ exports.verify_signer = async (req, res) => {
               Items[0]["message"],
               sig
             );
-            if (req.query.publicKey === publicKey) {
+            if (req.query.publicKey === publicKey.toLowerCase()) {
               res.status(200).json("Authorized");
             } else {
               res.status(401).json("UnAuthorized");
