@@ -21,6 +21,7 @@ router.get("/upload_client", InfuraController.upload_client);
 
 router.get("/verify_signer", AuthController.verify_signer);
 router.get("/get_message", AuthController.get_message);
+router.get("/user_data_usage", AuthController.user_data_usage);
 
 router.post("/process_cid", ProcessCidController.process_cid);
 
