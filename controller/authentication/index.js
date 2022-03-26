@@ -80,13 +80,17 @@ exports.get_message = async (req, res) => {
   try {
     const publicKey = req.query.publicKey.toLowerCase();
     const record = await returning_user(publicKey);
-    const message = uuidv4();
+
+    let message = "";
+    if(record){
+      message = req.query.new_message ? uuidv4().toString() : record.message
+    }
 
     const params = {
       TableName: tableName,
       Item: {
         publicKey: publicKey,
-        message: message.toString(),
+        message: message,
         dataLimit: record ? record.dataLimit : 1,
         dataUsed: record ? record.dataUsed : 0,
       },
@@ -108,3 +112,22 @@ exports.get_message = async (req, res) => {
   }
 };
 
+exports.user_data_usage = async (req, res) => {
+  try {
+    const publicKey = req.query.publicKey.toLowerCase();
+    const record = await returning_user(publicKey);
+
+    if(record){
+      res.status(200).json({
+        dataLimit: record.dataLimit,
+        dataUsed: record.dataUsed,
+      });
+    } else{
+      res.status(404).send("user does not exist");
+    }
+  } catch (e) {
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
