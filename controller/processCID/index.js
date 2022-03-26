@@ -1,11 +1,10 @@
 const AWS = require("aws-sdk");
 const axios = require("axios");
-const { v4: uuidv4 } = require("uuid");
 
 const lighthouseConfig = require("../../lighthouse.config");
+const saveFileMetaData = require("./saveFileMetaData");
 
 const tableName = "user";
-const fileTable = "FileManagement";
 
 AWS.config.update({
   aws_table_name: tableName,
@@ -14,31 +13,6 @@ AWS.config.update({
   region: "ap-south-1",
 });
 const client = new AWS.DynamoDB.DocumentClient();
-
-const saveFileMetaData = async (publicKey, cid, fileName, fileSizeInBytes, status) => {
-  const id = uuidv4();
-  const params = {
-    TableName: fileTable,
-    Item: {
-      id: id,
-      publicKey: publicKey,
-      cid: cid,
-      fileName: fileName,
-      fileSizeInBytes: fileSizeInBytes,
-      status: status
-    },
-  };
-
-  client.put(params, function (err, data) {
-    if (err) {
-      console.error(err);
-      return "error";
-    } else {
-      console.log("PutItem succeeded:");
-      return "updated";
-    }
-  });
-};
 
 const user_data_details = async (publicKey) => {
   const params = {
