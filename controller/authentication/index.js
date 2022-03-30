@@ -177,7 +177,7 @@ exports.get_api_key = async (req, res) => {
     } else {
       res.status(401).json("UnAuthorized");
     }
-  } else{
+  } else {
     res.status(401).json("UnAuthorized");
   }
 };
@@ -208,9 +208,9 @@ exports.verify_api_key = async (req, res) => {
 
   if (record) {
     res.status(200).json({
-      publicKey: record.publicKey
+      publicKey: record.publicKey,
     });
-  } else{
+  } else {
     res.status(401).json("UnAuthorized");
   }
 };
