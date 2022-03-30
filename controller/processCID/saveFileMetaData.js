@@ -1,5 +1,5 @@
 const AWS = require("aws-sdk");
-const { v4: uuidv4 } = require("uuid")
+const { v4: uuidv4 } = require("uuid");
 
 const fileTable = "FileManagement";
 AWS.config.update({
@@ -24,7 +24,7 @@ module.exports = async (publicKey, cid, fileName, fileSizeInBytes, status) => {
       status: status,
       txHash: "",
       createdAt: timestamp,
-      lastUpdate: timestamp
+      lastUpdate: timestamp,
     },
   };
 

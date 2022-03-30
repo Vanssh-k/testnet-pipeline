@@ -90,17 +90,32 @@ exports.process_cid = async (req, res) => {
       const fileSizeInGB = req.body.size / lighthouseConfig.gbInBytes;
       if (fileSizeInGB <= record.dataLimit - record.dataUsed) {
         // Create record of file
-        await saveFileMetaData(publicKey, req.body.cid, req.body.name, req.body.size, "queued");
-        
+        await saveFileMetaData(
+          publicKey,
+          req.body.cid,
+          req.body.name,
+          req.body.size,
+          "queued"
+        );
+
         // Update data usage
         update_user_data(publicKey, record, fileSizeInGB);
 
         // Send CID to Estuary
-        const add_cid_response = await add_cid_estuary(req.body.name, req.body.cid);
+        const add_cid_response = await add_cid_estuary(
+          req.body.name,
+          req.body.cid
+        );
         res.status(200).json(add_cid_response);
       } else {
         // Create record of file
-        await saveFileMetaData(publicKey, req.body.cid, req.body.name, req.body.size, "payment pending");
+        await saveFileMetaData(
+          publicKey,
+          req.body.cid,
+          req.body.name,
+          req.body.size,
+          "payment pending"
+        );
         res.status(500).json("Uploaded more than allowed limit");
       }
     }
@@ -110,4 +125,3 @@ exports.process_cid = async (req, res) => {
     });
   }
 };
-
