@@ -5,6 +5,17 @@ const serverUrl = process.env.serverUrl;
 
 const lighthouseConfig = require("../../lighthouse.config");
 
+const AWS = require("aws-sdk");
+
+const fileTable = "FileManagement";
+AWS.config.update({
+  aws_table_name: fileTable,
+  accessKeyId: process.env.aws_access_key_id,
+  secretAccessKey: process.env.aws_secret_access_key,
+  region: "ap-south-1",
+});
+const client = new AWS.DynamoDB.DocumentClient();
+
 const moralisAppId = process.env.moralisAppId;
 Moralis.start({ serverUrl, moralisAppId });
 
@@ -19,7 +30,7 @@ const getLogs = async (network, contractAddress, publicKey) => {
   return events;
 };
 
-exports.get_uploads = async (req, res) => {
+exports.get_uploads_contract = async (req, res) => {
   try {
     const abi = [
       "event StorageRequest(address indexed uploader, string cid, string config, uint fileCost, string fileName, uint fileSize, uint timestamp)",
@@ -53,6 +64,33 @@ exports.get_uploads = async (req, res) => {
     }
 
     res.status(200).send(walletTransaction);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+exports.get_uploads = async (req, res) => {
+  try {
+    const params = {
+      TableName: fileTable,
+      FilterExpression: "publicKey = :P",
+      ExpressionAttributeValues: {
+        ":P": req.query.publicKey.toLowerCase(),
+      },
+    };
+  
+    client.scan(params, function (err, data) {
+      if (err) {
+        res.status(500).send("Internal Server Error!!!");
+      } else {
+        const { Items } = data;
+        res.status(200).send(Items);
+      }
+    });
+
   } catch (e) {
     console.log(e);
     res.status(500).send({
