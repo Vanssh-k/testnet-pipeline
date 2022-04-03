@@ -19,17 +19,6 @@ const client = new AWS.DynamoDB.DocumentClient();
 const moralisAppId = process.env.moralisAppId;
 Moralis.start({ serverUrl, moralisAppId });
 
-const getLogs = async (network, contractAddress, publicKey) => {
-  const options = {
-    topic1: "0x000000000000000000000000" + publicKey,
-    chain: network,
-    address: contractAddress,
-  };
-
-  const events = await Moralis.Web3API.native.getLogsByAddress(options);
-  return events;
-};
-
 exports.get_uploads_contract = async (req, res) => {
   try {
     const abi = [
@@ -82,15 +71,62 @@ exports.get_uploads = async (req, res) => {
       },
     };
   
-    client.scan(params, function (err, data) {
+    client.scan(params, async function (err, data) {
       if (err) {
         res.status(500).send("Internal Server Error!!!");
       } else {
         const { Items } = data;
-        res.status(200).send(Items);
+
+        const getLogs = async (network, contractAddress, publicKey) => {
+          const options = {
+            topic1: "0x000000000000000000000000" + publicKey,
+            chain: network,
+            address: contractAddress,
+          };
+        
+          const events = await Moralis.Web3API.native.getLogsByAddress(options);
+          return events;
+        };
+
+        const abi = [
+          "event StorageRequest(address indexed uploader, string cid, string config, uint fileCost, string fileName, uint fileSize, uint timestamp)",
+        ];
+        const iface = new ethers.utils.Interface(abi);
+    
+        const publicKey = req.query.publicKey.toString();
+        const network = req.query.network?req.query.network:"polygon";
+        if(network==="fantom" || network==="polygon"){
+          const contractAddress =
+            lighthouseConfig[network]["lighthouse_contract_address"];
+          // const walletTransaction = [];
+      
+          const logs = await getLogs(
+            network,
+            contractAddress,
+            publicKey.substring(2, publicKey.toString().length)
+          );
+      
+          for (let i = 0; i < logs.result.length; i++) {
+            const log = iface.parseLog({
+              topics: [logs.result[i].topic0, logs.result[i].topic1],
+              data: logs.result[i].data,
+            });
+            Items.push({
+              cid: log.args[1],
+              fileName: log.args[4],
+              fileSizeInBytes: Number(log.args[5]),
+              status: "processed",
+              txHash: "",
+              createdAt: Number(log.args[6]),
+              lastUpdate: Number(log.args[6]),
+              id: i,
+              publicKey: publicKey
+            });
+          }
+        }
+        res.status(200).send(Items)
       }
     });
-
   } catch (e) {
     console.log(e);
     res.status(500).send({
