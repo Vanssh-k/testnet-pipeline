@@ -76,6 +76,9 @@ exports.get_uploads = async (req, res) => {
         res.status(500).send("Internal Server Error!!!");
       } else {
         const { Items } = data;
+        for (let i = 0; i < Items.length; i++) {
+          Items[i]["network"] = "polygon";
+        }
 
         const getLogs = async (network, contractAddress, publicKey) => {
           const options = {
@@ -94,35 +97,63 @@ exports.get_uploads = async (req, res) => {
         const iface = new ethers.utils.Interface(abi);
     
         const publicKey = req.query.publicKey.toString();
-        const network = req.query.network?req.query.network:"polygon";
-        if(network==="fantom" || network==="polygon"){
-          const contractAddress =
-            lighthouseConfig[network]["lighthouse_contract_address"];
-          // const walletTransaction = [];
-      
-          const logs = await getLogs(
-            network,
-            contractAddress,
-            publicKey.substring(2, publicKey.toString().length)
-          );
-      
-          for (let i = 0; i < logs.result.length; i++) {
-            const log = iface.parseLog({
-              topics: [logs.result[i].topic0, logs.result[i].topic1],
-              data: logs.result[i].data,
-            });
-            Items.push({
-              cid: log.args[1],
-              fileName: log.args[4],
-              fileSizeInBytes: Number(log.args[5]),
-              status: "processed",
-              txHash: "",
-              createdAt: Number(log.args[6]),
-              lastUpdate: Number(log.args[6]),
-              id: i,
-              publicKey: publicKey
-            });
-          }
+        let network = "polygon";
+        let contractAddress =
+          lighthouseConfig[network]["lighthouse_contract_address"];
+        // const walletTransaction = [];
+    
+        let logs = await getLogs(
+          network,
+          contractAddress,
+          publicKey.substring(2, publicKey.toString().length)
+        );
+    
+        for (let i = 0; i < logs.result.length; i++) {
+          const log = iface.parseLog({
+            topics: [logs.result[i].topic0, logs.result[i].topic1],
+            data: logs.result[i].data,
+          });
+          Items.push({
+            cid: log.args[1],
+            fileName: log.args[4],
+            fileSizeInBytes: Number(log.args[5]),
+            status: "processed",
+            txHash: "",
+            createdAt: Number(log.args[6]),
+            lastUpdate: Number(log.args[6]),
+            id: i,
+            publicKey: publicKey,
+            network: "polygon"
+          });
+        }
+
+        network = "fantom";
+        contractAddress =
+          lighthouseConfig[network]["lighthouse_contract_address"];
+
+        logs = await getLogs(
+          network,
+          contractAddress,
+          publicKey.substring(2, publicKey.toString().length)
+        );
+
+        for (let i = 0; i < logs.result.length; i++) {
+          const log = iface.parseLog({
+            topics: [logs.result[i].topic0, logs.result[i].topic1],
+            data: logs.result[i].data,
+          });
+          Items.push({
+            cid: log.args[1],
+            fileName: log.args[4],
+            fileSizeInBytes: Number(log.args[5]),
+            status: "processed",
+            txHash: "",
+            createdAt: Number(log.args[6]),
+            lastUpdate: Number(log.args[6]),
+            id: i,
+            publicKey: publicKey,
+            network: "fantom"
+          });
         }
         res.status(200).send(Items)
       }
