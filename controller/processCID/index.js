@@ -1,7 +1,6 @@
 const AWS = require("aws-sdk");
 const axios = require("axios");
 
-const lighthouseConfig = require("../../lighthouse.config");
 const saveFileMetaData = require("./saveFileMetaData");
 
 const tableName = "user";
@@ -35,14 +34,14 @@ const user_data_details = async (publicKey) => {
   });
 };
 
-const update_user_data = async (publicKey, record, fileSizeInGB) => {
+const update_user_data = async (publicKey, record, fileSizeInBytes) => {
   const params = {
     TableName: tableName,
     Item: {
       publicKey: publicKey,
       message: record.message,
       dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed + fileSizeInGB,
+      dataUsed: record.dataUsed + fileSizeInBytes,
     },
   };
 
@@ -87,8 +86,7 @@ exports.process_cid = async (req, res) => {
     const record = await user_data_details(publicKey);
 
     if (record) {
-      const fileSizeInGB = req.body.size / lighthouseConfig.gbInBytes;
-      if (fileSizeInGB <= record.dataLimit - record.dataUsed) {
+      if (req.body.size <= record.dataLimit - record.dataUsed) {
         // Create record of file
         await saveFileMetaData(
           publicKey,
@@ -99,7 +97,7 @@ exports.process_cid = async (req, res) => {
         );
 
         // Update data usage
-        update_user_data(publicKey, record, fileSizeInGB);
+        update_user_data(publicKey, record, req.body.size);
 
         // Send CID to Estuary
         const add_cid_response = await add_cid_estuary(

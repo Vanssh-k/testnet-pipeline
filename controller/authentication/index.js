@@ -100,7 +100,7 @@ exports.get_message = async (req, res) => {
       Item: {
         publicKey: publicKey,
         message: message,
-        dataLimit: record ? record.dataLimit : 1,
+        dataLimit: record ? record.dataLimit : 1073741824,
         dataUsed: record ? record.dataUsed : 0,
         apiKey: record ? record.apiKey : null,
       },
