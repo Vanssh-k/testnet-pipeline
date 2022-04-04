@@ -3,7 +3,7 @@ const axios = require("axios");
 
 const saveFileMetaData = require("./saveFileMetaData");
 
-const tableName = "user";
+const tableName = "Users";
 
 AWS.config.update({
   aws_table_name: tableName,
@@ -84,7 +84,7 @@ exports.process_cid = async (req, res) => {
   try {
     const publicKey = req.body.publicKey.toLowerCase();
     const record = await user_data_details(publicKey);
-
+    console.log(record)
     if (record) {
       if (req.body.size <= record.dataLimit - record.dataUsed) {
         // Create record of file
@@ -118,6 +118,7 @@ exports.process_cid = async (req, res) => {
       }
     }
   } catch (e) {
+    console.log(e)
     res.status(500).send({
       message: "Internal Server Error",
     });
