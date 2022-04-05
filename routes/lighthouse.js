@@ -6,6 +6,7 @@ const EstuaryController = require("../controller/estuary");
 const ContractController = require("../controller/contract");
 const AuthController = require("../controller/authentication");
 const ProcessCidController = require("../controller/processCID");
+const SubDomainController = require("../controller/subdomain");
 
 router.post("/user_token", EstuaryController.user_token);
 router.get("/get_ticker", EstuaryController.get_ticker);
@@ -26,5 +27,8 @@ router.get("/get_api_key", AuthController.get_api_key);
 router.get("/verify_api_key", AuthController.verify_api_key);
 
 router.post("/process_cid", ProcessCidController.process_cid);
+
+router.post("/add_subdomain", SubDomainController.add_subdomain);
+router.get("/check_subdomain", SubDomainController.check_subdomain);
 
 module.exports = router;
