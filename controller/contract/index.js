@@ -70,7 +70,7 @@ exports.get_uploads = async (req, res) => {
         ":P": req.query.publicKey.toLowerCase(),
       },
     };
-  
+
     client.scan(params, async function (err, data) {
       if (err) {
         res.status(500).send("Internal Server Error!!!");
@@ -86,7 +86,7 @@ exports.get_uploads = async (req, res) => {
             chain: network,
             address: contractAddress,
           };
-        
+
           const events = await Moralis.Web3API.native.getLogsByAddress(options);
           return events;
         };
@@ -95,19 +95,19 @@ exports.get_uploads = async (req, res) => {
           "event StorageRequest(address indexed uploader, string cid, string config, uint fileCost, string fileName, uint fileSize, uint timestamp)",
         ];
         const iface = new ethers.utils.Interface(abi);
-    
+
         const publicKey = req.query.publicKey.toString();
         let network = "polygon";
         let contractAddress =
           lighthouseConfig[network]["lighthouse_contract_address"];
         // const walletTransaction = [];
-    
+
         let logs = await getLogs(
           network,
           contractAddress,
           publicKey.substring(2, publicKey.toString().length)
         );
-    
+
         for (let i = 0; i < logs.result.length; i++) {
           const log = iface.parseLog({
             topics: [logs.result[i].topic0, logs.result[i].topic1],
@@ -123,7 +123,7 @@ exports.get_uploads = async (req, res) => {
             lastUpdate: Number(log.args[6]),
             id: i,
             publicKey: publicKey,
-            network: "polygon"
+            network: "polygon",
           });
         }
 
@@ -152,10 +152,10 @@ exports.get_uploads = async (req, res) => {
             lastUpdate: Number(log.args[6]),
             id: i,
             publicKey: publicKey,
-            network: "fantom"
+            network: "fantom",
           });
         }
-        res.status(200).send(Items)
+        res.status(200).send(Items);
       }
     });
   } catch (e) {
