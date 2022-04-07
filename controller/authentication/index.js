@@ -54,7 +54,10 @@ exports.verify_signer = async (req, res) => {
           req.query.signed_message
         );
         authentic
-          ? res.status(200).json("Authorized")
+          ? res.status(200).json({
+              dataLimit: Items[0].dataLimit,
+              dataUsed: Items[0].dataUsed,
+            })
           : res.status(401).json("UnAuthorized");
       } else {
         res.status(401).json("UnAuthorized");
@@ -209,6 +212,8 @@ exports.verify_api_key = async (req, res) => {
   if (record) {
     res.status(200).json({
       publicKey: record.publicKey,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
     });
   } else {
     res.status(401).json("UnAuthorized");
