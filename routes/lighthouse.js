@@ -30,5 +30,6 @@ router.post("/process_cid", ProcessCidController.process_cid);
 
 router.post("/add_subdomain", SubDomainController.add_subdomain);
 router.get("/check_subdomain", SubDomainController.check_subdomain);
+router.get("/get_subdomain", SubDomainController.get_subdomain);
 
 module.exports = router;
