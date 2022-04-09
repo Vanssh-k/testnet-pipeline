@@ -1,11 +1,8 @@
 const AWS = require("aws-sdk");
-const { default: axios } = require("axios");
 
-const lighthouseConfig = require("../../lighthouse.config");
 const {verify_signer, verify_api_key} = require("./verify");
 
 const subDomainTable = "SubDomainManagement";
-
 
 AWS.config.update({
   aws_table_name: subDomainTable,
@@ -15,60 +12,83 @@ AWS.config.update({
 });
 const client = new AWS.DynamoDB.DocumentClient();
 
-exports.add_subdomain = async (req, res) => {
-  try {
-    const network = req.body.network;
-    const txHash = req.body.txHash;
-    const chainId = lighthouseConfig[network]["chain_id"];
+const getTransactionDetails = async(publicKey) =>{
+  const params = {
+    TableName: subDomainTable,
+    FilterExpression: "publicKey = :p",
+    ExpressionAttributeValues: {
+      ":p": publicKey,
+    },
+  };
 
+  return new Promise(function (resolve, reject) {
+    client.scan(params, function (err, data) {
+      if (err) {
+        console.log(err);
+        resolve(null);
+      } else {
+        const { Items } = data;
+        if (Items.length > 0) {
+          resolve(Items[0])
+        } else {
+          resolve(null);
+        }
+      }
+    });
+  });
+}
+
+const updateSubDomain = async(transactionDetails) =>{
+  console.log(transactionDetails)
+  const params = {
+    TableName: subDomainTable,
+    Item: transactionDetails,
+  };
+
+  return new Promise(function (resolve, reject) {
+    client.put(params, function (err, data) {
+      if (err) {
+        console.log(err);
+        resolve(false);
+      } else {
+        console.log("PutItem succeeded:");
+        resolve(true);
+      }
+    });
+  });
+}
+
+exports.add_subdomain = async (req, res) => {
+  try{
     let verified = false;
+    const publicKey = req.body.publicKey.toLowerCase()
     if(req.body.signed_message){
-      verified = await verify_signer(req.body.publicKey.toLowerCase(), req.body.signed_message);
+      verified = await verify_signer(publicKey, req.body.signed_message);
     }else{
       verified = await verify_api_key(req.body.apiKey);
     }
 
-    console.log("here")
     if(verified){
-      console.log("here2")
-      const txReceipt = (await axios.get("https://deep-index.moralis.io/api/v2/transaction/0x1cced4ed634aa2a4d4fc539f3c15c474b64c6194f50d757339b38cb0cfb817eb?chain=fantom",{ headers: { "x-api-key": process.env.moralisAPIKey }})).data
-      console.log(txReceipt)
-      const value = txReceipt["value"];
-      const from = txReceipt.from_address.toLocaleLowerCase();
-      const to = txReceipt.to_address.toLowerCase();
-      console.log(value, to, from)
-      if(value && to==="0xf468602B34C482f34ca498D9a0DE7957539961d3".toLocaleLowerCase() && from===req.body.publicKey.toLocaleLowerCase()){
-        const timestamp = Date.now();
-        const params = {
-          TableName: subDomainTable,
-          Item: {
-            publicKey: req.body.publicKey.toLowerCase(),
-            subDomain: req.body.subDomain,
-            txHash: "",
-            createdAt: timestamp,
-            lastUpdate: timestamp,
-          },
-        };
-
-        client.put(params, function (err, data) {
-          if (err) {
-            console.error(err);
-            res.status(500).json("Internal Server Error");
-          } else {
-            console.log("PutItem succeeded:");
-            res.status(200).json("PutItem succeeded:");
-          }
-        });
+      const transactionDetails = await getTransactionDetails(publicKey);
+      if(transactionDetails.txHash && (transactionDetails.publicKey.toLowerCase()===publicKey)){
+        transactionDetails.lastUpdate = Date.now();
+        transactionDetails.subDomain = req.body.subDomain;
+        const response = await updateSubDomain(transactionDetails);
+        console.log(response)
+        if(response){
+          res.status(200).json("SubDomain Created");
+        } else{
+          res.status(500).json("Internal server error");
+        }
       } else{
-        res.status(500).json("Value error");
+        res.status(401).json("UnAuthorized");
       }
+    } else{
+      res.status(401).json("UnAuthorized");
     }
-    
-  } catch (e) {
+  } catch (e){
     console.log(e);
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
+    res.status(500).json('Internal Server Error');
   }
 };
 
@@ -96,6 +116,42 @@ exports.check_subdomain = async (req, res) => {
         } else {
           res.status(401).send({
             message: "UnAuthorized",
+          });
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+};
+
+exports.get_subdomain = async (req, res) => {
+  try {
+    const params = {
+      TableName: subDomainTable,
+      FilterExpression: "publicKey = :p",
+      ExpressionAttributeValues: {
+        ":p": req.query.publicKey,
+      },
+    };
+
+    client.scan(params, function (err, data) {
+      if (err) {
+        res.status(500).send({
+          message: "Internal Server Error",
+        });
+      } else {
+        const { Items } = data;
+        if (Items.length > 0) {
+          res.status(200).send({
+            subDomain: Items[0]["subDomain"],
+          });
+        } else {
+          res.status(200).send({
+            subDomain: null,
           });
         }
       }
