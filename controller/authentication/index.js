@@ -1,68 +1,29 @@
-const AWS = require("aws-sdk");
-const ethers = require("ethers");
 const SHA256 = require("crypto-js/sha256");
-
 const { v4: uuidv4 } = require("uuid");
 
-const tableName = "Users";
-AWS.config.update({
-  aws_table_name: tableName,
-  accessKeyId: process.env.aws_access_key_id,
-  secretAccessKey: process.env.aws_secret_access_key,
-  region: "ap-south-1",
-});
-const client = new AWS.DynamoDB.DocumentClient();
+const userDetails = require("./userDetails");
+const checkApiKey = require("./checkApiKey");
+const verifySignature = require("./verifySignature");
+const updateUserDetails = require("./updateUserDetails");
+const { freeDataLimitInBytes } = require("../libs/constants");
 
-const verify = (usersPublicKey, originalMessage, signedMessage) => {
-  try {
-    const sig = ethers.utils.splitSignature(signedMessage);
-    const publicKeyToVerify = ethers.utils
-      .verifyMessage(originalMessage, sig)
-      .toLowerCase();
-    if (usersPublicKey === publicKeyToVerify) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch {
-    return false;
-  }
-};
-
+// Return if user is authentic
 exports.verify_signer = async (req, res) => {
   try {
-    const usersPublicKey = req.query.publicKey.toLowerCase();
-    const params = {
-      TableName: tableName,
-      FilterExpression: "publicKey = :p",
-      ExpressionAttributeValues: {
-        ":p": usersPublicKey,
-      },
-    };
+    const usersPublicKey = req.body.publicKey;
+    const signedMessage = req.body.signedMessage;
+    const user = await userDetails(usersPublicKey);
+    const authentic = verifySignature(
+      usersPublicKey,
+      user.message,
+      signedMessage
+    );
 
-    client.scan(params, function (err, data) {
-      if (err) {
-        res.status(500).send({
-          message: "Internal Server Error",
-        });
-      }
-      const { Items } = data;
-      if (Items.length > 0) {
-        const authentic = verify(
-          usersPublicKey,
-          Items[0]["message"],
-          req.query.signed_message
-        );
-        authentic
-          ? res.status(200).json({
-              dataLimit: Items[0].dataLimit,
-              dataUsed: Items[0].dataUsed,
-            })
-          : res.status(401).json("UnAuthorized");
-      } else {
-        res.status(401).json("UnAuthorized");
-      }
-    });
+    if(authentic){
+      res.status(200).json("Authorized");
+    } else {
+      res.status(401).json("UnAuthorized");
+    }
   } catch (e) {
     res.status(500).send({
       message: "Internal Server Error",
@@ -70,74 +31,51 @@ exports.verify_signer = async (req, res) => {
   }
 };
 
-const returning_user = async (publicKey) => {
-  const params = {
-    TableName: tableName,
-    FilterExpression: "publicKey = :p",
-    ExpressionAttributeValues: {
-      ":p": publicKey,
-    },
-  };
+// Return if user is authentic along with his data usage
+exports.verify_signer_with_data = async (req, res) => {
+  try {
+    const usersPublicKey = req.body.publicKey;
+    const signedMessage = req.body.signedMessage;
+    
+    const user = await userDetails(usersPublicKey);
+    const authentic = verifySignature(
+      usersPublicKey,
+      user.message,
+      signedMessage
+    );
 
-  return new Promise(function (resolve, reject) {
-    client.scan(params, function (err, data) {
-      if (err) {
-        reject(false);
-      } else {
-        const { Items } = data;
-        resolve(Items[0]);
-      }
+    if(authentic){
+      res.status(200).json({
+        dataLimit: user.dataLimit,
+        dataUsed: user.dataUsed,
+      })
+    } else {
+      res.status(401).json("UnAuthorized");
+    }
+  } catch (e) {
+    res.status(500).send({
+      message: "Internal Server Error",
     });
-  });
+  }
 };
 
+// Get message - user will sign this message to verify himself
 exports.get_message = async (req, res) => {
   try {
-    const publicKey = req.query.publicKey.toLowerCase();
-    const record = await returning_user(publicKey);
-
+    const publicKey = req.query.publicKey;
+    const record = await userDetails(publicKey);        // Check if user already exist
     const message = uuidv4().toString();
 
-    const params = {
-      TableName: tableName,
-      Item: {
-        publicKey: publicKey,
-        message: message,
-        dataLimit: record ? record.dataLimit : 1073741824,
-        dataUsed: record ? record.dataUsed : 0,
-        apiKey: record ? record.apiKey : null,
-      },
+    const updatedDetails = {
+      publicKey: publicKey,
+      message: message,
+      dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
+      dataUsed: record ? record.dataUsed : 0,
+      apiKey: record ? record.apiKey : null,
     };
-
-    client.put(params, function (err, data) {
-      if (err) {
-        console.error(err);
-        res.status(500).json("Internal Server Error");
-      } else {
-        console.log("PutItem succeeded:");
-        res.status(200).json(message);
-      }
-    });
-  } catch (e) {
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
-  }
-};
-
-exports.user_data_usage = async (req, res) => {
-  try {
-    const publicKey = req.query.publicKey.toLowerCase();
-    const record = await returning_user(publicKey);
-
-    if (record) {
-      res.status(200).json({
-        dataLimit: record.dataLimit,
-        dataUsed: record.dataUsed,
-      });
-    } else {
-      res.status(404).send("user does not exist");
-    }
+    
+    const updateResponse = await updateUserDetails(updatedDetails);
+    res.status(200).json(message);
   } catch (e) {
     res.status(500).send({
       message: "Internal Server Error",
@@ -146,37 +84,32 @@ exports.user_data_usage = async (req, res) => {
 };
 
 exports.get_api_key = async (req, res) => {
-  const usersPublicKey = req.query.publicKey.toLowerCase();
-  const record = await returning_user(usersPublicKey);
-
+  const usersPublicKey = req.body.publicKey;
+  const signedMessage = req.body.signedMessage;
+  const record = await userDetails(usersPublicKey);
   if (record) {
-    const authentic = verify(
+    const authentic = verifySignature(
       usersPublicKey,
       record["message"],
-      req.query.signed_message
+      signedMessage
     );
+    
     if (authentic) {
       const apiKey = uuidv4().toString();
-      const params = {
-        TableName: tableName,
-        Item: {
-          publicKey: record.publicKey,
-          message: record.message,
-          dataLimit: record.dataLimit,
-          dataUsed: record.dataUsed,
-          apiKey: SHA256(apiKey).toString(),
-        },
+      const updatedDetails = {
+        publicKey: record.publicKey,
+        message: record.message,
+        dataLimit: record.dataLimit,
+        dataUsed: record.dataUsed,
+        apiKey: SHA256(apiKey).toString(),
       };
 
-      client.put(params, function (err, data) {
-        if (err) {
-          console.error(err);
-          res.status(500).json("Internal Server Error");
-        } else {
-          console.log("PutItem succeeded:");
-          res.status(200).json(apiKey);
-        }
-      });
+      const updateResponse = await updateUserDetails(updatedDetails);
+      if(updateResponse==="Update Successful"){
+        res.status(200).json(apiKey);
+      } else{
+        res.status(500).json("Internal Server Error!!!");
+      }
     } else {
       res.status(401).json("UnAuthorized");
     }
@@ -185,30 +118,8 @@ exports.get_api_key = async (req, res) => {
   }
 };
 
-const check_for_apiKey = async (apiKey) => {
-  const params = {
-    TableName: tableName,
-    FilterExpression: "apiKey = :K",
-    ExpressionAttributeValues: {
-      ":K": apiKey,
-    },
-  };
-
-  return new Promise(function (resolve, reject) {
-    client.scan(params, function (err, data) {
-      if (err) {
-        reject(false);
-      } else {
-        const { Items } = data;
-        resolve(Items[0]);
-      }
-    });
-  });
-};
-
 exports.verify_api_key = async (req, res) => {
-  const record = await check_for_apiKey(SHA256(req.query.apiKey).toString());
-
+  const record = await checkApiKey(SHA256(req.query.apiKey).toString());
   if (record) {
     res.status(200).json({
       publicKey: record.publicKey,
