@@ -96,7 +96,7 @@ exports.add_cid_to_queue = async (req, res) => {
         publicKey: publicKey,
         message: record.message,
         dataLimit: record.dataLimit,
-        dataUsed: record.dataUsed + req.body.size,
+        dataUsed: parseInt(record.dataUsed) + parseInt(req.body.size),
         apiKey: record.apiKey,
       };
       const updateResponse = await updateUserDetails(updatedDetails);
