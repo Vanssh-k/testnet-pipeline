@@ -24,8 +24,6 @@ router.post("/get_api_key", [
   body("signedMessage").trim().not().isEmpty().withMessage("signedMessage not found"),
 ], validate, AuthController.get_api_key);
 
-router.get("/verify_api_key", [
-  query('apiKey').not().isEmpty().withMessage("apiKey not found"),
-], validate, AuthController.verify_api_key);
+router.get("/verify_api_key", AuthController.verify_api_key);
 
 module.exports = router;
