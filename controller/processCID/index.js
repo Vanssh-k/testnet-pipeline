@@ -41,7 +41,7 @@ const update_user_data = async (publicKey, record, fileSizeInBytes) => {
       publicKey: publicKey,
       message: record.message,
       dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed + fileSizeInBytes,
+      dataUsed: parseInt(record.dataUsed) + parseInt(fileSizeInBytes),
     },
   };
 
