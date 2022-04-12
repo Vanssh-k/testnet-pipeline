@@ -119,14 +119,19 @@ exports.get_api_key = async (req, res) => {
 };
 
 exports.verify_api_key = async (req, res) => {
-  const record = await checkApiKey(SHA256(req.query.apiKey).toString());
-  if (record) {
-    res.status(200).json({
-      publicKey: record.publicKey,
-      dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed,
-    });
-  } else {
+  try{
+    const apiKey = req.headers["authorization"].split(" ")[1];
+    const record = await checkApiKey(SHA256(apiKey).toString());
+    if (record) {
+      res.status(200).json({
+        publicKey: record.publicKey,
+        dataLimit: record.dataLimit,
+        dataUsed: record.dataUsed,
+      });
+    } else {
+      res.status(401).json("UnAuthorized");
+    }
+  } catch{
     res.status(401).json("UnAuthorized");
   }
 };
