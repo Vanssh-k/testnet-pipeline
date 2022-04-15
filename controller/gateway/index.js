@@ -1,41 +1,44 @@
 const dbbClient = require("../libs/ddbClient");
-const {verify_signer, verify_api_key} = require("./verify");
+const { verify_signer, verify_api_key } = require("./verify");
 const { gatewayTable } = require("../libs/constants");
 
 const getTransactionDetails = require("./getTransactionDetails");
 const updateSubDomain = require("./updateSubDomain");
 
 exports.add_subdomain = async (req, res) => {
-  try{
+  try {
     let verified = false;
     const publicKey = req.body.publicKey.toLowerCase();
-    if(req.body.signedMessage){
+    if (req.body.signedMessage) {
       verified = await verify_signer(publicKey, req.body.signedMessage);
-    }else{
+    } else {
       verified = await verify_api_key(req.body.apiKey);
     }
 
-    if(verified){
+    if (verified) {
       const transactionDetails = await getTransactionDetails(publicKey);
-      if(transactionDetails.txHash && (transactionDetails.publicKey.toLowerCase()===publicKey)){
+      if (
+        transactionDetails.txHash &&
+        transactionDetails.publicKey.toLowerCase() === publicKey
+      ) {
         transactionDetails.lastUpdate = Date.now();
         transactionDetails.subDomain = req.body.subDomain;
         const response = await updateSubDomain(transactionDetails);
-        
-        if(response){
+
+        if (response) {
           res.status(200).json("SubDomain Created");
-        } else{
+        } else {
           res.status(500).json("Internal server error");
         }
-      } else{
+      } else {
         res.status(401).json("UnAuthorized");
       }
-    } else{
+    } else {
       res.status(401).json("UnAuthorized");
     }
-  } catch (e){
+  } catch (e) {
     console.log(e);
-    res.status(500).json('Internal Server Error');
+    res.status(500).json("Internal Server Error");
   }
 };
 

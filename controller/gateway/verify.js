@@ -50,16 +50,16 @@ exports.verify_signer = async (usersPublicKey, signedMessage) => {
           Items[0]["message"],
           signedMessage
         );
-        if(authentic){
-          resolve(true)
-        } else{
+        if (authentic) {
+          resolve(true);
+        } else {
           resolve(false);
         }
       } else {
         resolve(false);
       }
-    })
-  })
+    });
+  });
 };
 
 const check_for_apiKey = async (apiKey) => {
@@ -87,8 +87,8 @@ exports.verify_api_key = async (apiKey) => {
   const record = await check_for_apiKey(SHA256(apiKey).toString());
 
   if (record) {
-    return(true);
+    return true;
   } else {
-    return(false);
+    return false;
   }
 };

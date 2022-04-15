@@ -1,7 +1,7 @@
 const dbbClient = require("../libs/ddbClient");
 const { gatewayTable } = require("../libs/constants");
 
-module.exports = async (transactionDetails) =>{
+module.exports = async (transactionDetails) => {
   const params = {
     TableName: gatewayTable,
     Item: transactionDetails,
