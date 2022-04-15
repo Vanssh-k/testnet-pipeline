@@ -4,7 +4,9 @@ const ethers = require("ethers");
 
 test("Message: GET /get_message", async () => {
   await supertest(app)
-    .get("/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1")
+    .get(
+      "/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1"
+    )
     .expect(200)
     .then((response) => {
       const message = JSON.parse(response.text);
@@ -14,16 +16,21 @@ test("Message: GET /get_message", async () => {
 
 test("Verify Signer: POST /verify_signer", async () => {
   await supertest(app)
-    .get("/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1")
+    .get(
+      "/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1"
+    )
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text);
       const provider = new ethers.getDefaultProvider();
-      const signer = new ethers.Wallet(process.env.TEST_WALLET_PRIVATE_KEY, provider);
+      const signer = new ethers.Wallet(
+        process.env.TEST_WALLET_PRIVATE_KEY,
+        provider
+      );
       const signedMessage = await signer.signMessage(verificationMessage);
       const data = {
-        "publicKey":"0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
-        "signedMessage": signedMessage
+        publicKey: "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
+        signedMessage: signedMessage,
       };
 
       await supertest(app)
@@ -39,16 +46,21 @@ test("Verify Signer: POST /verify_signer", async () => {
 
 test("Verify Signer with Data: POST /verify_signer_with_data", async () => {
   await supertest(app)
-    .get("/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1")
+    .get(
+      "/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1"
+    )
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text);
       const provider = new ethers.getDefaultProvider();
-      const signer = new ethers.Wallet(process.env.TEST_WALLET_PRIVATE_KEY, provider);
+      const signer = new ethers.Wallet(
+        process.env.TEST_WALLET_PRIVATE_KEY,
+        provider
+      );
       const signedMessage = await signer.signMessage(verificationMessage);
       const data = {
-        "publicKey":"0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
-        "signedMessage": signedMessage
+        publicKey: "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
+        signedMessage: signedMessage,
       };
 
       await supertest(app)
@@ -65,16 +77,21 @@ test("Verify Signer with Data: POST /verify_signer_with_data", async () => {
 
 test("Api Key: POST /get_api_key", async () => {
   await supertest(app)
-    .get("/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1")
+    .get(
+      "/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1"
+    )
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text);
       const provider = new ethers.getDefaultProvider();
-      const signer = new ethers.Wallet(process.env.TEST_WALLET_PRIVATE_KEY, provider);
+      const signer = new ethers.Wallet(
+        process.env.TEST_WALLET_PRIVATE_KEY,
+        provider
+      );
       const signedMessage = await signer.signMessage(verificationMessage);
       const data = {
-        "publicKey": "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
-        "signedMessage": signedMessage
+        publicKey: "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
+        signedMessage: signedMessage,
       };
 
       await supertest(app)

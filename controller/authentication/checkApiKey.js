@@ -1,8 +1,8 @@
 const dbbClient = require("../libs/ddbClient");
 const { userTable } = require("../libs/constants");
 
-module.exports = async (apiKey) =>{
-  try{
+module.exports = async (apiKey) => {
+  try {
     const params = {
       TableName: userTable,
       FilterExpression: "apiKey = :K",
@@ -10,11 +10,11 @@ module.exports = async (apiKey) =>{
         ":K": apiKey,
       },
     };
-  
+
     const record = await dbbClient.scan(params).promise();
     const { Items } = record;
-    return(Items[0]);
-  } catch (error){
-    return(null);
+    return Items[0];
+  } catch (error) {
+    return null;
   }
 };

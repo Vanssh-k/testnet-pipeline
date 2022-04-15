@@ -1,8 +1,8 @@
 const dbbClient = require("../libs/ddbClient");
 const { userTable } = require("../libs/constants");
 
-module.exports = async(usersPublicKey) =>{
-  try{
+module.exports = async (usersPublicKey) => {
+  try {
     const params = {
       TableName: userTable,
       FilterExpression: "publicKey = :p",
@@ -13,8 +13,8 @@ module.exports = async(usersPublicKey) =>{
 
     const record = await dbbClient.scan(params).promise();
     const { Items } = record;
-    return(Items[0]);
-  } catch (error){
-    return(null);
+    return Items[0];
+  } catch (error) {
+    return null;
   }
-}
+};

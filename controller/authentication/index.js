@@ -23,7 +23,7 @@ exports.verify_signer = async (req, res, next) => {
       signedMessage
     );
 
-    if(!authentic){
+    if (!authentic) {
       throw new AuthenticationError();
     }
     res.status(200).json("Authorized");
@@ -37,7 +37,7 @@ exports.verify_signer_with_data = async (req, res, next) => {
   try {
     const usersPublicKey = req.body.publicKey;
     const signedMessage = req.body.signedMessage;
-    
+
     const user = await userDetails(usersPublicKey);
     const authentic = verifySignature(
       usersPublicKey,
@@ -45,13 +45,13 @@ exports.verify_signer_with_data = async (req, res, next) => {
       signedMessage
     );
 
-    if(!authentic){
+    if (!authentic) {
       throw new AuthenticationError();
     }
     res.status(200).json({
       dataLimit: user.dataLimit,
       dataUsed: user.dataUsed,
-    })
+    });
   } catch (error) {
     next(error);
   }
@@ -61,7 +61,7 @@ exports.verify_signer_with_data = async (req, res, next) => {
 exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
-    const record = await userDetails(publicKey);        // Check if user already exist
+    const record = await userDetails(publicKey); // Check if user already exist
     const message = uuidv4().toString();
 
     const updatedDetails = {
@@ -71,9 +71,9 @@ exports.get_message = async (req, res, next) => {
       dataUsed: record ? record.dataUsed : 0,
       apiKey: record ? record.apiKey : null,
     };
-    
+
     const updateResponse = await updateUserDetails(updatedDetails);
-    if(updateResponse===null){
+    if (updateResponse === null) {
       throw new DatabaseError("Put item failed");
     }
 
@@ -84,25 +84,25 @@ exports.get_message = async (req, res, next) => {
 };
 
 exports.get_api_key = async (req, res, next) => {
-  try{
+  try {
     const usersPublicKey = req.body.publicKey;
     const signedMessage = req.body.signedMessage;
     const record = await userDetails(usersPublicKey);
 
-    if(record===null){
+    if (record === null) {
       throw new NotFoundError();
     }
-    
+
     const authentic = verifySignature(
       usersPublicKey,
       record["message"],
       signedMessage
     );
 
-    if(!authentic){
+    if (!authentic) {
       throw new AuthenticationError();
     }
-    
+
     const apiKey = uuidv4().toString();
     const updatedDetails = {
       publicKey: record.publicKey,
@@ -111,14 +111,14 @@ exports.get_api_key = async (req, res, next) => {
       dataUsed: record.dataUsed,
       apiKey: SHA256(apiKey).toString(),
     };
-    
+
     const updateResponse = await updateUserDetails(updatedDetails);
-    if(updateResponse===null){
+    if (updateResponse === null) {
       throw new DatabaseError("Put item failed");
     }
 
     res.status(200).json(apiKey);
-  } catch(error){
+  } catch (error) {
     next(error);
   }
 };
