@@ -2,7 +2,7 @@ const userDetails = require("../authentication/userDetails");
 const fileDetails = require("./fileDetails");
 const getFileDataFromContract = require("./getFileDataFromContract");
 
-exports.get_uploads = async (req, res) => {
+exports.get_uploads = async (req, res, next) => {
   try {
     const metaData = await fileDetails(req.query.publicKey);
     for (let i = 0; i < metaData.length; i++) {
@@ -12,10 +12,7 @@ exports.get_uploads = async (req, res) => {
 
     res.status(200).send(metaData.concat(metaDataOldFiles));
   } catch (error) {
-    console.error(error);
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
