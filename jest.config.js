@@ -7,16 +7,13 @@ module.exports = async () => {
     rootDir: "./",
     clearMocks: true, // clear mocks before every test
     resetMocks: false, // reset mock state before every test
-    testMatch: ["<rootDir>/**/*.test.js"], // match only tests inside /tests folder
-    testPathIgnorePatterns: [
-      "<rootDir>/node_modules/",
-      "<rootDir>/.trunk/",
-    ], // exclude unnecessary folders
+    testMatch: ["<rootDir>/controller/**/*.test.js"], // match only tests inside /tests folder
+    testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.trunk/"], // exclude unnecessary folders
 
     // following lines are about coverage
     collectCoverage: true, //[true|false]
-    collectCoverageFrom: ["<rootDir>/**/*.js"],
-    coverageDirectory: "<rootDir>/tests/coverage",
+    collectCoverageFrom: ["<rootDir>/controller/**/*.js"],
+    coverageDirectory: "<rootDir>/coverage",
     coverageReporters: ["lcov"],
     coverageThreshold: {
       global: {
