@@ -1,11 +1,11 @@
 const ethers = require("ethers");
 
 const Moralis = require("moralis/node");
-const serverUrl = process.env.serverUrl;
+const serverUrl = process.env.SERVERURL;
 
 const lighthouseConfig = require("../../lighthouse.config");
 
-const moralisAppId = process.env.moralisAppId;
+const moralisAppId = process.env.MORALISAPPID;
 Moralis.start({ serverUrl, moralisAppId });
 
 const getLogs = async (network, contractAddress, publicKey) => {

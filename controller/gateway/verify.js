@@ -5,8 +5,8 @@ const SHA256 = require("crypto-js/sha256");
 const tableName = "Users";
 AWS.config.update({
   aws_table_name: tableName,
-  accessKeyId: process.env.aws_access_key_id,
-  secretAccessKey: process.env.aws_secret_access_key,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: "ap-south-1",
 });
 const client = new AWS.DynamoDB.DocumentClient();
