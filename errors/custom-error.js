@@ -6,12 +6,12 @@ class CustomError extends Error {
     this.name = name;
     this.statusCode = statusCode;
     this.errors = errors;
-      
+
     Error.captureStackTrace(this, this.constructor);
   }
-  serializeErrors(){
+  serializeErrors() {
     return [{ message: this.errors }];
-  };
+  }
 }
 
 module.exports = CustomError;
