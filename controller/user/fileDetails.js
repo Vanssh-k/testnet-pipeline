@@ -1,7 +1,7 @@
 const dbbClient = require("../libs/ddbClient");
 const { fileTable } = require("../libs/constants");
 
-module.exports = async(usersPublicKey) =>{
+module.exports = async (usersPublicKey) => {
   const params = {
     TableName: fileTable,
     FilterExpression: "publicKey = :p",
@@ -12,16 +12,16 @@ module.exports = async(usersPublicKey) =>{
 
   return new Promise(function (resolve, reject) {
     dbbClient.scan(params, function (err, data) {
-      try{
+      try {
         if (err) {
           reject(err);
         }
         const { Items } = data;
         resolve(Items);
-      } catch (error){
+      } catch (error) {
         console.error(error);
         reject(null);
       }
     });
-  })
+  });
 };

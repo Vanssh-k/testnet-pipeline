@@ -19,7 +19,7 @@ const getLogs = async (network, contractAddress, publicKey) => {
   return events;
 };
 
-module.exports = async(usersPublicKey) =>{
+module.exports = async (usersPublicKey) => {
   const Items = [];
   const abi = [
     "event StorageRequest(address indexed uploader, string cid, string config, uint fileCost, string fileName, uint fileSize, uint timestamp)",
@@ -27,7 +27,8 @@ module.exports = async(usersPublicKey) =>{
   const iface = new ethers.utils.Interface(abi);
 
   let network = "polygon";
-  let contractAddress = lighthouseConfig[network]["lighthouse_contract_address"];
+  let contractAddress =
+    lighthouseConfig[network]["lighthouse_contract_address"];
   // const walletTransaction = [];
 
   let logs = await getLogs(
@@ -56,8 +57,7 @@ module.exports = async(usersPublicKey) =>{
   }
 
   network = "fantom";
-  contractAddress =
-    lighthouseConfig[network]["lighthouse_contract_address"];
+  contractAddress = lighthouseConfig[network]["lighthouse_contract_address"];
 
   logs = await getLogs(
     network,
@@ -84,5 +84,5 @@ module.exports = async(usersPublicKey) =>{
     });
   }
 
-  return(Items);
+  return Items;
 };
