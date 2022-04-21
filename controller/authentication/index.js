@@ -124,7 +124,8 @@ exports.get_api_key = async (req, res, next) => {
 };
 
 exports.verify_api_key = async (req, res) => {
-  const record = await checkApiKey(SHA256(req.query.apiKey).toString());
+  const apiKey = req.headers["authorization"].split(" ")[1];
+  const record = await checkApiKey(SHA256(apiKey).toString());
   if (record) {
     res.status(200).json({
       publicKey: record.publicKey,
