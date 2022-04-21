@@ -1,6 +1,6 @@
 const verifySignature = require("../authentication/verifySignature");
 const checkApiKey = require("../authentication/checkApiKey");
-
+const userDetails = require("../authentication/userDetails");
 const { checkSubdomain, getRecord } = require("./subdomain");
 const updateSubDomain = require("./updateSubDomain");
 
@@ -19,7 +19,8 @@ exports.add_subdomain = async (req, res, next) => {
     let verified = false;
     const publicKey = req.body.publicKey.toLowerCase();
     if (req.body.signedMessage) {
-      verified = await verifySignature(publicKey, req.body.signedMessage);
+      const user = await userDetails(publicKey);
+      verified = await verifySignature(publicKey, user.message, req.body.signedMessage);
     } else {
       verified = await checkApiKey(req.body.apiKey);
     }
