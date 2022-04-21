@@ -15,6 +15,6 @@ module.exports = async (apiKey) => {
     const { Items } = record;
     return Items[0];
   } catch (error) {
-    return null;
+    return false;
   }
 };
