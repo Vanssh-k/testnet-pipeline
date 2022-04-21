@@ -1,115 +1,93 @@
-const dbbClient = require("../libs/ddbClient");
-const { verify_signer, verify_api_key } = require("./verify");
-const { gatewayTable } = require("../libs/constants");
+const verifySignature = require("../authentication/verifySignature");
+const checkApiKey = require("../authentication/checkApiKey");
 
-const getTransactionDetails = require("./getTransactionDetails");
+const { checkSubdomain, getRecord } = require("./subdomain");
 const updateSubDomain = require("./updateSubDomain");
 
-exports.add_subdomain = async (req, res) => {
+const DatabaseError = require("../../errors/database-error");
+const AuthenticationError = require("../../errors/authentication-error");
+const NotFoundError = require("../../errors/not-found-error");
+const ForbiddenError = require("../../errors/forbidden");
+
+exports.add_subdomain = async (req, res, next) => {
   try {
+    const restrictedNames = ["api", "gateway", "testnet", "mainnet", "node"];
+    if(restrictedNames.includes(req.body.subDomain)){
+      throw new ForbiddenError();
+    }
+
     let verified = false;
     const publicKey = req.body.publicKey.toLowerCase();
     if (req.body.signedMessage) {
-      verified = await verify_signer(publicKey, req.body.signedMessage);
+      verified = await verifySignature(publicKey, req.body.signedMessage);
     } else {
-      verified = await verify_api_key(req.body.apiKey);
+      verified = await checkApiKey(req.body.apiKey);
     }
 
-    if (verified) {
-      const transactionDetails = await getTransactionDetails(publicKey);
-      if (
-        transactionDetails.txHash &&
-        transactionDetails.publicKey.toLowerCase() === publicKey
-      ) {
-        transactionDetails.lastUpdate = Date.now();
-        transactionDetails.subDomain = req.body.subDomain;
-        const response = await updateSubDomain(transactionDetails);
+    if (!verified) {
+      throw new AuthenticationError();
+    }
 
-        if (response) {
-          res.status(200).json("SubDomain Created");
-        } else {
-          res.status(500).json("Internal server error");
-        }
-      } else {
-        res.status(401).json("UnAuthorized");
+    const transactionDetails = await getRecord(publicKey);
+    if (
+      transactionDetails.txHash &&
+      transactionDetails.publicKey.toLowerCase() === publicKey
+    ) {
+      transactionDetails.lastUpdate = Date.now();
+      transactionDetails.subDomain = req.body.subDomain;
+
+      const updateResponse = await updateSubDomain(transactionDetails);
+      if (updateResponse === null) {
+        throw new DatabaseError("Put item failed");
       }
+      
+      res.status(200).json("SubDomain Created");
     } else {
-      res.status(401).json("UnAuthorized");
+      throw new AuthenticationError();
     }
-  } catch (e) {
-    console.log(e);
-    res.status(500).json("Internal Server Error");
+  } catch (error) {
+    next(error)
   }
 };
 
-exports.check_subdomain = async (req, res) => {
+exports.check_subdomain = async (req, res, next) => {
   try {
-    const params = {
-      TableName: gatewayTable,
-      FilterExpression: "subDomain = :s",
-      ExpressionAttributeValues: {
-        ":s": req.query.subDomain,
-      },
-    };
-
-    dbbClient.scan(params, function (err, data) {
-      if (err) {
-        res.status(500).send({
-          message: "Internal Server Error",
-        });
-      } else {
-        const { Items } = data;
-        if (Items.length > 0) {
-          res.status(200).send({
-            message: "Exists",
-          });
-        } else {
-          res.status(401).send({
-            message: "UnAuthorized",
-          });
-        }
-      }
-    });
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
+    const exists = await checkSubdomain(req.query.subDomain);
+    console.log(exists)
+    if(!exists){
+      throw new NotFoundError();
+    }
+    res.status(200).json("Exists");
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.get_subdomain = async (req, res) => {
+exports.get_subdomain = async (req, res, next) => {
   try {
-    const params = {
-      TableName: gatewayTable,
-      FilterExpression: "publicKey = :p",
-      ExpressionAttributeValues: {
-        ":p": req.query.publicKey.toLowerCase(),
-      },
-    };
+    const record = await getRecord(req.query.publicKey);
+    if(record === null || record.subDomain === null){
+      throw new NotFoundError();
+    }
+    res.status(200).json(record.subDomain);
+  } catch (error) {
+    next(error)
+  }
+};
 
-    dbbClient.scan(params, function (err, data) {
-      if (err) {
-        res.status(500).send({
-          message: "Internal Server Error",
-        });
-      } else {
-        const { Items } = data;
-        if (Items.length > 0) {
-          res.status(200).send({
-            subDomain: Items[0]["subDomain"],
-          });
-        } else {
-          res.status(200).send({
-            subDomain: null,
-          });
-        }
-      }
+exports.get_transaction_details = async (req, res, next) => {
+  try {
+    const record = await getRecord(req.query.publicKey);
+    if(!record){
+      throw new NotFoundError();
+    }
+    res.status(200).json({
+      network: record.network,
+      subDomain: record.subDomain,
+      txHash: record.txHash,
+      value: record.value
     });
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({
-      message: "Internal Server Error",
-    });
+  } catch (error) {
+    next(error)
   }
 };
