@@ -33,4 +33,11 @@ router.get(
   GatewayController.get_subdomain
 );
 
+router.get(
+  "/get_transaction_details",
+  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
+  validate,
+  GatewayController.get_transaction_details
+);
+
 module.exports = router;
