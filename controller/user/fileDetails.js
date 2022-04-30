@@ -10,18 +10,7 @@ module.exports = async (usersPublicKey) => {
     },
   };
 
-  return new Promise(function (resolve, reject) {
-    dbbClient.scan(params, function (err, data) {
-      try {
-        if (err) {
-          reject(err);
-        }
-        const { Items } = data;
-        resolve(Items);
-      } catch (error) {
-        console.error(error);
-        reject(null);
-      }
-    });
-  });
+  const record = await dbbClient.scan(params).promise();
+  const { Items } = record;
+  return Items;
 };
