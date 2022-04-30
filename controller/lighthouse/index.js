@@ -5,6 +5,8 @@ const saveFileMetaData = require("./saveFileMetaData");
 
 const ForbiddenError = require("../../errors/forbidden");
 const DatabaseError = require("../../errors/database-error");
+const NotFoundError = require("../../errors/not-found-error");
+const BadRequestError = require("../../errors/bad-request");
 
 // get ticker of a token by its symbol as input
 exports.get_ticker = async (req, res, next) => {
@@ -71,8 +73,8 @@ const addCid = async (name, cid) => {
 exports.add_cid = async (req, res, next) => {
   try {
     const addCidResponse = await addCid(req.body.name, req.body.cid);
-    if (addCidResponse === null) {
-      throw new DatabaseError("Add CID Failed");
+    if (!addCidResponse) {
+      throw new BadRequestError();
     }
 
     res.status(200).json("Added To Queue");
@@ -86,6 +88,10 @@ exports.add_cid_to_queue = async (req, res, next) => {
   try {
     const publicKey = req.body.publicKey.toLowerCase();
     const record = await userDetails(publicKey); // Get record of user
+
+    if (!record) {
+      throw new NotFoundError();
+    }
 
     if (req.body.size > record.dataLimit - record.dataUsed) {
       // Create record of file
@@ -108,7 +114,7 @@ exports.add_cid_to_queue = async (req, res, next) => {
       req.body.size,
       "queued"
     );
-    if (saveFileResponse === null) {
+    if (!saveFileResponse) {
       throw new DatabaseError("Save File failed");
     }
 
@@ -122,14 +128,14 @@ exports.add_cid_to_queue = async (req, res, next) => {
     };
 
     const updateResponse = await updateUserDetails(updatedDetails);
-    if (updateResponse === null) {
+    if (!updateResponse) {
       throw new DatabaseError("Put item failed");
     }
 
     // Send CID to Estuary
     const addCidResponse = await addCid(req.body.name, req.body.cid);
 
-    if (addCidResponse === null) {
+    if (!addCidResponse) {
       throw new DatabaseError("Add CID Failed");
     }
 
