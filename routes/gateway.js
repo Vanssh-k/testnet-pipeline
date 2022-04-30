@@ -10,10 +10,7 @@ router.post(
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
     body("subDomain").trim().not().isEmpty().withMessage("subDomain not found"),
-    oneOf([
-      body("signedMessage").exists().isString(),
-      body("apiKey").exists().isString(),
-    ]),
+    body("signedMessage").trim().not().isEmpty().withMessage("signedMessage not found"),
   ],
   validate,
   GatewayController.add_subdomain
