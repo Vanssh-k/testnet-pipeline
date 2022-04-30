@@ -27,3 +27,11 @@ test("User Data Usage: GET /user_data_usage", async () => {
       expect(typeof usage.dataUsed).toBe("number");
     });
 }, 30000);
+
+test("User Data Usage Record Not Found Error: GET /user_data_usage", async () => {
+  await supertest(app)
+    .get(
+      "/api/user/user_data_usage?publicKey=0xC88C729Ef2c18baf1074EA0Df537d61a54A8CE7c"
+    )
+    .expect(404)
+}, 30000);
