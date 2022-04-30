@@ -1,10 +1,8 @@
 const verifySignature = require("../authentication/verifySignature");
-const checkApiKey = require("../authentication/checkApiKey");
 const userDetails = require("../authentication/userDetails");
 const { checkSubdomain, getRecord } = require("./subdomain");
 const updateSubDomain = require("./updateSubDomain");
 
-const DatabaseError = require("../../errors/database-error");
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
@@ -16,35 +14,24 @@ exports.add_subdomain = async (req, res, next) => {
       throw new ForbiddenError();
     }
 
-    let verified = false;
     const publicKey = req.body.publicKey.toLowerCase();
-    if (req.body.signedMessage) {
-      const user = await userDetails(publicKey);
-      verified = await verifySignature(publicKey, user.message, req.body.signedMessage);
-    } else {
-      verified = await checkApiKey(req.body.apiKey);
-    }
+    const user = await userDetails(publicKey);
+    const verified = verifySignature(publicKey, user.message, req.body.signedMessage);
 
     if (!verified) {
       throw new AuthenticationError();
     }
 
     const transactionDetails = await getRecord(publicKey);
-    if (
-      transactionDetails.txHash &&
-      transactionDetails.publicKey.toLowerCase() === publicKey
-    ) {
+    if (transactionDetails.txHash) {
       transactionDetails.lastUpdate = Date.now();
       transactionDetails.subDomain = req.body.subDomain;
 
-      const updateResponse = await updateSubDomain(transactionDetails);
-      if (updateResponse === null) {
-        throw new DatabaseError("Put item failed");
-      }
+      const _ = await updateSubDomain(transactionDetails);
       
       res.status(200).json("SubDomain Created");
     } else {
-      throw new AuthenticationError();
+      throw new ForbiddenError();
     }
   } catch (error) {
     next(error)
@@ -54,7 +41,6 @@ exports.add_subdomain = async (req, res, next) => {
 exports.check_subdomain = async (req, res, next) => {
   try {
     const exists = await checkSubdomain(req.query.subDomain);
-    console.log(exists)
     if(!exists){
       throw new NotFoundError();
     }
@@ -67,7 +53,7 @@ exports.check_subdomain = async (req, res, next) => {
 exports.get_subdomain = async (req, res, next) => {
   try {
     const record = await getRecord(req.query.publicKey);
-    if(record === null || record.subDomain === null){
+    if(!record || !record.subDomain){
       throw new NotFoundError();
     }
     res.status(200).json(record.subDomain);
