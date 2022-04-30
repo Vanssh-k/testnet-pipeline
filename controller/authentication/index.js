@@ -7,7 +7,6 @@ const verifySignature = require("./verifySignature");
 const updateUserDetails = require("./updateUserDetails");
 const { freeDataLimitInBytes } = require("../libs/constants");
 
-const DatabaseError = require("../../errors/database-error");
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
 
@@ -72,10 +71,7 @@ exports.get_message = async (req, res, next) => {
       apiKey: record ? record.apiKey : null,
     };
 
-    const updateResponse = await updateUserDetails(updatedDetails);
-    if (updateResponse === null) {
-      throw new DatabaseError("Put item failed");
-    }
+    const _ = await updateUserDetails(updatedDetails);
 
     res.status(200).json(message);
   } catch (error) {
@@ -89,7 +85,7 @@ exports.get_api_key = async (req, res, next) => {
     const signedMessage = req.body.signedMessage;
     const record = await userDetails(usersPublicKey);
 
-    if (record === null) {
+    if (!record) {
       throw new NotFoundError();
     }
 
@@ -112,10 +108,7 @@ exports.get_api_key = async (req, res, next) => {
       apiKey: SHA256(apiKey).toString(),
     };
 
-    const updateResponse = await updateUserDetails(updatedDetails);
-    if (updateResponse === null) {
-      throw new DatabaseError("Put item failed");
-    }
+    const _ = await updateUserDetails(updatedDetails);
 
     res.status(200).json(apiKey);
   } catch (error) {
@@ -123,16 +116,19 @@ exports.get_api_key = async (req, res, next) => {
   }
 };
 
-exports.verify_api_key = async (req, res) => {
-  const apiKey = req.headers["authorization"].split(" ")[1];
-  const record = await checkApiKey(SHA256(apiKey).toString());
-  if (record) {
+exports.verify_api_key = async (req, res, next) => {
+  try{
+    const apiKey = req.headers["authorization"].split(" ")[1];
+    const record = await checkApiKey(SHA256(apiKey).toString());
+    if (!record) {
+      throw new NotFoundError();
+    }
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
     });
-  } else {
-    res.status(401).json("UnAuthorized");
-  }
+  } catch (error) {
+    next(error);
+  }  
 };
