@@ -2,6 +2,8 @@ const userDetails = require("../authentication/userDetails");
 const fileDetails = require("./fileDetails");
 const getFileDataFromContract = require("./getFileDataFromContract");
 
+const NotFoundError = require("../../errors/not-found-error");
+
 exports.get_uploads = async (req, res, next) => {
   try {
     const metaData = await fileDetails(req.query.publicKey);
@@ -16,21 +18,18 @@ exports.get_uploads = async (req, res, next) => {
   }
 };
 
-exports.user_data_usage = async (req, res) => {
+exports.user_data_usage = async (req, res, next) => {
   try {
     const record = await userDetails(req.query.publicKey);
-
-    if (record) {
-      res.status(200).json({
-        dataLimit: record.dataLimit,
-        dataUsed: record.dataUsed,
-      });
-    } else {
-      res.status(404).send("user does not exist");
+    if(!record){
+      throw new NotFoundError();
     }
-  } catch (e) {
-    res.status(500).send({
-      message: "Internal Server Error",
+
+    res.status(200).json({
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
     });
+  } catch (error) {
+    next(error);
   }
 };
