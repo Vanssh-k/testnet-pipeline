@@ -1,27 +1,44 @@
 const express = require("express");
+const LighthouseController = require("../controller/lighthouse");
+const { body, query } = require("express-validator");
+
 const router = express.Router();
+const validate = require("../middlewares/validate");
 
-const InfuraController = require("../controller/Infura");
-const EstuaryController = require("../controller/estuary");
-const ContractController = require("../controller/contract");
-const AuthController = require("../controller/authentication");
-const ProcessCidController = require("../controller/processCID");
+router.get(
+  "/get_ticker",
+  [query("symbol").not().isEmpty().withMessage("token symbol not found")],
+  validate,
+  LighthouseController.get_ticker
+);
 
-router.post("/user_token", EstuaryController.user_token);
-router.get("/get_ticker", EstuaryController.get_ticker);
-router.get("/status/:cid", EstuaryController.status);
-router.post("/add_cid", EstuaryController.add_cid);
+router.get(
+  "/cid_status",
+  [query("cid").not().isEmpty().withMessage("cid not found")],
+  validate,
+  LighthouseController.cid_status
+);
 
-router.get("/list_data", EstuaryController.list_data);
-router.get("/get_deals", EstuaryController.get_deals);
-router.get("/get_deals_filecoin", EstuaryController.get_deals_filecoin);
+router.post(
+  "/add_cid",
+  [
+    body("name").trim().not().isEmpty().withMessage("file name not found"),
+    body("cid").trim().not().isEmpty().withMessage("cid not found"),
+  ],
+  validate,
+  LighthouseController.add_cid
+);
 
-router.get("/get_uploads", ContractController.get_uploads);
-router.get("/upload_client", InfuraController.upload_client);
-
-router.get("/verify_signer", AuthController.verify_signer);
-router.get("/get_message", AuthController.get_message);
-
-router.post("/process_cid", ProcessCidController.process_cid);
+router.post(
+  "/add_cid_to_queue",
+  [
+    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    body("name").trim().not().isEmpty().withMessage("file name not found"),
+    body("cid").trim().not().isEmpty().withMessage("cid not found"),
+    body("size").trim().not().isEmpty().withMessage("file size not found"),
+  ],
+  validate,
+  LighthouseController.add_cid_to_queue
+);
 
 module.exports = router;

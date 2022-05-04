@@ -23,4 +23,6 @@ typings/
 .env
 .env.test
 
+coverage/
+
 package-lock.json
