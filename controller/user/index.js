@@ -1,18 +1,16 @@
 const userDetails = require("../authentication/userDetails");
 const fileDetails = require("./fileDetails");
-const getFileDataFromContract = require("./getFileDataFromContract");
 
 const NotFoundError = require("../../errors/not-found-error");
 
 exports.get_uploads = async (req, res, next) => {
   try {
-    const metaData = await fileDetails(req.query.publicKey);
-    for (let i = 0; i < metaData.length; i++) {
-      metaData[i]["network"] = "polygon";
+    const files = await fileDetails(req.query.publicKey);
+    for (let i = 0; i < files.length; i++) {
+      files[i]["network"] = "polygon";
     }
-    const metaDataOldFiles = await getFileDataFromContract(req.query.publicKey);
 
-    res.status(200).send(metaData.concat(metaDataOldFiles));
+    res.status(200).send(files);
   } catch (error) {
     next(error);
   }
