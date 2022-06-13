@@ -5,10 +5,12 @@ const userDetails = require("./userDetails");
 const checkApiKey = require("./checkApiKey");
 const verifySignature = require("./verifySignature");
 const updateUserDetails = require("./updateUserDetails");
+const checkTwitter = require("./checkTwitter");
 const { freeDataLimitInBytes } = require("../libs/constants");
 
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
+const ForbiddenError = require("../../errors/forbidden");
 
 // Return if user is authentic
 exports.verify_signer = async (req, res, next) => {
@@ -117,7 +119,7 @@ exports.get_api_key = async (req, res, next) => {
 };
 
 exports.verify_api_key = async (req, res, next) => {
-  try{
+  try {
     const apiKey = req.headers["authorization"].split(" ")[1];
     const record = await checkApiKey(SHA256(apiKey).toString());
     if (!record) {
@@ -130,5 +132,37 @@ exports.verify_api_key = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-  }  
+  }
+};
+
+exports.tweet_recharge = async (req, res, next) => {
+  try {
+    const publicKey = req.query.publicKey;
+    const twitterID = req.query.twitterID;
+
+    // Check for validity of tweet
+    const validTweet = await checkTwitter(publicKey, twitterID);
+    if (!validTweet) {
+      throw new ForbiddenError();
+    }
+
+    const record = await userDetails(publicKey); // Check if user already exist
+    if (!record) {
+      throw new NotFoundError();
+    }
+
+    const updatedDetails = {
+      publicKey: publicKey,
+      message: record.message,
+      dataLimit: record.dataLimit + freeDataLimitInBytes,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+    };
+
+    const _ = await updateUserDetails(updatedDetails);
+
+    res.status(200).json("Data Limit Upgraded");
+  } catch (error) {
+    next(error);
+  }
 };
