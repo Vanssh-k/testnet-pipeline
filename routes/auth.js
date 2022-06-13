@@ -54,6 +54,16 @@ router.post(
   AuthController.get_api_key
 );
 
+router.get(
+  "/tweet_recharge",
+  [
+    query("publicKey").not().isEmpty().withMessage("publicKey not found"),
+    query("twitterID").not().isEmpty().withMessage("twitterID not found")
+  ],
+  validate,
+  AuthController.tweet_recharge
+);
+
 router.get("/verify_api_key", AuthController.verify_api_key);
 
 module.exports = router;
