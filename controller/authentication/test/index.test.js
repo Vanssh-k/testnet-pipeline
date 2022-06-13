@@ -50,10 +50,7 @@ test("Verify Signer Unauthorized Case: POST /verify_signer", async () => {
     signedMessage: "signedMessage",
   };
 
-  await supertest(app)
-    .post("/api/auth/verify_signer")
-    .send(data)
-    .expect(401)
+  await supertest(app).post("/api/auth/verify_signer").send(data).expect(401);
 }, 10000);
 
 test("Verify Signer with Data: POST /verify_signer_with_data", async () => {
@@ -96,7 +93,7 @@ test("Verify Signer with Data Unauthorized Case: POST /verify_signer_with_data",
   await supertest(app)
     .post("/api/auth/verify_signer_with_data")
     .send(data)
-    .expect(401)
+    .expect(401);
 }, 10000);
 
 test("Api Key: POST /get_api_key", async () => {
@@ -135,10 +132,7 @@ test("Api Key Record Not Found: POST /get_api_key", async () => {
     signedMessage: "signedMessage",
   };
 
-  await supertest(app)
-    .post("/api/auth/get_api_key")
-    .send(data)
-    .expect(404)
+  await supertest(app).post("/api/auth/get_api_key").send(data).expect(404);
 }, 10000);
 
 test("Api Key Record Not Authorized: POST /get_api_key", async () => {
@@ -147,10 +141,7 @@ test("Api Key Record Not Authorized: POST /get_api_key", async () => {
     signedMessage: "signedMessage",
   };
 
-  await supertest(app)
-    .post("/api/auth/get_api_key")
-    .send(data)
-    .expect(401)
+  await supertest(app).post("/api/auth/get_api_key").send(data).expect(401);
 }, 10000);
 
 // Test Wallet
@@ -177,12 +168,12 @@ test("Verify API Key: GET /verify_api_key", async () => {
         .post("/api/auth/get_api_key")
         .send(data)
         .expect(200)
-        .then(async(response) => {
+        .then(async (response) => {
           const apiKey = JSON.parse(response.text);
           await supertest(app)
             .get("/api/auth/verify_api_key")
-            .set('Authorization', 'Bearer ' + apiKey)
-            .expect(200)
+            .set("Authorization", "Bearer " + apiKey)
+            .expect(200);
         });
     });
 }, 10000);
@@ -190,13 +181,40 @@ test("Verify API Key: GET /verify_api_key", async () => {
 test("Verify API Key Record Not Found: GET /verify_api_key", async () => {
   await supertest(app)
     .get("/api/auth/verify_api_key")
-    .set('Authorization', 'Bearer ' + "937b68b8-3768-45d1-950b-30c3836785d5")
-    .expect(404)
+    .set("Authorization", "Bearer " + "937b68b8-3768-45d1-950b-30c3836785d5")
+    .expect(404);
 }, 10000);
 
 test("Verify API Key Bad Request: GET /verify_api_key", async () => {
-  await supertest(app)
-    .get("/api/auth/verify_api_key")
-    .expect(400)
+  await supertest(app).get("/api/auth/verify_api_key").expect(400);
 }, 10000);
 
+test("Twitter, Invalid Tweet: GET /tweet_recharge", async () => {
+  await supertest(app)
+    .get(
+      "/api/auth/tweet_recharge?publicKey=0x420B7C7114F7372207Ab0b36F1353B5d2D3b2afA&twitterID=1536248943725535233"
+    )
+    .expect(403);
+}, 10000);
+
+test("Twitter, Invalid Twitter ID: GET /tweet_recharge", async () => {
+  await supertest(app)
+    .get(
+      "/api/auth/tweet_recharge?publicKey=0x420B7C7114F7372207Ab0b36F1353B5d2D3b2afB&twitterID=cosmos"
+    )
+    .expect(403);
+}, 10000);
+
+// test("Twitter, User Not Found: GET /tweet_recharge", async () => {
+//   await supertest(app)
+//     .get("/api/auth/tweet_recharge?publicKey=0x20B7C7114F7372207Ab0b36F1353B5d2D3b2afB&twitterID=1536248943725535233")
+//     .expect(404)
+// }, 10000);
+
+test("Twitter, Recharge Done: GET /tweet_recharge", async () => {
+  await supertest(app)
+    .get(
+      "/api/auth/tweet_recharge?publicKey=0x420B7C7114F7372207Ab0b36F1353B5d2D3b2afB&twitterID=1536248943725535233"
+    )
+    .expect(200);
+}, 10000);
