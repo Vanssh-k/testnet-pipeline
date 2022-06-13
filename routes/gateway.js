@@ -1,6 +1,6 @@
 const express = require("express");
 const GatewayController = require("../controller/gateway");
-const { body, query, oneOf } = require("express-validator");
+const { body, query } = require("express-validator");
 
 const router = express.Router();
 const validate = require("../middlewares/validate");
