@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require("uuid");
+
 const userDetails = require("./userDetails");
 const updateUserDetails = require("./updateUserDetails");
 const saveFileMetaData = require("./saveFileMetaData");
@@ -46,15 +48,19 @@ exports.save_encryption_publicKey = async (req, res, next) => {
 
 exports.save_encryption_key = async (req, res, next) => {
   try {
+    const timestamp = Date.now();
     const record = {
-      publicKey: req.body.publicKey,
+      id: uuidv4(),
       cid: req.body.cid,
+      publicKey: req.body.publicKey,
       fileName: req.body.fileName,
       nonce: req.body.nonce,
       fileSizeInBytes: parseInt(req.body.fileSizeInBytes),
       fileEncryptionKey: req.body.fileEncryptionKey,
       sharedFrom: req.body.sharedFrom,
       sharedTo: req.body.sharedTo,
+      createdAt: timestamp,
+      lastUpdate: timestamp
     };
 
     const _ = await saveFileMetaData(record);
