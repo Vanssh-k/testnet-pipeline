@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 
-const userDetails = require("./userDetails");
-const updateUserDetails = require("./updateUserDetails");
+const userDetails = require("../authentication/userDetails");
+const updateUserDetails = require("../authentication/updateUserDetails");
 const saveFileMetaData = require("./saveFileMetaData");
 const fileDetails = require("./fileDetails");
 const verifyAccessToken = require("../authentication/verifyAccessToken");
@@ -74,9 +74,21 @@ exports.save_encryption_key = async (req, res, next) => {
 exports.get_file_encrypted_key = async (req, res, next) => {
   try {
     const cid = req.query.cid;
-    const file = await fileDetails(cid);
+    const sharedTo = req.query.sharedTo;
+    const files = await fileDetails(cid);
+    
+    let record = null;
+    for(let i=0; i<files.length; i++){
+      if(files[i]["sharedTo"]===sharedTo){
+        record = files[i]
+      }
+    }
 
-    res.status(200).json(file);
+    if(!record){
+      throw new ForbiddenError();
+    }
+
+    res.status(200).json(record);
   } catch (error) {
     next(error);
   }
