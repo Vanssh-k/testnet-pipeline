@@ -1,22 +1,10 @@
-const dbbClient = require("../libs/ddbClient");
-const { userTable } = require("../libs/constants");
+const SHA256 = require("crypto-js/sha256");
 
-module.exports = (usersPublicKey, accessToken) => {
+module.exports = (record, token) => {
   try {
-    const params = {
-      TableName: userTable,
-      FilterExpression: "publicKey = :p",
-      ExpressionAttributeValues: {
-        ":p": usersPublicKey.trim().toLowerCase(),
-      },
-    };
-
-    const record = await dbbClient.scan(params).promise();
-    const { Items } = record;
-
     if (
-      Items[0]["accessToken"] === SHA256(accessToken).toString() ||
-      Items[0]["apiKey"] === SHA256(accessToken).toString()
+      record["accessToken"] === SHA256(token).toString() ||
+      record["apiKey"] === SHA256(token).toString()
     ) {
       return true;
     } else {
