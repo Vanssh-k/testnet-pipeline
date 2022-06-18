@@ -30,7 +30,10 @@ router.post(
 
 router.get(
   "/get_file_encrypted_key",
-  [query("cid").not().isEmpty().withMessage("cid not found")],
+  [
+    query("cid").not().isEmpty().withMessage("cid not found"),
+    query("sharedTo").not().isEmpty().withMessage("sharedTo not found"),
+  ],
   validate,
   EncryptionController.get_file_encrypted_key
 );
