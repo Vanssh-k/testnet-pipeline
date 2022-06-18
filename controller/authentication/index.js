@@ -3,12 +3,11 @@ const { v4: uuidv4 } = require("uuid");
 
 const userDetails = require("./userDetails");
 const checkApiKey = require("./checkApiKey");
+const checkTwitter = require("./checkTwitter");
 const verifySignature = require("./verifySignature");
 const verifyAccessToken = require("./verifyAccessToken");
 const updateUserDetails = require("./updateUserDetails");
-const checkTwitter = require("./checkTwitter");
 const { freeDataLimitInBytes } = require("../libs/constants");
-const { updateFaucet, getDetails } = require("./faucet");
 
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
@@ -32,19 +31,26 @@ exports.verify_signer = async (req, res, next) => {
 
     // Change the message and return access token
     const accessToken = uuidv4().toString().split("-").join("");
+    let date = new Date(); // Now
+    date = date.setDate(date.getDate() + 7); // Expire in 7 days
+
     const updatedDetails = {
-      publicKey: publicKey,
+      publicKey: record.publicKey,
       message: uuidv4().toString(),
-      dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
-      dataUsed: record ? record.dataUsed : 0,
-      apiKey: record ? record.apiKey : null,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: SHA256(accessToken).toString(),
+      tokenExpires: date,
+      faucet: record.faucet
     };
 
     const _ = await updateUserDetails(updatedDetails);
 
     res.status(200).json({ accessToken: accessToken });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 };
@@ -55,16 +61,16 @@ exports.verify_signer_with_data = async (req, res, next) => {
     const usersPublicKey = req.body.publicKey;
     const accessToken = req.headers["authorization"].split(" ")[1];
 
-    const user = await userDetails(usersPublicKey);
-    const authentic = verifyAccessToken(usersPublicKey, accessToken);
+    const record = await userDetails(usersPublicKey);
+    const authentic = verifyAccessToken(record, accessToken);
 
     if (!authentic) {
       throw new AuthenticationError();
     }
 
     res.status(200).json({
-      dataLimit: user.dataLimit,
-      dataUsed: user.dataUsed,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
     });
   } catch (error) {
     next(error);
@@ -84,7 +90,10 @@ exports.get_message = async (req, res, next) => {
       dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
       dataUsed: record ? record.dataUsed : 0,
       apiKey: record ? record.apiKey : "",
+      encryptionPublicKey: "",
       accessToken: "",
+      tokenExpires: record ? record.tokenExpires : 0,
+      faucet: record ? record.faucet : {}
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -98,19 +107,14 @@ exports.get_message = async (req, res, next) => {
 exports.get_api_key = async (req, res, next) => {
   try {
     const usersPublicKey = req.body.publicKey;
-    const signedMessage = req.body.signedMessage;
+    const accessToken = req.headers["authorization"].split(" ")[1];
+    
     const record = await userDetails(usersPublicKey);
-
     if (!record) {
       throw new NotFoundError();
     }
 
-    const authentic = verifySignature(
-      usersPublicKey,
-      record["message"],
-      signedMessage
-    );
-
+    const authentic = verifyAccessToken(record, accessToken);
     if (!authentic) {
       throw new AuthenticationError();
     }
@@ -122,7 +126,10 @@ exports.get_api_key = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: SHA256(apiKey).toString(),
+      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -154,17 +161,23 @@ exports.tweet_recharge = async (req, res, next) => {
   try {
     const usersPublicKey = req.query.publicKey;
     const twitterID = req.query.twitterID;
-    const accessToken = req.headers["authorization"].split(" ")[1];
+    const token = req.headers["authorization"].split(" ")[1]; // can be api key or access token
+
+    const record = await userDetails(usersPublicKey);
+    
+    // Check if user already exist
+    if (!record) {
+      throw new NotFoundError();
+    }
 
     // Check if user authentic
-    const authentic = verifyAccessToken(usersPublicKey, accessToken);
+    const authentic = verifyAccessToken(record, token);
     if (!authentic) {
       throw new AuthenticationError();
     }
 
     // Check if user have already used faucet
-    const faucetDetails = getDetails(usersPublicKey);
-    if (faucetDetails["twitter"] === "yes") {
+    if (record["faucet"]["twitter"] === "used") {
       throw new ForbiddenError();
     }
 
@@ -174,11 +187,6 @@ exports.tweet_recharge = async (req, res, next) => {
       throw new ForbiddenError();
     }
 
-    const record = await userDetails(usersPublicKey); // Check if user already exist
-    if (!record) {
-      throw new NotFoundError();
-    }
-
     // Update Data Limit
     const updatedDetails = {
       publicKey: usersPublicKey,
@@ -186,19 +194,47 @@ exports.tweet_recharge = async (req, res, next) => {
       dataLimit: record.dataLimit + freeDataLimitInBytes,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
+      encryptionPublicKey: record.encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: {twitter: "used"}
     };
 
     const _ = await updateUserDetails(updatedDetails);
 
-    // Update faucet record
-    const faucetRecord = {
-      publicKey: usersPublicKey,
-      tweet: "yes",
+    res.status(200).json("Data Limit Upgraded");
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.save_encryption_publicKey = async (req, res, next) => {
+  try {
+    const usersPublicKey = req.body.publicKey;
+    const encryptionPublicKey = req.body.encryptionPublicKey;
+    const accessToken = req.headers["authorization"].split(" ")[1];
+
+    const record = await userDetails(usersPublicKey);
+    const authentic = verifyAccessToken(record, accessToken);
+    if (!authentic) {
+      throw new AuthenticationError();
+    }
+
+    const updatedDetails = {
+      publicKey: record.publicKey,
+      message: record.message,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+      encryptionPublicKey: encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet
     };
 
-    const __ = await updateFaucet(faucetRecord);
+    const _ = await updateUserDetails(updatedDetails);
 
-    res.status(200).json("Data Limit Upgraded");
+    res.status(200).json("Success");
   } catch (error) {
     next(error);
   }
