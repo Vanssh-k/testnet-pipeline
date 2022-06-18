@@ -13,7 +13,7 @@ module.exports = async (cid) => {
 
     const record = await dbbClient.scan(params).promise();
     const { Items } = record;
-    return Items[0];
+    return Items;
   } catch (error) {
     return null;
   }
