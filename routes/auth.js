@@ -23,11 +23,6 @@ router.post(
   "/verify_signer_with_data",
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("signedMessage")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("signedMessage not found"),
   ],
   validate,
   AuthController.verify_signer_with_data
@@ -65,5 +60,15 @@ router.get(
 );
 
 router.get("/verify_api_key", AuthController.verify_api_key);
+
+router.post(
+  "/save_encryption_publicKey",
+  [
+    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    body("encryptionPublicKey").trim().not().isEmpty().withMessage("subDomain not found"),
+  ],
+  validate,
+  AuthController.save_encryption_publicKey
+);
 
 module.exports = router;
