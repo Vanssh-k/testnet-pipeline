@@ -13,16 +13,6 @@ router.get(
 );
 
 router.post(
-  "/save_encryption_publicKey",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("encryptionPublicKey").trim().not().isEmpty().withMessage("subDomain not found"),
-  ],
-  validate,
-  EncryptionController.save_encryption_publicKey
-);
-
-router.post(
   "/save_encryption_key",
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
