@@ -19,13 +19,13 @@ router.post(
   AuthController.verify_signer
 );
 
-router.post(
-  "/verify_signer_with_data",
+router.get(
+  "/verify_token",
   [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    query("publicKey").not().isEmpty().withMessage("publicKey not found"),
   ],
   validate,
-  AuthController.verify_signer_with_data
+  AuthController.verify_token
 );
 
 router.get(
