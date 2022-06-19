@@ -21,9 +21,6 @@ router.post(
 
 router.get(
   "/verify_token",
-  [
-    query("publicKey").not().isEmpty().withMessage("publicKey not found"),
-  ],
   validate,
   AuthController.verify_token
 );
