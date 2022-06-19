@@ -1,10 +1,8 @@
 const { v4: uuidv4 } = require("uuid");
 
 const userDetails = require("../authentication/userDetails");
-const updateUserDetails = require("../authentication/updateUserDetails");
 const saveFileMetaData = require("./saveFileMetaData");
 const fileDetails = require("./fileDetails");
-const verifyAccessToken = require("../authentication/verifyAccessToken");
 
 const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
@@ -17,30 +15,6 @@ exports.get_encryption_publicKey = async (req, res, next) => {
     }
 
     res.status(200).json({ encryptionPublicKey: record.encryptionPublicKey });
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.save_encryption_publicKey = async (req, res, next) => {
-  try {
-    const usersPublicKey = req.body.publicKey;
-    const encryptionPublicKey = req.body.encryptionPublicKey;
-    const accessToken = req.headers["authorization"].split(" ")[1];
-
-    const authentic = verifyAccessToken(usersPublicKey, accessToken);
-    if (!authentic) {
-      throw new ForbiddenError();
-    }
-
-    const updatedDetails = {
-      publicKey: usersPublicKey,
-      encryptionPublicKey: encryptionPublicKey,
-    };
-
-    const _ = await updateUserDetails(updatedDetails);
-
-    res.status(200).json("Success");
   } catch (error) {
     next(error);
   }
