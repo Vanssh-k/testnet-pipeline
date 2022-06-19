@@ -30,7 +30,7 @@ exports.verify_signer = async (req, res, next) => {
     }
 
     // Change the message and return access token
-    const accessToken = uuidv4().toString().split("-").join("");
+    const accessToken = "accesstoken-" + uuidv4().toString().split("-").join("");
     let date = new Date(); // Now
     date = date.setDate(date.getDate() + 7); // Expire in 7 days
 
@@ -56,21 +56,20 @@ exports.verify_signer = async (req, res, next) => {
 };
 
 // Return if user is authentic along with his data usage
-exports.verify_signer_with_data = async (req, res, next) => {
+exports.verify_token = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.publicKey;
     const accessToken = req.headers["authorization"].split(" ")[1];
 
-    const record = await userDetails(usersPublicKey);
-    const authentic = verifyAccessToken(record, accessToken);
+    const authentic = verifyAccessToken(accessToken);
 
     if (!authentic) {
       throw new AuthenticationError();
     }
 
     res.status(200).json({
-      dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed,
+      publicKey: authentic.publicKey,
+      dataLimit: authentic.dataLimit,
+      dataUsed: authentic.dataUsed,
     });
   } catch (error) {
     next(error);
@@ -215,7 +214,14 @@ exports.save_encryption_publicKey = async (req, res, next) => {
     const accessToken = req.headers["authorization"].split(" ")[1];
 
     const record = await userDetails(usersPublicKey);
-    const authentic = verifyAccessToken(record, accessToken);
+    let authentic = false;
+    if(
+      SHA256(accessToken).toString() === record["accessToken"] || 
+      SHA256(accessToken).toString() === record["apiKey"]
+    ){
+      authentic = true;
+    }
+    
     if (!authentic) {
       throw new AuthenticationError();
     }
