@@ -13,7 +13,7 @@ const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
 
-// Return if user is authentic
+// Return access token if user is authentic
 exports.verify_signer = async (req, res, next) => {
   try {
     const usersPublicKey = req.body.publicKey;
@@ -50,17 +50,16 @@ exports.verify_signer = async (req, res, next) => {
 
     res.status(200).json({ accessToken: accessToken });
   } catch (error) {
-    console.log(error)
     next(error);
   }
 };
 
 // Return if user is authentic along with his data usage
-exports.verify_token = async (req, res, next) => {
+exports.verify_access_token = async (req, res, next) => {
   try {
     const accessToken = req.headers["authorization"].split(" ")[1];
 
-    const authentic = verifyAccessToken(accessToken);
+    const authentic = await verifyAccessToken(accessToken);
 
     if (!authentic) {
       throw new AuthenticationError();
@@ -106,14 +105,19 @@ exports.get_message = async (req, res, next) => {
 exports.get_api_key = async (req, res, next) => {
   try {
     const usersPublicKey = req.body.publicKey;
-    const accessToken = req.headers["authorization"].split(" ")[1];
+    const signedMessage = req.body.signedMessage;
     
     const record = await userDetails(usersPublicKey);
     if (!record) {
       throw new NotFoundError();
     }
 
-    const authentic = verifyAccessToken(record, accessToken);
+    const authentic = verifySignature(
+      usersPublicKey,
+      record.message,
+      signedMessage
+    );
+
     if (!authentic) {
       throw new AuthenticationError();
     }
@@ -121,7 +125,7 @@ exports.get_api_key = async (req, res, next) => {
     const apiKey = uuidv4().toString();
     const updatedDetails = {
       publicKey: record.publicKey,
-      message: record.message,
+      message: uuidv4().toString(),
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: SHA256(apiKey).toString(),
