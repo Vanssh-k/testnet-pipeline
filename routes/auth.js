@@ -20,9 +20,9 @@ router.post(
 );
 
 router.get(
-  "/verify_token",
+  "/verify_access_token",
   validate,
-  AuthController.verify_token
+  AuthController.verify_access_token
 );
 
 router.get(

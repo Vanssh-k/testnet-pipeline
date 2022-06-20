@@ -13,7 +13,7 @@ router.get(
 );
 
 router.post(
-  "/save_encryption_key",
+  "/save_file_encryption_key",
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
     body("fileName").trim().not().isEmpty().withMessage("fileName not found"),
@@ -25,17 +25,17 @@ router.post(
     body("sharedTo").trim().not().isEmpty().withMessage("sharedTo not found"),
   ],
   validate,
-  EncryptionController.save_encryption_key
+  EncryptionController.save_file_encryption_key
 );
 
 router.get(
-  "/get_file_encrypted_key",
+  "/get_file_encryption_key",
   [
     query("cid").not().isEmpty().withMessage("cid not found"),
     query("sharedTo").not().isEmpty().withMessage("sharedTo not found"),
   ],
   validate,
-  EncryptionController.get_file_encrypted_key
+  EncryptionController.get_file_encryption_key
 );
 
 module.exports = router;
