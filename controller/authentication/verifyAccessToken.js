@@ -14,15 +14,16 @@ module.exports = async (accessToken) => {
     };
 
     const record = await dbbClient.scan(params).promise();
+    const { Items } = record;
 
-    if(!record){
+    if(Items.length===0){
       return null;
     }
     
     return {
-      publicKey: record["publicKey"],
-      dataLimit: record["dataLimit"],
-      dataUsed: record["dataUsed"]
+      publicKey: Items[0]["publicKey"],
+      dataLimit: Items[0]["dataLimit"],
+      dataUsed: Items[0]["dataUsed"]
     };
   } catch (error) {
     return null;
