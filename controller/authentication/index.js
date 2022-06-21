@@ -174,8 +174,7 @@ exports.tweet_recharge = async (req, res, next) => {
     }
 
     // Check if user authentic
-    const authentic = verifyAccessToken(record, token);
-    if (!authentic) {
+    if (SHA256(token).toString()!==record["accessToken"]) {
       throw new AuthenticationError();
     }
 
