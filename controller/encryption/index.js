@@ -47,7 +47,7 @@ exports.save_file_encryption_key = async (req, res, next) => {
     const toSave = {
       id: uuidv4(),
       cid: req.body.cid,
-      publicKey: req.body.publicKey,
+      publicKey: req.body.publicKey.toLowerCase(),
       fileName: req.body.fileName,
       nonce: req.body.nonce,
       fileSizeInBytes: parseInt(req.body.fileSizeInBytes),
@@ -75,7 +75,8 @@ exports.get_file_encryption_key = async (req, res, next) => {
     let record = null;
     for(let i=0; i<files.length; i++){
       if(files[i]["sharedTo"]===sharedTo){
-        record = files[i]
+        record = files[i];
+        break;
       }
     }
 
