@@ -12,7 +12,7 @@ module.exports = async (publicKey, twitterID) => {
     );
 
     const tweetContent = response["data"]["data"]["text"];
-    return tweetContent.includes(publicKey);
+    return tweetContent.toLowerCase().includes(publicKey.toLowerCase());
   } catch (error) {
     return null;
   }
