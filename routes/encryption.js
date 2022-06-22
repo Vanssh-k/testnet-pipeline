@@ -38,4 +38,13 @@ router.get(
   EncryptionController.get_file_encryption_key
 );
 
+router.get(
+  "/get_encrypted_uploads",
+  [
+    query("publicKey").not().isEmpty().withMessage("publicKey not found")
+  ],
+  validate,
+  EncryptionController.get_encrypted_uploads
+);
+
 module.exports = router;

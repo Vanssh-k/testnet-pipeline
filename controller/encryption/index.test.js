@@ -121,3 +121,11 @@ test("Get File Encryption Key - Main: POST /get_file_encryption_key", async () =
     )
     .expect(200)
 }, 10000);
+
+test("Get File List by public key - Main: POST /get_encrypted_uploads", async () => {
+  await supertest(app)
+    .get(
+      "/api/encryption/get_encrypted_uploads?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588"
+    )
+    .expect(200)
+}, 10000);
