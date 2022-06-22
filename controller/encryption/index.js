@@ -4,6 +4,7 @@ const SHA256 = require("crypto-js/sha256");
 const userDetails = require("../authentication/userDetails");
 const saveFileMetaData = require("./saveFileMetaData");
 const fileDetails = require("./fileDetails");
+const fileList = require("./fileList");
 
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
@@ -85,6 +86,17 @@ exports.get_file_encryption_key = async (req, res, next) => {
     }
 
     res.status(200).json(record);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.get_encrypted_uploads = async (req, res, next) => {
+  try {
+    const publicKey = req.query.publicKey;
+    const fileDetails = fileList(publicKey);
+
+    res.status(200).json(fileDetails);
   } catch (error) {
     next(error);
   }
