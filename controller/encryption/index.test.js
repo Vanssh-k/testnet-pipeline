@@ -55,7 +55,7 @@ test("Save File Encryption Key - Auth Failed: POST /save_file_encryption_key", a
 test("Save File Encryption Key: POST /save_file_encryption_key", async () => {
   await supertest(app)
     .get(
-      "/api/auth/get_message?publicKey=0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26"
+      "/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588"
     )
     .expect(200)
     .then(async (response) => {
@@ -67,7 +67,7 @@ test("Save File Encryption Key: POST /save_file_encryption_key", async () => {
       );
       const signedMessage = await signer.signMessage(verificationMessage);
       const data = {
-        publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
+        publicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
         signedMessage: signedMessage,
       };
 
@@ -79,15 +79,13 @@ test("Save File Encryption Key: POST /save_file_encryption_key", async () => {
           const accessToken = JSON.parse(response.text);
           const postData = {
             cid: "QmW5F7WqyDzd6zmC1ex8ooyC7aYjnvcv2eGbZ43n19WgnJ",
-            publicKey: "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26  ",
+            publicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
             fileName: "test.jpg",
             nonce: "QwLx0+0cme3qUt3PRQCmsQBbnadC/14L",
             fileSizeInBytes: 82958,
             fileEncryptionKey: "YFpVJ0YMpi9y3DJdNqU/noTB7ktf9lFF9HIobDhp99vgCtgEGkgcHSS4h7KbvKLFEFGJsg==",
             sharedFrom: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8=",
-            sharedTo: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8=",
-            createdAt: 1655594266438,
-            lastUpdate: 1655594266438
+            sharedTo: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8="
           };
           await supertest(app)
             .post(
