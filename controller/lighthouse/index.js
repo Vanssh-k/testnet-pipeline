@@ -125,7 +125,11 @@ exports.add_cid_to_queue = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: parseInt(record.dataUsed) + parseInt(req.body.size),
       apiKey: record.apiKey,
-    };
+      encryptionPublicKey: encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet
+    }; 
 
     const updateResponse = await updateUserDetails(updatedDetails);
     if (!updateResponse) {
