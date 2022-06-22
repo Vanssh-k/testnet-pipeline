@@ -88,8 +88,8 @@ exports.get_message = async (req, res, next) => {
       dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
       dataUsed: record ? record.dataUsed : 0,
       apiKey: record ? record.apiKey : "",
-      encryptionPublicKey: "",
-      accessToken: "",
+      encryptionPublicKey: record ? record.encryptionPublicKey : "",
+      accessToken: record ? record.accessToken : "",
       tokenExpires: record ? record.tokenExpires : 0,
       faucet: record ? record.faucet : {}
     };
