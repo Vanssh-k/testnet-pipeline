@@ -34,6 +34,7 @@ test("Save File Encryption Key - Auth Failed: POST /save_file_encryption_key", a
   const postData = {
     cid: "QmW5F7WqyDzd6zmC1ex8ooyC7aYjnvcv2eGbZ43n19WgnJ",
     publicKey: "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
+    fromPublicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
     fileName: "test.jpg",
     nonce: "QwLx0+0cme3qUt3PRQCmsQBbnadC/14L",
     fileSizeInBytes: 82958,
@@ -80,6 +81,7 @@ test("Save File Encryption Key: POST /save_file_encryption_key", async () => {
           const postData = {
             cid: "QmW5F7WqyDzd6zmC1ex8ooyC7aYjnvcv2eGbZ43n19WgnJ",
             publicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
+            fromPublicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
             fileName: "test.jpg",
             nonce: "QwLx0+0cme3qUt3PRQCmsQBbnadC/14L",
             fileSizeInBytes: 82958,

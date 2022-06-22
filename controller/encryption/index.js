@@ -28,7 +28,7 @@ exports.get_encryption_publicKey = async (req, res, next) => {
 
 exports.save_file_encryption_key = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.publicKey;
+    const usersPublicKey = req.body.fromPublicKey;
     const accessToken = req.headers["authorization"].split(" ")[1];
 
     const record = await userDetails(usersPublicKey);

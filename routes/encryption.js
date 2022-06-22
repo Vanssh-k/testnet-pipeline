@@ -16,6 +16,7 @@ router.post(
   "/save_file_encryption_key",
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    body("fromPublicKey").trim().not().isEmpty().withMessage("fromPublicKey not found"),
     body("fileName").trim().not().isEmpty().withMessage("fileName not found"),
     body("cid").trim().not().isEmpty().withMessage("cid not found"),
     body("nonce").trim().not().isEmpty().withMessage("nonce not found"),
