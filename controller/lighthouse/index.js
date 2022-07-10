@@ -100,6 +100,8 @@ exports.add_cid_to_queue = async (req, res, next) => {
         req.body.cid,
         req.body.name,
         req.body.size,
+        req.body.encryption,
+        req.body.mimeType,
         "payment pending"
       );
 
@@ -112,8 +114,11 @@ exports.add_cid_to_queue = async (req, res, next) => {
       req.body.cid,
       req.body.name,
       req.body.size,
+      req.body.encryption,
+      req.body.mimeType,
       "queued"
     );
+
     if (!saveFileResponse) {
       throw new DatabaseError("Save File failed");
     }

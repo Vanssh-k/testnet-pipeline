@@ -90,6 +90,8 @@ test("Add CID To Queue: GET /add_cid_to_queue", async () => {
     name: "adiyogi.jpg",
     cid: "bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34",
     publicKey: "0x487fc2fE07c593EAb555729c3DD6dF85020B5160",
+    encryption: false,
+    mimeType: "image/jpeg",
     size: 239214,
   };
 
