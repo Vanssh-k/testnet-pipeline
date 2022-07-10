@@ -100,6 +100,8 @@ exports.add_cid_to_queue = async (req, res, next) => {
         req.body.cid,
         req.body.name,
         req.body.size,
+        req.body.encryption,
+        req.body.mimeType,
         "payment pending"
       );
 
@@ -112,8 +114,11 @@ exports.add_cid_to_queue = async (req, res, next) => {
       req.body.cid,
       req.body.name,
       req.body.size,
+      req.body.encryption,
+      req.body.mimeType,
       "queued"
     );
+
     if (!saveFileResponse) {
       throw new DatabaseError("Save File failed");
     }
@@ -125,7 +130,11 @@ exports.add_cid_to_queue = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: parseInt(record.dataUsed) + parseInt(req.body.size),
       apiKey: record.apiKey,
-    };
+      encryptionPublicKey: record.encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet
+    }; 
 
     const updateResponse = await updateUserDetails(updatedDetails);
     if (!updateResponse) {

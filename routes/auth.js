@@ -19,18 +19,10 @@ router.post(
   AuthController.verify_signer
 );
 
-router.post(
-  "/verify_signer_with_data",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("signedMessage")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("signedMessage not found"),
-  ],
+router.get(
+  "/verify_access_token",
   validate,
-  AuthController.verify_signer_with_data
+  AuthController.verify_access_token
 );
 
 router.get(
@@ -54,6 +46,26 @@ router.post(
   AuthController.get_api_key
 );
 
+router.get(
+  "/tweet_recharge",
+  [
+    query("publicKey").not().isEmpty().withMessage("publicKey not found"),
+    query("twitterID").not().isEmpty().withMessage("twitterID not found")
+  ],
+  validate,
+  AuthController.tweet_recharge
+);
+
 router.get("/verify_api_key", AuthController.verify_api_key);
+
+router.post(
+  "/save_encryption_publicKey",
+  [
+    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    body("encryptionPublicKey").trim().not().isEmpty().withMessage("subDomain not found"),
+  ],
+  validate,
+  AuthController.save_encryption_publicKey
+);
 
 module.exports = router;

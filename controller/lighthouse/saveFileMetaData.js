@@ -2,7 +2,7 @@ const dbbClient = require("../libs/ddbClient");
 const { fileTable } = require("../libs/constants");
 const { v4: uuidv4 } = require("uuid");
 
-module.exports = async (publicKey, cid, fileName, fileSizeInBytes, status) => {
+module.exports = async (publicKey, cid, fileName, fileSizeInBytes, encryption, mimeType, status) => {
   try {
     const id = uuidv4();
     const timestamp = Date.now();
@@ -14,6 +14,8 @@ module.exports = async (publicKey, cid, fileName, fileSizeInBytes, status) => {
         cid: cid,
         fileName: fileName,
         fileSizeInBytes: fileSizeInBytes,
+        encryption: encryption,
+        mimeType: mimeType,
         status: status,
         txHash: "",
         createdAt: timestamp,
