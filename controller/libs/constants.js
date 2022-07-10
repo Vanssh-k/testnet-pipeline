@@ -1,5 +1,5 @@
 const userTable = "UsersTable";
-const fileTable = "FileManagement";
+const fileTable = "files";
 const gatewayTable = "SubDomainManagement";
 const fileTableEncryption = "fileTableTest";
 const freeDataLimitInBytes = 1073741824;
