@@ -1,7 +1,8 @@
 const axios = require("axios");
-const updateUserDetails = require("../authentication/updateUserDetails");
-const userDetails = require("../authentication/userDetails");
+const fileDetailsByCid = require("./fileDetailsByCid");
 const saveFileMetaData = require("./saveFileMetaData");
+const userDetails = require("../authentication/userDetails");
+const updateUserDetails = require("../authentication/updateUserDetails");
 
 const ForbiddenError = require("../../errors/forbidden");
 const DatabaseError = require("../../errors/database-error");
@@ -78,6 +79,31 @@ exports.add_cid = async (req, res, next) => {
     }
 
     res.status(200).json("Added To Queue");
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get details of a file
+exports.file_info = async (req, res, next) => {
+  try {
+    console.log("here")
+    const record = await fileDetailsByCid(req.query.cid);
+    console.log(record)
+    if (!record) {
+      throw new NotFoundError();
+    }
+
+    res.status(200).json({
+      id: record.id,
+      fileSizeInBytes: record.fileSizeInBytes,
+      cid: record.cid,
+      encryption: record.encryption,
+      fileName: record.fileName,
+      mimeType: record.mimeType,
+      txHash: record.txHash,
+      status: record.status
+    });
   } catch (error) {
     next(error);
   }
