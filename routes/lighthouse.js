@@ -13,6 +13,13 @@ router.get(
 );
 
 router.get(
+  "/file_info",
+  [query("cid").not().isEmpty().withMessage("cid not found")],
+  validate,
+  LighthouseController.file_info
+);
+
+router.get(
   "/cid_status",
   [query("cid").not().isEmpty().withMessage("cid not found")],
   validate,
