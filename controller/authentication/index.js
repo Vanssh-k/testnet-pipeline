@@ -1,12 +1,12 @@
 const SHA256 = require("crypto-js/sha256");
 const { v4: uuidv4 } = require("uuid");
+const jwt = require('jsonwebtoken');
 const web3 = require("web3");
 
 const userDetails = require("./userDetails");
 const checkApiKey = require("./checkApiKey");
 const checkTwitter = require("./checkTwitter");
 const verifySignature = require("./verifySignature");
-const verifyAccessToken = require("./verifyAccessToken");
 const updateUserDetails = require("./updateUserDetails");
 const { freeDataLimitInBytes } = require("../libs/constants");
 
@@ -32,7 +32,10 @@ exports.verify_signer = async (req, res, next) => {
     }
 
     // Change the message and return access token
-    const accessToken = "accesstoken-" + uuidv4().toString().split("-").join("");
+    const payLoad = {publicKey: record.publicKey};
+    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET , { algorithm: 'HS256', expiresIn: '12h'});
+    const refreshToken = jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET , { algorithm: 'HS256'});
+    
     let date = new Date(); // Now
     date = date.setDate(date.getDate() + 7); // Expire in 7 days
 
@@ -43,34 +46,44 @@ exports.verify_signer = async (req, res, next) => {
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
       encryptionPublicKey: record.encryptionPublicKey,
-      accessToken: SHA256(accessToken).toString(),
+      accessToken: refreshToken,
       tokenExpires: date,
       faucet: record.faucet
     };
 
     const _ = await updateUserDetails(updatedDetails);
 
-    res.status(200).json({ accessToken: accessToken });
+    res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (error) {
     next(error);
   }
 };
 
+const verifyJWT = (accessToken) =>{
+  try{
+    const userData  = jwt.verify(accessToken, process.env.JWT_SECRET);
+    return(userData);
+  } catch {
+    return null;
+  }
+}
+
 // Return if user is authentic along with his data usage
 exports.verify_access_token = async (req, res, next) => {
   try {
     const accessToken = req.headers["authorization"].split(" ")[1];
-
-    const authentic = await verifyAccessToken(accessToken);
-
-    if (!authentic) {
+    const userData = verifyJWT(accessToken);
+    
+    if (!userData) {
       throw new AuthenticationError();
     }
 
+    const record = await userDetails(userData.publicKey);
+
     res.status(200).json({
-      publicKey: authentic.publicKey,
-      dataLimit: authentic.dataLimit,
-      dataUsed: authentic.dataUsed,
+      publicKey: record.publicKey,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
     });
   } catch (error) {
     next(error);
