@@ -87,9 +87,7 @@ exports.add_cid = async (req, res, next) => {
 // Get details of a file
 exports.file_info = async (req, res, next) => {
   try {
-    console.log("here")
     const record = await fileDetailsByCid(req.query.cid);
-    console.log(record)
     if (!record) {
       throw new NotFoundError();
     }

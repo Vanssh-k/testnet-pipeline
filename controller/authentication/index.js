@@ -1,6 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 const { v4: uuidv4 } = require("uuid");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const web3 = require("web3");
 
 const userDetails = require("./userDetails");
@@ -32,10 +32,15 @@ exports.verify_signer = async (req, res, next) => {
     }
 
     // Change the message and return access token
-    const payLoad = {publicKey: record.publicKey};
-    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET , { algorithm: 'HS256', expiresIn: '12h'});
-    const refreshToken = jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET , { algorithm: 'HS256'});
-    
+    const payLoad = { publicKey: record.publicKey };
+    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "12h",
+    });
+    const refreshToken = jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET, {
+      algorithm: "HS256",
+    });
+
     let date = new Date(); // Now
     date = date.setDate(date.getDate() + 7); // Expire in 7 days
 
@@ -48,32 +53,34 @@ exports.verify_signer = async (req, res, next) => {
       encryptionPublicKey: record.encryptionPublicKey,
       accessToken: refreshToken,
       tokenExpires: date,
-      faucet: record.faucet
+      faucet: record.faucet,
     };
 
     const _ = await updateUserDetails(updatedDetails);
 
-    res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+    res
+      .status(200)
+      .json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (error) {
     next(error);
   }
 };
 
-const verifyJWT = (accessToken) =>{
-  try{
-    const userData  = jwt.verify(accessToken, process.env.JWT_SECRET);
-    return(userData);
+const verifyJWT = (accessToken) => {
+  try {
+    const userData = jwt.verify(accessToken, process.env.JWT_SECRET);
+    return userData;
   } catch {
     return null;
   }
-}
+};
 
 // Return if user is authentic along with his data usage
 exports.verify_access_token = async (req, res, next) => {
   try {
     const accessToken = req.headers["authorization"].split(" ")[1];
     const userData = verifyJWT(accessToken);
-    
+
     if (!userData) {
       throw new AuthenticationError();
     }
@@ -95,7 +102,7 @@ exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
     if (!web3.utils.isAddress(publicKey)) {
-      throw new RequestValidationError([{msg: "Invalid public key!!!"}]);
+      throw new RequestValidationError([{ msg: "Invalid public key!!!" }]);
     }
 
     const record = await userDetails(publicKey); // Check if user already exist
@@ -110,7 +117,7 @@ exports.get_message = async (req, res, next) => {
       encryptionPublicKey: record ? record.encryptionPublicKey : "",
       accessToken: record ? record.accessToken : "",
       tokenExpires: record ? record.tokenExpires : 0,
-      faucet: record ? record.faucet : {}
+      faucet: record ? record.faucet : {},
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -125,7 +132,7 @@ exports.get_api_key = async (req, res, next) => {
   try {
     const usersPublicKey = req.body.publicKey;
     const signedMessage = req.body.signedMessage;
-    
+
     const record = await userDetails(usersPublicKey);
     if (!record) {
       throw new NotFoundError();
@@ -151,7 +158,7 @@ exports.get_api_key = async (req, res, next) => {
       encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
-      faucet: record.faucet
+      faucet: record.faucet,
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -186,14 +193,14 @@ exports.tweet_recharge = async (req, res, next) => {
     const token = req.headers["authorization"].split(" ")[1]; // can be api key or access token
 
     const record = await userDetails(usersPublicKey);
-    
+
     // Check if user already exist
     if (!record) {
       throw new NotFoundError();
     }
 
     // Check if user authentic
-    if (SHA256(token).toString()!==record["accessToken"]) {
+    if (SHA256(token).toString() !== record["accessToken"]) {
       throw new AuthenticationError();
     }
 
@@ -218,7 +225,7 @@ exports.tweet_recharge = async (req, res, next) => {
       encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
-      faucet: {twitter: "used"}
+      faucet: { twitter: "used" },
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -237,13 +244,13 @@ exports.save_encryption_publicKey = async (req, res, next) => {
 
     const record = await userDetails(usersPublicKey);
     let authentic = false;
-    if(
-      SHA256(accessToken).toString() === record["accessToken"] || 
+    if (
+      SHA256(accessToken).toString() === record["accessToken"] ||
       SHA256(accessToken).toString() === record["apiKey"]
-    ){
+    ) {
       authentic = true;
     }
-    
+
     if (!authentic) {
       throw new AuthenticationError();
     }
@@ -257,7 +264,7 @@ exports.save_encryption_publicKey = async (req, res, next) => {
       encryptionPublicKey: encryptionPublicKey,
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
-      faucet: record.faucet
+      faucet: record.faucet,
     };
 
     const _ = await updateUserDetails(updatedDetails);
