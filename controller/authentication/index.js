@@ -1,5 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 const { v4: uuidv4 } = require("uuid");
+const web3 = require("web3");
 
 const userDetails = require("./userDetails");
 const checkApiKey = require("./checkApiKey");
@@ -12,6 +13,7 @@ const { freeDataLimitInBytes } = require("../libs/constants");
 const AuthenticationError = require("../../errors/authentication-error");
 const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
+const RequestValidationError = require("../../errors/request-validation-error");
 
 // Return access token if user is authentic
 exports.verify_signer = async (req, res, next) => {
@@ -79,6 +81,10 @@ exports.verify_access_token = async (req, res, next) => {
 exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
+    if (!web3.utils.isAddress(publicKey)) {
+      throw new RequestValidationError([{msg: "Invalid public key!!!"}]);
+    }
+
     const record = await userDetails(publicKey); // Check if user already exist
     const message = uuidv4().toString();
 
