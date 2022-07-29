@@ -13,7 +13,8 @@ module.exports = async (usersPublicKey) => {
     };
 
     const record = await dbbClient.query(params).promise();
-    return record;
+    const { Items } = record;
+    return Items;
   } catch (error) {
     return null;
   }
