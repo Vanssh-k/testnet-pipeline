@@ -113,7 +113,7 @@ exports.get_message = async (req, res, next) => {
       message: message,
       dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
       dataUsed: record ? record.dataUsed : 0,
-      apiKey: record ? record.apiKey : "",
+      apiKey: record ? (record.apiKey===""?SHA256(uuidv4().toString()).toString():record.apiKey) : SHA256(uuidv4().toString()).toString(),
       encryptionPublicKey: record ? record.encryptionPublicKey : "",
       accessToken: record ? record.accessToken : "",
       tokenExpires: record ? record.tokenExpires : 0,
