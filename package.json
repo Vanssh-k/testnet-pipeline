@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index",
+    "dev": "nodemon index",
     "lint": "trunk check",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageDirectory=tests/coverage"
