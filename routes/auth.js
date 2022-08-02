@@ -26,6 +26,12 @@ router.get(
 );
 
 router.get(
+  "/refresh_access_token",
+  validate,
+  AuthController.refresh_access_token
+);
+
+router.get(
   "/get_message",
   [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
   validate,

@@ -66,9 +66,9 @@ exports.verify_signer = async (req, res, next) => {
   }
 };
 
-const verifyJWT = (accessToken) => {
+const verifyJWT = (accessToken, secret) => {
   try {
-    const userData = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const userData = jwt.verify(accessToken, secret);
     return userData;
   } catch {
     return null;
@@ -79,7 +79,7 @@ const verifyJWT = (accessToken) => {
 exports.verify_access_token = async (req, res, next) => {
   try {
     const accessToken = req.headers["authorization"].split(" ")[1];
-    const userData = verifyJWT(accessToken);
+    const userData = verifyJWT(accessToken, process.env.JWT_SECRET);
 
     if (!userData) {
       throw new AuthenticationError();
@@ -93,6 +93,34 @@ exports.verify_access_token = async (req, res, next) => {
       dataUsed: record.dataUsed,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+exports.refresh_access_token = async (req, res, next) => {
+  try {
+    const refreshToken = req.headers["authorization"].split(" ")[1];
+    const userData = verifyJWT(refreshToken, process.env.JWT_REFRESH_SECRET);
+    
+    if (!userData) {
+      throw new AuthenticationError();
+    }
+
+    const record = await userDetails(userData.publicKey);
+
+    if(!record || record.accessToken!==refreshToken){
+      throw new AuthenticationError();
+    }
+
+    const payLoad = { publicKey: record.publicKey };
+    const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "12h",
+    });
+
+    res.status(200).json({ accessToken: accessToken });
+  } catch (error) {
+    console.log(error)
     next(error);
   }
 };
