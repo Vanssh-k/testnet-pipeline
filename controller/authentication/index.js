@@ -216,21 +216,15 @@ exports.verify_api_key = async (req, res, next) => {
 
 exports.tweet_recharge = async (req, res, next) => {
   try {
-    const usersPublicKey = req.query.publicKey;
     const twitterID = req.query.twitterID;
     const token = req.headers["authorization"].split(" ")[1]; // can be api key or access token
 
-    const record = await userDetails(usersPublicKey);
-
-    // Check if user already exist
-    if (!record) {
-      throw new NotFoundError();
-    }
-
-    // Check if user authentic
-    if (SHA256(token).toString() !== record["accessToken"]) {
+    const userData = verifyJWT(token, process.env.JWT_SECRET);
+    if (!userData) {
       throw new AuthenticationError();
     }
+
+    const record = await userDetails(userData.publicKey);
 
     // Check if user have already used faucet
     if (record["faucet"]["twitter"] === "used") {
@@ -238,14 +232,14 @@ exports.tweet_recharge = async (req, res, next) => {
     }
 
     // Check for validity of tweet
-    const validTweet = await checkTwitter(usersPublicKey, twitterID);
+    const validTweet = await checkTwitter(userData.publicKey, twitterID);
     if (!validTweet) {
       throw new ForbiddenError();
     }
 
     // Update Data Limit
     const updatedDetails = {
-      publicKey: usersPublicKey,
+      publicKey: userData.publicKey,
       message: record.message,
       dataLimit: record.dataLimit + freeDataLimitInBytes,
       dataUsed: record.dataUsed,
