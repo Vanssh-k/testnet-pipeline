@@ -120,7 +120,37 @@ exports.refresh_access_token = async (req, res, next) => {
 
     res.status(200).json({ accessToken: accessToken });
   } catch (error) {
-    console.log(error)
+    next(error);
+  }
+};
+
+exports.remove_refresh_access_token = async (req, res, next) => {
+  try {
+    const refreshToken = req.headers["authorization"].split(" ")[1];
+    const userData = verifyJWT(refreshToken, process.env.JWT_REFRESH_SECRET);
+    
+    if (!userData) {
+      throw new AuthenticationError();
+    }
+
+    const record = await userDetails(userData.publicKey);
+
+    const updatedDetails = {
+      publicKey: record.publicKey,
+      message: record.message,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+      encryptionPublicKey: record.encryptionPublicKey,
+      accessToken: null,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet,
+    };
+
+    const _ = await updateUserDetails(updatedDetails);
+
+    res.status(200).json("Logout Success!!!");
+  } catch (error) {
     next(error);
   }
 };
