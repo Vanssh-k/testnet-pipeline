@@ -134,7 +134,7 @@ exports.bulk_cid_add = async (req, res, next) => {
     }
     // Add data to SQS
 
-    res.status(200).json("Added to queue!!!");
+    res.status(200).json({orderID: orderID});
   } catch (error) {
     next(error);
   }
