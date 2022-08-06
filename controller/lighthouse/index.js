@@ -155,7 +155,7 @@ exports.cid_order_status = async (req, res, next) => {
 
 exports.order_details = async (req, res, next) => {
   try {
-    const record = await orderDetails(req.query.orderID);
+    const record = await orderDetails(req.query.orderId);
     if (!record) {
       throw new NotFoundError();
     }
