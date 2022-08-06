@@ -108,6 +108,7 @@ exports.bulk_cid_add = async (req, res, next) => {
       id: uuidv4().toString(),
       publicKey: record.publicKey,
       orderID: orderID,
+      totalCID: data.length,
       orderStatus: "queued",
       createdAt: timestamp,
       lastUpdate: timestamp,
