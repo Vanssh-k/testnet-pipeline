@@ -37,6 +37,35 @@ router.post(
 );
 
 router.post(
+  "/bulk_cid_add",
+  [
+    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
+    body("signedMessage")
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("signedMessage not found"),
+      body("data").trim().not().isEmpty().withMessage("data not found"),
+  ],
+  validate,
+  LighthouseController.bulk_cid_add
+);
+
+router.get(
+  "/cid_order_status",
+  [query("orderId").not().isEmpty().withMessage("orderId not found")],
+  validate,
+  LighthouseController.cid_order_status
+);
+
+router.get(
+  "/order_details",
+  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
+  validate,
+  LighthouseController.order_details
+);
+
+router.post(
   "/add_cid_to_queue",
   [
     body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
