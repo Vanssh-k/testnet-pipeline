@@ -125,7 +125,7 @@ exports.bulk_cid_add = async (req, res, next) => {
         fileName: "",
         fileSizeInBytes: "",
         txHash: "",
-        status: "queued",
+        cidStatus: "queued",
         deal: ""
       });
       if(!save){
@@ -142,7 +142,7 @@ exports.bulk_cid_add = async (req, res, next) => {
 
 exports.cid_order_status = async (req, res, next) => {
   try {
-    const record = await cidOrderStatus(req.query.publicKey);
+    const record = await cidOrderStatus(req.query.publicKey.toLowerCase());
     if (!record) {
       throw new NotFoundError();
     }
@@ -196,7 +196,7 @@ exports.file_info = async (req, res, next) => {
       fileName: record.fileName,
       mimeType: record.mimeType,
       txHash: record.txHash,
-      status: record.status
+      cidStatus: record.cidStatus
     });
   } catch (error) {
     next(error);
