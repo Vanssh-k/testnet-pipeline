@@ -53,14 +53,14 @@ router.post(
 
 router.get(
   "/cid_order_status",
-  [query("orderId").not().isEmpty().withMessage("orderId not found")],
+  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
   validate,
   LighthouseController.cid_order_status
 );
 
 router.get(
   "/order_details",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
+  [query("orderId").not().isEmpty().withMessage("orderId not found")],
   validate,
   LighthouseController.order_details
 );
