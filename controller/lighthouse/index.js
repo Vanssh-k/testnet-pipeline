@@ -1,6 +1,12 @@
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
+const addCID = require("./addCID");
+const createOrder = require("./createOrder");
+const cidOrderStatus = require("./cidOrderStatus");
+const orderDetails = require("./orderDetails");
 const fileDetailsByCid = require("./fileDetailsByCid");
 const saveFileMetaData = require("./saveFileMetaData");
+const verifySignature = require("../authentication/verifySignature");
 const userDetails = require("../authentication/userDetails");
 const updateUserDetails = require("../authentication/updateUserDetails");
 
@@ -67,6 +73,95 @@ const addCid = async (name, cid) => {
     return response;
   } catch (error) {
     return null;
+  }
+};
+
+// add cid in bulk
+exports.bulk_cid_add = async (req, res, next) => {
+  try {
+    // Authenticate
+    const usersPublicKey = req.body.publicKey;
+    const signedMessage = req.body.signedMessage;
+
+    const record = await userDetails(usersPublicKey);
+    if (!record) {
+      throw new NotFoundError();
+    }
+
+    const authentic = verifySignature(
+      usersPublicKey,
+      record.message,
+      signedMessage
+    );
+
+    if (!authentic) {
+      throw new AuthenticationError();
+    }
+
+    // Get CID, filename array
+    const data = JSON.parse(req.body.data);
+    const orderID = uuidv4().toString();
+
+    // Save Order
+    const timestamp = Date.now();
+    const orderSave = await createOrder({
+      id: uuidv4().toString(),
+      publicKey: record.publicKey,
+      orderID: orderID,
+      orderStatus: "queued",
+      createdAt: timestamp,
+      lastUpdate: timestamp,
+    });
+    if(!orderSave){
+      throw new DatabaseError();
+    }
+
+    for(let i=0; i<data.length; i++){
+      const save =  await addCID({
+        id: uuidv4().toString(),
+        cid: data[i],
+        orderID: orderID,
+        fileName: "",
+        fileSizeInBytes: "",
+        txHash: "",
+        status: "queued",
+        deal: ""
+      });
+      if(!save){
+        //TODO handle failed item
+      }
+    }
+    // Add data to SQS
+
+    res.status(200).json("Added to queue!!!");
+  } catch (error) {
+    next(error);
+  }
+}
+
+exports.cid_order_status = async (req, res, next) => {
+  try {
+    const record = await cidOrderStatus(req.query.publicKey);
+    if (!record) {
+      throw new NotFoundError();
+    }
+
+    res.status(200).json(record);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.order_details = async (req, res, next) => {
+  try {
+    const record = await orderDetails(req.query.orderID);
+    if (!record) {
+      throw new NotFoundError();
+    }
+
+    res.status(200).json(record);
+  } catch (error) {
+    next(error);
   }
 };
 
