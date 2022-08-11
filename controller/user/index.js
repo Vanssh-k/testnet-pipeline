@@ -27,3 +27,29 @@ exports.user_data_usage = async (req, res, next) => {
     next(error);
   }
 };
+
+const verifyJWT = (accessToken, secret) => {
+  try {
+    const userData = jwt.verify(accessToken, secret);
+    return userData;
+  } catch {
+    return null;
+  }
+};
+
+exports.faucet_status = async (req, res, next) => {
+  try {
+    const token = req.headers["authorization"].split(" ")[1];
+
+    const userData = verifyJWT(token, process.env.JWT_SECRET);
+    if (!userData) {
+      throw new AuthenticationError();
+    }
+
+    const record = await userDetails(userData.publicKey);
+
+    res.status(200).json(record["faucet"]);
+  } catch (error) {
+    next(error);
+  }
+};

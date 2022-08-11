@@ -19,4 +19,9 @@ router.get(
   UserController.user_data_usage
 );
 
+router.get(
+  "/faucet_status",
+  UserController.faucet_status
+);
+
 module.exports = router;
