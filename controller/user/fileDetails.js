@@ -6,6 +6,7 @@ module.exports = async (usersPublicKey) => {
     const params = {
       TableName: fileTable,
       IndexName: "publicKey-createdAt-index",
+      ScanIndexForward: false,
       KeyConditionExpression: "publicKey = :p",
       ExpressionAttributeValues: {
         ":p": usersPublicKey.trim().toLowerCase(),
