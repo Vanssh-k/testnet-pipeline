@@ -13,13 +13,13 @@ router.get(
 
 router.post(
   "/save_file_encryption_key",
-  validate(validator.saveEncryptionKeySchema, { body: true }),
+  validate(validator.saveFileEncryptionKeySchema, { body: true }),
   EncryptionController.save_file_encryption_key
 );
 
 router.get(
   "/get_file_encryption_key",
-  validate(validator.getEncryptionKeySchema, { query: true }),
+  validate(validator.getFileEncryptionKeySchema, { query: true }),
   EncryptionController.get_file_encryption_key
 );
 

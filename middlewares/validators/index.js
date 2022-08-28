@@ -3,4 +3,5 @@ module.exports = {
   ...require("./lighthouse"),
   ...require("./encryption"),
   ...require("./gateway"),
+  ...require("./auth"),
 };
