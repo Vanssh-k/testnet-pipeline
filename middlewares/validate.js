@@ -1,4 +1,4 @@
-const RequestValidationError = require("../errors/request-validation-error");
+const Errors = require("../errors");
 
 module.exports = (schema, intercept) => {
   return (req, res, next) => {
@@ -10,13 +10,13 @@ module.exports = (schema, intercept) => {
         : { ...req.query };
     const validated = schema.validate(payload, { allowUnknown: false });
     if (validated.error) {
-      errors = validated.error.details.map((err) => {
+      let errors = validated.error.details.map((err) => {
         return {
           msg: err.message.replace(/"/g, ""),
           param: err.context.key,
         };
       });
-      return next(new RequestValidationError(errors));
+      return next(new Errors.RequestValidationError(errors));
     }
     return next();
   };

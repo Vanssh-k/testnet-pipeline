@@ -1,36 +1,15 @@
 const SHA256 = require("crypto-js/sha256");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
-const web3 = require("web3");
-
-const userDetails = require("./userDetails");
-const checkApiKey = require("./checkApiKey");
 const checkTwitter = require("./checkTwitter");
-const verifySignature = require("./verifySignature");
 const updateUserDetails = require("./updateUserDetails");
 const { freeDataLimitInBytes } = require("../libs/constants");
-
-const AuthenticationError = require("../../errors/authentication-error");
-const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
-const RequestValidationError = require("../../errors/request-validation-error");
 
 // Return access token if user is authentic
 exports.verify_signer = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.publicKey;
-    const signedMessage = req.body.signedMessage;
-    const record = await userDetails(usersPublicKey);
-    const authentic = verifySignature(
-      usersPublicKey,
-      record.message,
-      signedMessage
-    );
-
-    if (!authentic) {
-      throw new AuthenticationError();
-    }
-
+    const record = req.user;
     // Change the message and return access token
     const payLoad = { publicKey: record.publicKey };
     const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {
@@ -66,26 +45,10 @@ exports.verify_signer = async (req, res, next) => {
   }
 };
 
-const verifyJWT = (accessToken, secret) => {
-  try {
-    const userData = jwt.verify(accessToken, secret);
-    return userData;
-  } catch {
-    return null;
-  }
-};
-
 // Return if user is authentic along with his data usage
 exports.verify_access_token = async (req, res, next) => {
   try {
-    const accessToken = req.headers["authorization"].split(" ")[1];
-    const userData = verifyJWT(accessToken, process.env.JWT_SECRET);
-
-    if (!userData) {
-      throw new AuthenticationError();
-    }
-
-    const record = await userDetails(userData.publicKey);
+    const record = req.user;
 
     res.status(200).json({
       publicKey: record.publicKey,
@@ -99,19 +62,7 @@ exports.verify_access_token = async (req, res, next) => {
 
 exports.refresh_access_token = async (req, res, next) => {
   try {
-    const refreshToken = req.headers["authorization"].split(" ")[1];
-    const userData = verifyJWT(refreshToken, process.env.JWT_REFRESH_SECRET);
-    
-    if (!userData) {
-      throw new AuthenticationError();
-    }
-
-    const record = await userDetails(userData.publicKey);
-
-    if(!record || record.accessToken!==refreshToken){
-      throw new AuthenticationError();
-    }
-
+    const record = req.user;
     const payLoad = { publicKey: record.publicKey };
     const accessToken = jwt.sign(payLoad, process.env.JWT_SECRET, {
       algorithm: "HS256",
@@ -126,14 +77,7 @@ exports.refresh_access_token = async (req, res, next) => {
 
 exports.remove_refresh_access_token = async (req, res, next) => {
   try {
-    const refreshToken = req.headers["authorization"].split(" ")[1];
-    const userData = verifyJWT(refreshToken, process.env.JWT_REFRESH_SECRET);
-    
-    if (!userData) {
-      throw new AuthenticationError();
-    }
-
-    const record = await userDetails(userData.publicKey);
+    const record = req.user;
 
     const updatedDetails = {
       publicKey: record.publicKey,
@@ -159,11 +103,7 @@ exports.remove_refresh_access_token = async (req, res, next) => {
 exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
-    if (!web3.utils.isAddress(publicKey)) {
-      throw new RequestValidationError([{ msg: "Invalid public key!!!" }]);
-    }
-
-    const record = await userDetails(publicKey); // Check if user already exist
+    const record = req.user;
     const message = uuidv4().toString();
 
     const updatedDetails = {
@@ -171,7 +111,11 @@ exports.get_message = async (req, res, next) => {
       message: message,
       dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
       dataUsed: record ? record.dataUsed : 0,
-      apiKey: record ? (record.apiKey===""?SHA256(uuidv4().toString()).toString():record.apiKey) : SHA256(uuidv4().toString()).toString(),
+      apiKey: record
+        ? record.apiKey === ""
+          ? SHA256(uuidv4().toString()).toString()
+          : record.apiKey
+        : SHA256(uuidv4().toString()).toString(),
       encryptionPublicKey: record ? record.encryptionPublicKey : "",
       accessToken: record ? record.accessToken : "",
       tokenExpires: record ? record.tokenExpires : 0,
@@ -188,24 +132,7 @@ exports.get_message = async (req, res, next) => {
 
 exports.get_api_key = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.publicKey;
-    const signedMessage = req.body.signedMessage;
-
-    const record = await userDetails(usersPublicKey);
-    if (!record) {
-      throw new NotFoundError();
-    }
-
-    const authentic = verifySignature(
-      usersPublicKey,
-      record.message,
-      signedMessage
-    );
-
-    if (!authentic) {
-      throw new AuthenticationError();
-    }
-
+    const record = req.user;
     const apiKey = uuidv4().toString();
     const updatedDetails = {
       publicKey: record.publicKey,
@@ -229,11 +156,7 @@ exports.get_api_key = async (req, res, next) => {
 
 exports.verify_api_key = async (req, res, next) => {
   try {
-    const apiKey = req.headers["authorization"].split(" ")[1];
-    const record = await checkApiKey(SHA256(apiKey).toString());
-    if (!record) {
-      throw new NotFoundError();
-    }
+    const record = req.user;
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
@@ -247,14 +170,7 @@ exports.verify_api_key = async (req, res, next) => {
 exports.tweet_recharge = async (req, res, next) => {
   try {
     const twitterID = req.query.twitterID;
-    const token = req.headers["authorization"].split(" ")[1]; // can be api key or access token
-
-    const userData = verifyJWT(token, process.env.JWT_SECRET);
-    if (!userData) {
-      throw new AuthenticationError();
-    }
-
-    const record = await userDetails(userData.publicKey);
+    const record = req.user;
 
     // Check if user have already used faucet
     if (record["faucet"]["twitter"] === "used") {
@@ -262,14 +178,14 @@ exports.tweet_recharge = async (req, res, next) => {
     }
 
     // Check for validity of tweet
-    const validTweet = await checkTwitter(userData.publicKey, twitterID);
+    const validTweet = await checkTwitter(record.publicKey, twitterID);
     if (!validTweet) {
       throw new ForbiddenError();
     }
 
     // Update Data Limit
     const updatedDetails = {
-      publicKey: userData.publicKey,
+      publicKey: record.publicKey,
       message: record.message,
       dataLimit: record.dataLimit + freeDataLimitInBytes,
       dataUsed: record.dataUsed,
@@ -290,22 +206,8 @@ exports.tweet_recharge = async (req, res, next) => {
 
 exports.save_encryption_publicKey = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.publicKey;
     const encryptionPublicKey = req.body.encryptionPublicKey;
-    const accessToken = req.headers["authorization"].split(" ")[1];
-
-    const record = await userDetails(usersPublicKey);
-    let authentic = false;
-    if (
-      SHA256(accessToken).toString() === record["accessToken"] ||
-      SHA256(accessToken).toString() === record["apiKey"]
-    ) {
-      authentic = true;
-    }
-
-    if (!authentic) {
-      throw new AuthenticationError();
-    }
+    const record = req.user;
 
     const updatedDetails = {
       publicKey: record.publicKey,

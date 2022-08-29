@@ -1,0 +1,97 @@
+const userDetails = require("../controller/authentication/userDetails");
+const verifySignature = require("../controller/authentication/verifySignature");
+const Errors = require("../errors");
+const helpers = require("../helpers");
+const web3 = require("web3");
+const checkApiKey = require("../controller/authentication/checkApiKey");
+
+module.exports = (rules, clauses = []) => {
+  return async (req, res, next) => {
+    if (rules && rules.length) {
+      rulesLoop: for (let rule of rules) {
+        let record = {};
+        ruleSwitch: switch (rule) {
+          case "verifysignature":
+            const usersPublicKey = req.body.publicKey || req.query.publicKey;
+            record = await userDetails(usersPublicKey);
+            if (!record) {
+              throw new Errors.NotFoundError();
+            }
+            let authentic = verifySignature(
+              usersPublicKey,
+              record.message,
+              signedMessage
+            );
+            if (!authentic) {
+              throw new Errors.AuthenticationError();
+            }
+            req.user = record;
+            break ruleSwitch;
+          case "verifyjwt":
+            if (clauses.includes("useSHA256WithApiKey")) {
+              const apiKey = req.headers["authorization"].split(" ")[1];
+              const record = await checkApiKey(SHA256(apiKey).toString());
+              if (!record) {
+                throw new NotFoundError();
+              }
+              req.user = record;
+              break ruleSwitch;
+            }
+            let accessToken = req.headers["authorization"]?.split(" ")[1];
+            if (clauses.includes("useSHA256WithAccessTokenAndApiKey")) {
+              let authentic = false;
+              if (
+                SHA256(accessToken).toString() === record["accessToken"] ||
+                SHA256(accessToken).toString() === record["apiKey"]
+              ) {
+                authentic = true;
+              }
+              if (!authentic) {
+                throw new Errors.AuthenticationError();
+              }
+              break ruleSwitch;
+            }
+            let accessData = helpers.verifyJWT(
+              accessToken,
+              clauses.includes("useRefreshSecret")
+                ? process.env.JWT_REFRESH_SECRET
+                : process.env.JWT_SECRET
+            );
+            if (!accessData) {
+              throw new Errors.AuthenticationError();
+            }
+            record = await userDetails(accessData.publicKey);
+            if (!record) {
+              throw new Errors.NotFoundError();
+            }
+            if (clauses.includes("useRefreshEquality")) {
+              if (record.accessToken !== refreshToken) {
+                throw new Errors.AuthenticationError();
+              }
+            }
+            req.user = record;
+            break ruleSwitch;
+          case "verifypublickey":
+            const publicKey = req.query.publicKey || req.body.publicKey;
+            if (clauses.includes("useWeb3")) {
+              if (!web3.utils.isAddress(publicKey)) {
+                throw new Errors.RequestValidationError([
+                  { msg: "Invalid public key!!!" },
+                ]);
+              }
+            }
+            record = await userDetails(publicKey); // Check if user already exist
+            if (!record) {
+              throw new Errors.NotFoundError();
+            }
+            req.user = record;
+            break ruleSwitch;
+          default:
+            continue rulesLoop;
+        }
+      }
+      return next();
+    }
+    return next();
+  };
+};
