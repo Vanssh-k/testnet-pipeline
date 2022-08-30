@@ -1,5 +1,6 @@
 const express = require("express");
 const LighthouseController = require("../controller/lighthouse");
+const authenticator = require("../middlewares/authenticator");
 const validate = require("../middlewares/validate");
 const validator = require("../middlewares/validators");
 
@@ -32,6 +33,7 @@ router.post(
 router.post(
   "/bulk_cid_add",
   validate(validator.bulkCidAddSchema, { body: true }),
+  authenticator(["verifysignature"]),
   LighthouseController.bulk_cid_add
 );
 
@@ -50,6 +52,7 @@ router.get(
 router.post(
   "/add_cid_to_queue",
   validate(validator.addCIDToQueueSchema, { body: true }),
+  authenticator(["verifypublickey"]),
   LighthouseController.add_cid_to_queue
 );
 

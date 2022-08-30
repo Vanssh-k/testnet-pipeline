@@ -2,12 +2,14 @@ const express = require("express");
 const GatewayController = require("../controller/gateway");
 const validate = require("../middlewares/validate");
 const validator = require("../middlewares/validators");
+const authenticator = require("../middlewares/authenticator");
 
 const router = express.Router();
 
 router.post(
   "/add_subdomain",
   validate(validator.addSubdomainSchema, { body: true }),
+  authenticator(["verifysignature"]),
   GatewayController.add_subdomain
 );
 

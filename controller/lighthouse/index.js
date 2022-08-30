@@ -6,8 +6,6 @@ const cidOrderStatus = require("./cidOrderStatus");
 const orderDetails = require("./orderDetails");
 const fileDetailsByCid = require("./fileDetailsByCid");
 const saveFileMetaData = require("./saveFileMetaData");
-const verifySignature = require("../authentication/verifySignature");
-const userDetails = require("../authentication/userDetails");
 const updateUserDetails = require("../authentication/updateUserDetails");
 
 const ForbiddenError = require("../../errors/forbidden");
@@ -79,24 +77,7 @@ const addCid = async (name, cid) => {
 // add cid in bulk
 exports.bulk_cid_add = async (req, res, next) => {
   try {
-    // Authenticate
-    const usersPublicKey = req.body.publicKey;
-    const signedMessage = req.body.signedMessage;
-
-    const record = await userDetails(usersPublicKey);
-    if (!record) {
-      throw new NotFoundError();
-    }
-
-    const authentic = verifySignature(
-      usersPublicKey,
-      record.message,
-      signedMessage
-    );
-
-    if (!authentic) {
-      throw new AuthenticationError();
-    }
+    const record = req.user;
 
     // Get CID, filename array
     const data = JSON.parse(req.body.data);
@@ -113,12 +94,12 @@ exports.bulk_cid_add = async (req, res, next) => {
       createdAt: timestamp,
       lastUpdate: timestamp,
     });
-    if(!orderSave){
+    if (!orderSave) {
       throw new DatabaseError();
     }
 
-    for(let i=0; i<data.length; i++){
-      const save =  await addCID({
+    for (let i = 0; i < data.length; i++) {
+      const save = await addCID({
         id: uuidv4().toString(),
         cid: data[i],
         orderID: orderID,
@@ -126,19 +107,19 @@ exports.bulk_cid_add = async (req, res, next) => {
         fileSizeInBytes: "",
         txHash: "",
         cidStatus: "queued",
-        deal: ""
+        deal: "",
       });
-      if(!save){
+      if (!save) {
         //TODO handle failed item
       }
     }
     // Add data to SQS
 
-    res.status(200).json({orderID: orderID});
+    res.status(200).json({ orderID: orderID });
   } catch (error) {
     next(error);
   }
-}
+};
 
 exports.cid_order_status = async (req, res, next) => {
   try {
@@ -196,7 +177,7 @@ exports.file_info = async (req, res, next) => {
       fileName: record.fileName,
       mimeType: record.mimeType,
       txHash: record.txHash,
-      cidStatus: record.cidStatus
+      cidStatus: record.cidStatus,
     });
   } catch (error) {
     next(error);
@@ -207,11 +188,7 @@ exports.file_info = async (req, res, next) => {
 exports.add_cid_to_queue = async (req, res, next) => {
   try {
     const publicKey = req.body.publicKey.toLowerCase();
-    const record = await userDetails(publicKey); // Get record of user
-
-    if (!record) {
-      throw new NotFoundError();
-    }
+    const record = req.user;
 
     if (req.body.size > record.dataLimit - record.dataUsed) {
       // Create record of file
@@ -253,8 +230,8 @@ exports.add_cid_to_queue = async (req, res, next) => {
       encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
-      faucet: record.faucet
-    }; 
+      faucet: record.faucet,
+    };
 
     const updateResponse = await updateUserDetails(updatedDetails);
     if (!updateResponse) {
