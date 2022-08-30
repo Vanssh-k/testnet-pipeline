@@ -1,4 +1,4 @@
-const dbbClient = require("../libs/ddbClient");
+const dbbClient = require("../../repository/ddbClient");
 const { fileTable } = require("../libs/constants");
 const { v4: uuidv4 } = require("uuid");
 

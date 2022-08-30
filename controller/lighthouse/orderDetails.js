@@ -1,4 +1,4 @@
-const dbbClient = require("../libs/ddbClient");
+const dbbClient = require("../../repository/ddbClient");
 const { bulkCIDAdd } = require("../libs/constants");
 
 module.exports = async (orderID) => {

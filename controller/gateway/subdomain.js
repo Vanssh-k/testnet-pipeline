@@ -1,4 +1,4 @@
-const dbbClient = require("../libs/ddbClient");
+const dbbClient = require("../../repository/ddbClient");
 const { gatewayTable } = require("../libs/constants");
 
 const checkSubdomain = async (subDomain) => {

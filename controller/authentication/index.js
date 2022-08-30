@@ -2,7 +2,7 @@ const SHA256 = require("crypto-js/sha256");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const checkTwitter = require("./checkTwitter");
-const updateUserDetails = require("./updateUserDetails");
+const updateUserDetails = require("../../repository/updateUserDetails");
 const { freeDataLimitInBytes } = require("../libs/constants");
 const ForbiddenError = require("../../errors/forbidden");
 

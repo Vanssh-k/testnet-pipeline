@@ -1,6 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 
-const dbbClient = require("../libs/ddbClient");
+const dbbClient = require("../../repository/ddbClient");
 const { userTable } = require("../libs/constants");
 
 module.exports = async (accessToken) => {

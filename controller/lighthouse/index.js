@@ -6,7 +6,7 @@ const cidOrderStatus = require("./cidOrderStatus");
 const orderDetails = require("./orderDetails");
 const fileDetailsByCid = require("./fileDetailsByCid");
 const saveFileMetaData = require("./saveFileMetaData");
-const updateUserDetails = require("../authentication/updateUserDetails");
+const updateUserDetails = require("../../repository/updateUserDetails");
 
 const ForbiddenError = require("../../errors/forbidden");
 const DatabaseError = require("../../errors/database-error");

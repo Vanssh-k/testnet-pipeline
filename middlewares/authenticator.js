@@ -1,9 +1,9 @@
-const userDetails = require("../controller/authentication/userDetails");
+const userDetails = require("../repository/userDetails");
 const verifySignature = require("../controller/authentication/verifySignature");
 const Errors = require("../errors");
 const helpers = require("../helpers");
 const web3 = require("web3");
-const checkApiKey = require("../controller/authentication/checkApiKey");
+const checkApiKey = require("../repository/checkApiKey");
 
 module.exports = (rules, clauses = []) => {
   return async (req, res, next) => {
