@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
-const saveFileMetaData = require("./saveFileMetaData");
-const fileDetails = require("./fileDetails");
-const fileList = require("./fileList");
+const saveFileMetaData = require("../../repository/saveFileMetaData");
+const fileDetails = require("../../repository/fileDetails");
+const fileList = require("../../repository/fileList");
 const ForbiddenError = require("../../errors/forbidden");
 
 exports.get_encryption_publicKey = async (req, res, next) => {

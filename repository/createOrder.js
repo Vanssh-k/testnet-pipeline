@@ -1,6 +1,6 @@
 const chalk = require("chalk");
-const dbbClient = require("../../repository/ddbClient");
-const { cidOrderTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { cidOrderTable } = require("../controller/libs/constants");
 
 module.exports = async (record) => {
   try {

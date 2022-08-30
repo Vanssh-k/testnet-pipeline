@@ -1,5 +1,5 @@
-const dbbClient = require("../../repository/ddbClient");
-const { gatewayTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { gatewayTable } = require("../controller/libs/constants");
 
 module.exports = async (transactionDetails) => {
   try{

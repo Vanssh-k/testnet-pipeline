@@ -1,11 +1,11 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const addCID = require("./addCID");
-const createOrder = require("./createOrder");
-const cidOrderStatus = require("./cidOrderStatus");
-const orderDetails = require("./orderDetails");
-const fileDetailsByCid = require("./fileDetailsByCid");
-const saveFileMetaData = require("./saveFileMetaData");
+const addCID = require("../../repository/addCID");
+const createOrder = require("../../repository/createOrder");
+const cidOrderStatus = require("../../repository/cidOrderStatus");
+const orderDetails = require("../../repository/orderDetails");
+const fileDetailsByCid = require("../../repository/fileDetailsByCid");
+const saveFileMetaData = require("../../repository/saveFileMetaData");
 const updateUserDetails = require("../../repository/updateUserDetails");
 
 const ForbiddenError = require("../../errors/forbidden");

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const fileDetails = require("./fileDetails");
+const fileDetails = require("../../repository/fileDetails");
 
 exports.get_uploads = async (req, res, next) => {
   try {

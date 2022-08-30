@@ -1,5 +1,5 @@
-const dbbClient = require("../../repository/ddbClient");
-const { fileTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { fileTable } = require("../controller/libs/constants");
 
 module.exports = async (cid) => {
   try{

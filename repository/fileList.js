@@ -1,20 +1,20 @@
-const dbbClient = require("../../repository/ddbClient");
-const { cidOrderTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { fileTableEncryption } = require("../controller/libs/constants");
 
 module.exports = async (publicKey) => {
-  try{
+  try {
     const params = {
-      TableName: cidOrderTable,
+      TableName: fileTableEncryption,
       FilterExpression: "publicKey = :p",
       ExpressionAttributeValues: {
-        ":p": publicKey,
+        ":p": publicKey.toLowerCase(),
       },
     };
-  
+
     const record = await dbbClient.scan(params).promise();
     const { Items } = record;
     return Items;
-  } catch(error) {
+  } catch (error) {
     return null;
   }
 };

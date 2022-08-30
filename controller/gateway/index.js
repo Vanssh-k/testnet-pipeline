@@ -1,5 +1,5 @@
-const { checkSubdomain, getRecord } = require("./subdomain");
-const updateSubDomain = require("./updateSubDomain");
+const { checkSubdomain, getRecord } = require("../../repository/subdomain");
+const updateSubDomain = require("../../repository/updateSubDomain");
 const NotFoundError = require("../../errors/not-found-error");
 const ForbiddenError = require("../../errors/forbidden");
 
