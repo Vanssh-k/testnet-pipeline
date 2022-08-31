@@ -1,26 +1,27 @@
 const express = require("express");
 const UserController = require("../controller/user");
-const { query } = require("express-validator");
+const authenticator = require("../middlewares/authenticator");
+const validate = require("../middlewares/validate");
+const validator = require("../middlewares/validators");
 
 const router = express.Router();
-const validate = require("../middlewares/validate");
 
 router.get(
   "/get_uploads",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
-  validate,
+  validate(validator.publicKeySchema, { query: true }),
   UserController.get_uploads
 );
 
 router.get(
   "/user_data_usage",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
-  validate,
+  validate(validator.publicKeySchema, { query: true }),
+  authenticator(["verifypublickey"]),
   UserController.user_data_usage
 );
 
 router.get(
   "/faucet_status",
+  authenticator(["verifyjwt"]),
   UserController.faucet_status
 );
 

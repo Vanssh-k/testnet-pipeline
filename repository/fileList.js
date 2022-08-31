@@ -1,13 +1,13 @@
-const dbbClient = require("../libs/ddbClient");
-const { fileTableEncryption } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { fileTableEncryption } = require("../controller/libs/constants");
 
-module.exports = async (cid) => {
+module.exports = async (publicKey) => {
   try {
     const params = {
       TableName: fileTableEncryption,
-      FilterExpression: "cid = :c",
+      FilterExpression: "publicKey = :p",
       ExpressionAttributeValues: {
-        ":c": cid,
+        ":p": publicKey.toLowerCase(),
       },
     };
 

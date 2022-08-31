@@ -1,11 +1,11 @@
 const chalk = require("chalk");
-const dbbClient = require("../libs/ddbClient");
-const { bulkCIDAdd } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { cidOrderTable } = require("../controller/libs/constants");
 
 module.exports = async (record) => {
   try {
     const params = {
-      TableName: bulkCIDAdd,
+      TableName: cidOrderTable,
       Item: record,
     };
 
@@ -13,7 +13,7 @@ module.exports = async (record) => {
     return save;
   } catch (error) {
     console.log(
-      chalk.yellow("CID save error: ") + chalk.red(error.message)
+      chalk.yellow("Order save error: ") + chalk.red(error.message)
     );
     return null;
   }

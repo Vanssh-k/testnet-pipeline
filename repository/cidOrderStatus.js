@@ -1,5 +1,5 @@
-const dbbClient = require("../libs/ddbClient");
-const { cidOrderTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { cidOrderTable } = require("../controller/libs/constants");
 
 module.exports = async (publicKey) => {
   try{

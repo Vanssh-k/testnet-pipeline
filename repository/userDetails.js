@@ -1,6 +1,6 @@
 const chalk = require("chalk");
-const dbbClient = require("../libs/ddbClient");
-const { userTable } = require("../libs/constants");
+const dbbClient = require("./ddbClient");
+const { userTable } = require("../controller/libs/constants");
 
 module.exports = async (usersPublicKey) => {
   try {
