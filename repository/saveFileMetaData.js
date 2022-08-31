@@ -1,16 +1,17 @@
 const dbbClient = require("./ddbClient");
-const { fileTableEncryption } = require("../controller/libs/constants");
+const { fileTable } = require("../controller/libs/constants");
 
 module.exports = async (record) => {
   try {
     const params = {
-      TableName: fileTableEncryption,
+      TableName: fileTable,
       Item: record,
     };
 
     await dbbClient.put(params).promise();
     return "Put Successful";
   } catch (error) {
+    console.error(error);
     return null;
   }
 };

@@ -1,3 +1,4 @@
+const SHA256 = require("crypto-js/sha256");
 const userDetails = require("../repository/userDetails");
 const verifySignature = require("../controller/authentication/verifySignature");
 const Errors = require("../errors");
@@ -73,7 +74,7 @@ module.exports = (rules, clauses = []) => {
               throw new Errors.NotFoundError();
             }
             if (clauses.includes("useRefreshEquality")) {
-              if (record.accessToken !== refreshToken) {
+              if (record.accessToken !== accessToken) {
                 throw new Errors.AuthenticationError();
               }
             }

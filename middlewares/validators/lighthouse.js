@@ -25,8 +25,8 @@ module.exports.bulkCidAddSchema = joi.object({
   data: joi.string().required().messages({
     "any.required": `data not found`,
   }),
-  signedMesage: joi.string().required().messages({
-    "any.required": `signedMesage not found`,
+  signedMessage: joi.string().required().messages({
+    "any.required": `signedMessage not found`,
   }),
   publicKey: joi.string().required().messages({
     "any.required": `publicKey not found`,
@@ -51,5 +51,9 @@ module.exports.addCIDToQueueSchema = joi.object({
   }),
   cid: joi.string().required().messages({
     "any.required": `cid not found`,
+  }),
+  mimeType: joi.string(),
+  encryption: joi.boolean().required().messages({
+    "any.required": `encryption not found`,
   }),
 });

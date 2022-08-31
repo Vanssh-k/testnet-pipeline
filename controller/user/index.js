@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const fileDetails = require("../../repository/fileDetails");
 
 exports.get_uploads = async (req, res, next) => {
@@ -19,16 +18,6 @@ exports.user_data_usage = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-  }
-};
-
-const verifyJWT = (accessToken, secret) => {
-  try {
-    const userData = jwt.verify(accessToken, secret);
-    console.log(userData);
-    return userData;
-  } catch {
-    return null;
   }
 };
 

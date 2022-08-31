@@ -190,31 +190,40 @@ exports.add_cid_to_queue = async (req, res, next) => {
     const publicKey = req.body.publicKey.toLowerCase();
     const record = req.user;
 
+    const timestamp = Date.now();
     if (req.body.size > record.dataLimit - record.dataUsed) {
       // Create record of file
-      await saveFileMetaData(
-        publicKey,
-        req.body.cid,
-        req.body.name,
-        req.body.size,
-        req.body.encryption,
-        req.body.mimeType,
-        "payment pending"
-      );
+      await saveFileMetaData({
+        id: uuidv4(),
+        publicKey: publicKey,
+        cid: req.body.cid,
+        fileName: req.body.name,
+        fileSizeInBytes: req.body.size,
+        encryption: req.body.encryption,
+        mimeType: req.body.mimeType,
+        status: "payment pending",
+        txHash: "",
+        createdAt: timestamp,
+        lastUpdate: timestamp,
+      });
 
       throw new ForbiddenError();
     }
 
     // Create record of file
-    const saveFileResponse = await saveFileMetaData(
-      publicKey,
-      req.body.cid,
-      req.body.name,
-      req.body.size,
-      req.body.encryption,
-      req.body.mimeType,
-      "queued"
-    );
+    const saveFileResponse = await saveFileMetaData({
+      id: uuidv4(),
+      publicKey: publicKey,
+      cid: req.body.cid,
+      fileName: req.body.name,
+      fileSizeInBytes: req.body.size,
+      encryption: req.body.encryption,
+      mimeType: req.body.mimeType,
+      status: "payment pending",
+      txHash: "",
+      createdAt: timestamp,
+      lastUpdate: timestamp,
+    });
 
     if (!saveFileResponse) {
       throw new DatabaseError("Save File failed");
