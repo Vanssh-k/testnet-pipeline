@@ -20,12 +20,6 @@ router.get(
 );
 
 router.get(
-  "/get_subdomain",
-  validate(validator.publicKeySchema, { query: true }),
-  GatewayController.get_subdomain
-);
-
-router.get(
   "/get_transaction_details",
   validate(validator.publicKeySchema, { query: true }),
   GatewayController.get_transaction_details
