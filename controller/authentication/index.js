@@ -203,28 +203,3 @@ exports.tweet_recharge = async (req, res, next) => {
     next(error);
   }
 };
-
-exports.save_encryption_publicKey = async (req, res, next) => {
-  try {
-    const encryptionPublicKey = req.body.encryptionPublicKey;
-    const record = req.user;
-
-    const updatedDetails = {
-      publicKey: record.publicKey,
-      message: record.message,
-      dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed,
-      apiKey: record.apiKey,
-      encryptionPublicKey: encryptionPublicKey,
-      accessToken: record.accessToken,
-      tokenExpires: record.tokenExpires,
-      faucet: record.faucet,
-    };
-
-    const _ = await updateUserDetails(updatedDetails);
-
-    res.status(200).json("Success");
-  } catch (error) {
-    next(error);
-  }
-};

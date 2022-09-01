@@ -52,14 +52,4 @@ router.get(
   AuthController.verify_api_key
 );
 
-router.post(
-  "/save_encryption_publicKey",
-  validate(validator.saveEncryptionPublicKeySchema, { body: true }),
-  authenticator(
-    ["verifypublickey", "verifyjwt"],
-    ["useSHA256WithAccessTokenAndApiKey"]
-  ),
-  AuthController.save_encryption_publicKey
-);
-
 module.exports = router;
