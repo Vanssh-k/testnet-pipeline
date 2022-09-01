@@ -16,7 +16,7 @@ module.exports = (rules, clauses = []) => {
             const usersPublicKey = req.body.publicKey || req.query.publicKey;
             record = await userDetails(usersPublicKey);
             if (!record) {
-              throw new Errors.NotFoundError();
+              return next(new Errors.NotFoundError());
             }
             let authentic = verifySignature(
               usersPublicKey,
@@ -24,7 +24,7 @@ module.exports = (rules, clauses = []) => {
               req.body.signedMessage
             );
             if (!authentic) {
-              throw new Errors.AuthenticationError();
+              return next(new Errors.AuthenticationError());
             }
             req.user = record;
             break ruleSwitch;
@@ -33,7 +33,7 @@ module.exports = (rules, clauses = []) => {
               const apiKey = req.headers["authorization"].split(" ")[1];
               const record = await checkApiKey(SHA256(apiKey).toString());
               if (!record) {
-                throw new Errors.NotFoundError();
+                return next(new Errors.NotFoundError());
               }
               req.user = record;
               break ruleSwitch;
@@ -46,7 +46,7 @@ module.exports = (rules, clauses = []) => {
                 req.body.publicKey;
               record = await userDetails(publicKey);
               if (!record) {
-                throw new Errors.NotFoundError();
+                return next(new Errors.NotFoundError());
               }
               let authentic = false;
               if (
@@ -56,7 +56,7 @@ module.exports = (rules, clauses = []) => {
                 authentic = true;
               }
               if (!authentic) {
-                throw new Errors.AuthenticationError();
+                return next(new Errors.AuthenticationError());
               }
               break ruleSwitch;
             }
@@ -67,15 +67,15 @@ module.exports = (rules, clauses = []) => {
                 : process.env.JWT_SECRET
             );
             if (!accessData) {
-              throw new Errors.AuthenticationError();
+              return next(new Errors.AuthenticationError());
             }
             record = await userDetails(accessData.publicKey);
             if (!record) {
-              throw new Errors.NotFoundError();
+              return next(new Errors.NotFoundError());
             }
             if (clauses.includes("useRefreshEquality")) {
               if (record.accessToken !== accessToken) {
-                throw new Errors.AuthenticationError();
+                return next(new Errors.AuthenticationError());
               }
             }
             req.user = record;
@@ -84,18 +84,18 @@ module.exports = (rules, clauses = []) => {
             const publicKey = req.body.publicKey || req.query.publicKey;
             if (clauses.includes("useWeb3")) {
               if (!web3.utils.isAddress(publicKey)) {
-                throw new Errors.RequestValidationError([
+                return next(new Errors.RequestValidationError([
                   { msg: "Invalid public key!!!" },
-                ]);
+                ]));
               }
             }
             record = await userDetails(publicKey); // Check if user already exist
             if (!record) {
-              throw new Errors.NotFoundError();
+              return next(new Errors.NotFoundError());
             }
             if (clauses.includes("useEncryptionPublicKeyExists")) {
               if (!record.encryptionPublicKey) {
-                throw new Errors.NotFoundError();
+                return next(new Errors.NotFoundError());
               }
             }
             req.user = record;
