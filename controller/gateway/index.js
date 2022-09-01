@@ -60,7 +60,7 @@ exports.check_subdomain = async (req, res, next) => {
   }
 };
 
-exports.user_domain = async (req, res, next) =>{
+exports.get_subdomain = async (req, res, next) =>{
   try {
     const record = await getRecord(req.query.publicKey);
     if (!record) {
