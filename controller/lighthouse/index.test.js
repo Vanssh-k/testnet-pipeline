@@ -1,4 +1,5 @@
 const app = require("../../app");
+const ethers = require("ethers");
 const supertest = require("supertest");
 
 // get_ticker
@@ -115,4 +116,68 @@ test("Add CID To Queue Record Not Found: GET /add_cid_to_queue", async () => {
     .post("/api/lighthouse/add_cid_to_queue")
     .send(data)
     .expect(404);
+}, 30000);
+
+test("Bulk CID Add: POST /bulk_cid_add", async () => {
+  await supertest(app)
+    .get(
+      "/api/auth/get_message?publicKey=0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1"
+    )
+    .expect(200)
+    .then(async (response) => {
+      const verificationMessage = JSON.parse(response.text);
+      const provider = new ethers.getDefaultProvider();
+      const signer = new ethers.Wallet(
+        process.env.TEST_WALLET1_PRIVATE_KEY,
+        provider
+      );
+      const signedMessage = await signer.signMessage(verificationMessage);
+      const data = {
+        publicKey: "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1",
+        signedMessage: signedMessage,
+        data: "[\"QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc\"]",
+      };
+
+      await supertest(app)
+        .post("/api/lighthouse/bulk_cid_add")
+        .send(data)
+        .expect(200)
+        .then((response) => {
+          const res = JSON.parse(response.text);
+          expect(typeof res).toBe("object");
+        });
+    });
+}, 10000);
+
+test("CID order status: GET /cid_order_status", async () => {
+
+  await supertest(app)
+    .get("/api/lighthouse/cid_order_status?publicKey=0xc88c729ef2c18baf1074ea0df537d61a54a8ce7b")
+    .expect(200)
+    .then((response) => {
+      const order = JSON.parse(response.text);
+      expect(typeof order).toBe("object");
+    });
+}, 30000);
+
+test("Order Details: GET /order_details", async () => {
+
+  await supertest(app)
+    .get("/api/lighthouse/order_details?orderId=93e80a7f-f09c-491c-a0bd-40965cd37ebb")
+    .expect(200)
+    .then((response) => {
+      const order = JSON.parse(response.text);
+      expect(typeof order).toBe("object");
+    });
+}, 30000);
+
+test("File Info: GET /file_info", async () => {
+
+  await supertest(app)
+    .get("/api/lighthouse/file_info?cid=QmWWkks3aHf1pyygat1o2QEGmZMagCJVCa388UxiSNbvEN")
+    .expect(200)
+    .then((response) => {
+      const info = JSON.parse(response.text);
+      expect(typeof info).toBe("object");
+    });
 }, 30000);
