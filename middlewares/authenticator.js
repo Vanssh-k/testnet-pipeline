@@ -30,7 +30,10 @@ module.exports = (rules, clauses = []) => {
             break ruleSwitch;
           case "verifyjwt":
             if (clauses.includes("useSHA256WithApiKey")) {
-              const apiKey = req.headers["authorization"].split(" ")[1];
+              const apiKey = req.headers["authorization"]?.split(" ")[1];
+              if (!apiKey){
+                return next(new Errors.AuthenticationError());
+              }
               const record = await checkApiKey(SHA256(apiKey).toString());
               if (!record) {
                 return next(new Errors.NotFoundError());
@@ -39,6 +42,9 @@ module.exports = (rules, clauses = []) => {
               break ruleSwitch;
             }
             let accessToken = req.headers["authorization"]?.split(" ")[1];
+            if (!accessToken){
+              return next(new Errors.AuthenticationError());
+            }
             if (clauses.includes("useSHA256WithAccessTokenAndApiKey")) {
               let publicKey =
                 req.body.fromPublicKey ||
