@@ -33,7 +33,7 @@ module.exports = (rules, clauses = []) => {
               const apiKey = req.headers["authorization"].split(" ")[1];
               const record = await checkApiKey(SHA256(apiKey).toString());
               if (!record) {
-                throw new NotFoundError();
+                throw new Errors.NotFoundError();
               }
               req.user = record;
               break ruleSwitch;
@@ -95,7 +95,7 @@ module.exports = (rules, clauses = []) => {
             }
             if (clauses.includes("useEncryptionPublicKeyExists")) {
               if (!record.encryptionPublicKey) {
-                throw new NotFoundError();
+                throw new Errors.NotFoundError();
               }
             }
             req.user = record;
