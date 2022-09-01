@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+/* Not in use replaced with BLS key splitting */
 const { v4: uuidv4 } = require("uuid");
 const saveFileMetaData = require("../../repository/saveFileMetaData");
 const fileDetails = require("../../repository/fileDetails");
