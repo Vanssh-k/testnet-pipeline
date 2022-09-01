@@ -188,19 +188,19 @@ test("Verify API Key Record Not Found: GET /verify_api_key", async () => {
   await supertest(app)
     .get("/api/auth/verify_api_key")
     .set("Authorization", "Bearer " + "937b68b8-3768-45d1-950b-30c3836785d5")
-    .expect(404);
+    .expect(401);
 }, 10000);
 
 test("Verify API Key Bad Request: GET /verify_api_key", async () => {
   await supertest(app).get("/api/auth/verify_api_key")
-    .expect(400);
+    .expect(401);
 }, 10000);
 
 test("Twitter, User Not Found: GET /tweet_recharge", async () => {
   await supertest(app)
     .get("/api/auth/tweet_recharge?publicKey=0x111B7C7114F7372207Ab0b36F1353B5d2D3b2a&twitterID=1536248943725535233")
     .set("Authorization", "Bearer " + "superman")
-    .expect(404)
+    .expect(401)
 }, 10000);
 
 test("Twitter, Auth Failed: GET /tweet_recharge", async () => {
@@ -250,56 +250,4 @@ test("Twitter, Invalid Tweet & Success: GET /tweet_recharge", async () => {
             .expect(403);
         });
     });
-}, 10000);
-
-// Save Encryption public Key
-test("Save Encryption public Key: POST /save_encryption_publicKey", async () => {
-  await supertest(app)
-    .get(
-      "/api/auth/get_message?publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5160"
-    )
-    .expect(200)
-    .then(async (response) => {
-      const verificationMessage = JSON.parse(response.text);
-      const provider = new ethers.getDefaultProvider();
-      const signer = new ethers.Wallet(
-        process.env.TEST_WALLET2_PRIVATE_KEY,
-        provider
-      );
-      const signedMessage = await signer.signMessage(verificationMessage);
-      const data = {
-        publicKey: "0x487fc2fE07c593EAb555729c3DD6dF85020B5160",
-        signedMessage: signedMessage,
-      };
-
-      await supertest(app)
-        .post("/api/auth/verify_signer")
-        .send(data)
-        .expect(200)
-        .then(async(response) => {
-          const accessToken = JSON.parse(response.text);
-          const toSend = {
-            publicKey: "0x487fc2fE07c593EAb555729c3DD6dF85020B5160",
-            encryptionPublicKey: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8="
-          };
-          await supertest(app)
-            .post("/api/auth/save_encryption_publicKey")
-            .set("Authorization", "Bearer " + accessToken.accessToken)
-            .send(toSend)
-            .expect(200)
-        });
-    });
-}, 10000);
-
-test("Save Encryption public Key - Not Authentic: POST /save_encryption_publicKey", async () => {
-  const toSend = {
-    publicKey: "0x487fc2fE07c593EAb555729c3DD6dF85020B5160",
-    encryptionPublicKey: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8="
-  };
-
-  await supertest(app)
-    .post("/api/auth/save_encryption_publicKey")
-    .set("Authorization", "Bearer " + "naruto")
-    .send(toSend)
-    .expect(401);
 }, 10000);

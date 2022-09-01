@@ -36,7 +36,7 @@ module.exports = (rules, clauses = []) => {
               }
               const record = await checkApiKey(SHA256(apiKey).toString());
               if (!record) {
-                return next(new Errors.NotFoundError());
+                return next(new Errors.AuthenticationError());
               }
               req.user = record;
               break ruleSwitch;

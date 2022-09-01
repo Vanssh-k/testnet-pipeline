@@ -2,9 +2,35 @@
 /* Not in use replaced with BLS key splitting */
 const { v4: uuidv4 } = require("uuid");
 const saveFileMetaData = require("../../repository/saveFileMetaData");
+const updateUserDetails = require("../../repository/updateUserDetails");
 const fileDetails = require("../../repository/fileDetails");
 const fileList = require("../../repository/fileList");
 const ForbiddenError = require("../../errors/forbidden");
+
+exports.save_encryption_publicKey = async (req, res, next) => {
+  try {
+    const encryptionPublicKey = req.body.encryptionPublicKey;
+    const record = req.user;
+
+    const updatedDetails = {
+      publicKey: record.publicKey,
+      message: record.message,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+      encryptionPublicKey: encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet,
+    };
+
+    const _ = await updateUserDetails(updatedDetails);
+
+    res.status(200).json("Success");
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.get_encryption_publicKey = async (req, res, next) => {
   try {

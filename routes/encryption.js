@@ -6,6 +6,16 @@ const authenticator = require("../middlewares/authenticator");
 
 const router = express.Router();
 
+router.post(
+  "/save_encryption_publicKey",
+  validate(validator.saveEncryptionPublicKeySchema, { body: true }),
+  authenticator(
+    ["verifypublickey", "verifyjwt"],
+    ["useSHA256WithAccessTokenAndApiKey"]
+  ),
+  EncryptionController.save_encryption_publicKey
+);
+
 router.get(
   "/get_encryption_publicKey",
   validate(validator.publicKeySchema, { query: true }),
