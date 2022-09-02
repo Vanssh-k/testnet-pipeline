@@ -22,10 +22,12 @@ exports.verify_signer = async (req, res, next) => {
 
     let date = new Date(); // Now
     date = date.setDate(date.getDate() + 7); // Expire in 7 days
+    const message = 
+      "Please prove you are owner of this wallet by signing this message\r\nnonce=" + date
 
     const updatedDetails = {
       publicKey: record.publicKey,
-      message: uuidv4().toString(),
+      message: message,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
