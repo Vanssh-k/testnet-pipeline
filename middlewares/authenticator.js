@@ -96,14 +96,16 @@ module.exports = (rules, clauses = []) => {
               }
             }
             record = await userDetails(publicKey); // Check if user already exist
-            if (!record) {
-              return next(new Errors.NotFoundError());
-            }
-            if (clauses.includes("useEncryptionPublicKeyExists")) {
-              if (!record.encryptionPublicKey) {
+            if (!clauses.includes("useNewUserBypass")) {
+              if (!record) {
                 return next(new Errors.NotFoundError());
               }
             }
+            // if (clauses.includes("useEncryptionPublicKeyExists")) {
+            //   if (!record.encryptionPublicKey) {
+            //     return next(new Errors.NotFoundError());
+            //   }
+            // }
             req.user = record;
             break ruleSwitch;
           default:
