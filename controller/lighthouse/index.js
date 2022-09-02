@@ -81,6 +81,9 @@ exports.bulk_cid_add = async (req, res, next) => {
 
     // Get CID, filename array
     const data = JSON.parse(req.body.data);
+    if(data.length === 0) {
+      throw new DatabaseError("No CID included");
+    }
     const orderID = uuidv4().toString();
 
     // Save Order
