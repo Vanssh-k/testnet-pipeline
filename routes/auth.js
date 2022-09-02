@@ -28,7 +28,7 @@ router.get(
 router.get(
   "/get_message",
   validate(validator.publicKeySchema, { query: true }),
-  authenticator(["verifypublickey"], ["useWeb3"]),
+  authenticator(["verifypublickey"], ["useWeb3", "useNewUserBypass"]),
   AuthController.get_message
 );
 
