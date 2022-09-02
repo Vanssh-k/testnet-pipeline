@@ -22,8 +22,7 @@ exports.verify_signer = async (req, res, next) => {
 
     let date = new Date(); // Now
     date = date.setDate(date.getDate() + 7); // Expire in 7 days
-    const message = 
-      "Please prove you are owner of this wallet by signing this message\r\nnonce=" + date
+    const message = date;
 
     const updatedDetails = {
       publicKey: record.publicKey,
@@ -106,7 +105,8 @@ exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
     const record = req.user;
-    const message = uuidv4().toString();
+    const message = 
+      "Please prove you are owner of this wallet by signing this message\r\nnonce=" + Date.now();
 
     const updatedDetails = {
       publicKey: publicKey,
