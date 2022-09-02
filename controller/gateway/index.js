@@ -39,6 +39,7 @@ exports.add_subdomain = async (req, res, next) => {
     res.status(200).json("SubDomain Created");
     
   } catch (error) {
+    console.error(error);
     next(error);
   }
 };
@@ -67,7 +68,7 @@ exports.get_subdomain = async (req, res, next) =>{
       throw new NotFoundError();
     }
 
-    res.status(200).json(record);
+    res.status(200).json(record["subDomain"]);
   } catch (error) {
     next(error);
   }
@@ -76,10 +77,6 @@ exports.get_subdomain = async (req, res, next) =>{
 exports.get_transaction_details = async (req, res, next) => {
   try {
     const record = await userTransactions(req.query.publicKey);
-    if (!record) {
-      throw new NotFoundError();
-    }
-
     res.status(200).json(record);
   } catch (error) {
     next(error);
