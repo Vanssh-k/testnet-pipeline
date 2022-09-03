@@ -1,10 +1,10 @@
 const dbbClient = require("./ddbClient");
-const { governance } = require("../controller/libs/constants");
+const { ProposalTable } = require("../controller/libs/constants");
 
 const addProposal = async (proposalDetail) => {
   try{
     const params = {
-      TableName: governance,
+      TableName: ProposalTable,
       Item: proposalDetail,
     };
   
@@ -18,7 +18,7 @@ const addProposal = async (proposalDetail) => {
 const allProposals = async () => {
   try{
     const params = {
-      TableName: governance,
+      TableName: ProposalTable,
     };
   
     const record = await dbbClient.scan(params).promise();

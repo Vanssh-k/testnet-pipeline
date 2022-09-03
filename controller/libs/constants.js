@@ -4,7 +4,7 @@ const gatewayTable = "SubDomainManagement";
 const fileTableEncryption = "fileTableTest";
 const bulkCIDAdd = "bulkCIDAdd";
 const cidOrderTable = "cidOrderTable";
-const governance = "governance";
+const ProposalTable = "ProposalTable";
 const subscriptionPurchaseTransactions = "subscriptionPurchaseTransactions";
 const freeDataLimitInBytes = 1073741824;
 
@@ -17,5 +17,5 @@ module.exports = {
   bulkCIDAdd, 
   cidOrderTable, 
   subscriptionPurchaseTransactions, 
-  governance
+  ProposalTable
 };
