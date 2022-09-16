@@ -43,10 +43,18 @@ exports.add_subdomain = async (req, res, next) => {
     // }
 
     if (!status) {
-      if (subscriptionId.toString() > Number.MAX_SAFE_INTEGER.toString()) {
-        throw new ForbiddenError("kindly purchase an active plan");
+      if (subscriptionId > Number.MAX_SAFE_INTEGER) {
+        return res
+          .status(401)
+          .json({ data: { message: "kindly purchase an active plan" } });
       } else {
-        throw new ForbiddenError("kindly renew or upgrade your plan");
+        //TODO: Replace message with plan details
+        // throw new ForbiddenError();
+        return res.status(401).json({
+          data: {
+            message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
+          },
+        });
       }
     }
     const timestamp = Date.now();
