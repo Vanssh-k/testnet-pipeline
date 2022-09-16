@@ -115,3 +115,32 @@ exports.get_purchaseable_plans = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.get_active_plan = async (req, res, next) => {
+  try {
+    const publicKey = req.body.publicKey.toLowerCase();
+
+    const { status, subscriptionId } = await getSubscriptionStatus(publicKey);
+
+    if (!status) {
+      if (subscriptionId > Number.MAX_SAFE_INTEGER) {
+        return res
+          .status(401)
+          .json({ data: { message: "kindly purchase an active plan" } });
+      } else {
+        //TODO: Replace message with plan details
+        // throw new ForbiddenError();
+        return res.status(401).json({
+          data: {
+            message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
+          },
+        });
+      }
+    }
+    res
+      .status(200)
+      .json({ data: { status, subscriptionId: subscriptionId.toString() } });
+  } catch (error) {
+    next(error);
+  }
+};
