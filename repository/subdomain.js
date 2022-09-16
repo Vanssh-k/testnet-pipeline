@@ -59,14 +59,13 @@ const userTransactions = async (publicKey) => {
 
 const purchasedPlans = async (publicKey) => {
   try {
-
     // TODO: filter active plans
     const params = {
       TableName: subscriptionPlans,
-      // FilterExpression: "publicKey = :p",
-      // ExpressionAttributeValues: {
-      //   ":p": publicKey.toLowerCase(),
-      // },
+      FilterExpression: "isActive = :a",
+      ExpressionAttributeValues: {
+        ":a": "true",
+      },
     };
 
     const record = await dbbClient.scan(params).promise();
