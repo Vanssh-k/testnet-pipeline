@@ -31,4 +31,6 @@ router.get(
   GatewayController.get_transaction_details
 );
 
+router.get("/get_plans", GatewayController.get_purchaseable_plans);
+
 module.exports = router;
