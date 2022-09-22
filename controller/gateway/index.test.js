@@ -20,7 +20,7 @@ test("Add SubDomain Main Case: POST /add_subdomain", async () => {
       const data = {
         publicKey: "0x75a22ede971080c8448c46de6ae5df3f64c67475",
         signedMessage: signedMessage,
-        subDomain: "ravish"
+        subDomain: "rav"
       };
 
       await supertest(app)
@@ -77,7 +77,7 @@ test("Add SubDomain Authentication Error: POST /add_subdomain", async () => {
 // check_subdomain
 test("Check Sub Domain Main Case: GET /check_subdomain", async () => {
   await supertest(app)
-    .get("/api/gateway/check_subdomain?subDomain=ravish")
+    .get("/api/gateway/check_subdomain?subDomain=rav")
     .expect(200)
     .then((response) => {
       const exists = JSON.parse(response.text);
@@ -88,7 +88,7 @@ test("Check Sub Domain Main Case: GET /check_subdomain", async () => {
 test("Check Sub Domain Not Found: GET /check_subdomain", async () => {
   await supertest(app)
     .get("/api/gateway/check_subdomain?subDomain=gateway")
-    .expect(404);
+    .expect(403);
 }, 30000);
 
 // get_subdomain
@@ -98,7 +98,7 @@ test("Get Sub Domain Main Case: GET /get_subdomain", async () => {
     .expect(200)
     .then((response) => {
       const subDomain = JSON.parse(response.text);
-      expect(subDomain).toBe("ravish");
+      expect(subDomain).toBe("rav");
     });
 }, 30000);
 

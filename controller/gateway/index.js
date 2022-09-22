@@ -21,7 +21,7 @@ exports.add_subdomain = async (req, res, next) => {
   try {
     if (
       restrictedNames.includes(req.body.subDomain) ||
-      !/[^A-Za-z0-9]/.test(req.body.subDomain)
+      /[^A-Za-z0-9]/.test(req.body.subDomain)
     ) {
       throw new ForbiddenError();
     }
@@ -34,13 +34,6 @@ exports.add_subdomain = async (req, res, next) => {
     const publicKey = req.body.publicKey.toLowerCase();
 
     const { status, subscriptionId } = await getSubscriptionStatus(publicKey);
-
-    // const transactionDetails = await userTransactions(publicKey);
-
-    // // Temporary Solution, DB redesign required
-    // if (transactionDetails.length === 0) {
-    //   throw new ForbiddenError("No plan purchased");
-    // }
 
     if (!status) {
       if (subscriptionId > Number.MAX_SAFE_INTEGER) {
@@ -78,7 +71,7 @@ exports.check_subdomain = async (req, res, next) => {
   try {
     if (
       restrictedNames.includes(req.body.subDomain) ||
-      !/[^A-Za-z0-9]/.test(req.body.subDomain)
+      /[^A-Za-z0-9]/.test(req.body.subDomain)
     ) {
       throw new ForbiddenError();
     }
