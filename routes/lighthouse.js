@@ -52,7 +52,7 @@ router.get(
 router.post(
   "/add_cid_to_queue",
   validate(validator.addCIDToQueueSchema, { body: true }),
-  authenticator(["verifypublickey"]),
+  authenticator(["verifypublickey"], ["protectedRoute"]),
   LighthouseController.add_cid_to_queue
 );
 

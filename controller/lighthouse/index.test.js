@@ -98,6 +98,7 @@ test("Add CID To Queue: GET /add_cid_to_queue", async () => {
 
   await supertest(app)
     .post("/api/lighthouse/add_cid_to_queue")
+    .set("Authorization", "Bearer " + process.env.ROUTE_ACCESS_TOKEN)
     .send(data)
     .expect(200);
 }, 30000);

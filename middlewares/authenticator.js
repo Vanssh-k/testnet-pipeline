@@ -101,11 +101,12 @@ module.exports = (rules, clauses = []) => {
                 return next(new Errors.NotFoundError());
               }
             }
-            // if (clauses.includes("useEncryptionPublicKeyExists")) {
-            //   if (!record.encryptionPublicKey) {
-            //     return next(new Errors.NotFoundError());
-            //   }
-            // }
+            if (clauses.includes("protectedRoute")) {
+              const routeAccessToken = req.headers["authorization"]?.split(" ")[1];
+              if(routeAccessToken !== process.env.ROUTE_ACCESS_TOKEN){
+                return next(new Errors.ForbiddenError());
+              }
+            }
             req.user = record;
             break ruleSwitch;
           default:
