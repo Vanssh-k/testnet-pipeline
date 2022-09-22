@@ -117,7 +117,7 @@ exports.bulk_cid_add = async (req, res, next) => {
       }
     }
     // Add data to SQS
-    // const startMigration = await axios.get("http://34.67.216.167:8080/?order_id=" + orderID)
+    const startMigration = axios.get("http://34.67.216.167:8082/?order_id=" + orderID)
     res.status(200).json({ orderID: orderID });
   } catch (error) {
     next(error);
