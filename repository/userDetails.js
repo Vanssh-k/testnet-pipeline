@@ -2,12 +2,12 @@ const chalk = require("chalk");
 const dbbClient = require("./ddbClient");
 const { userTable } = require("../controller/libs/constants");
 
-module.exports = async (usersPublicKey) => {
+module.exports = async (usersPublicKey, network) => {
   try {
     const params = {
       TableName: userTable,
       Key: {
-        publicKey: usersPublicKey.trim().toLowerCase(),
+        publicKey: network==="evm"?usersPublicKey.trim().toLowerCase():usersPublicKey,
       },
     };
 
