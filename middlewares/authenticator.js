@@ -3,7 +3,7 @@ const userDetails = require("../repository/userDetails");
 const verifySignature = require("../controller/authentication/verifySignature");
 const Errors = require("../errors");
 const helpers = require("../helpers");
-const web3 = require("web3");
+const getNetwork = require("./getNetwork");
 const checkApiKey = require("../repository/checkApiKey");
 
 module.exports = (rules, clauses = []) => {
@@ -11,17 +11,20 @@ module.exports = (rules, clauses = []) => {
     if (rules && rules.length) {
       rulesLoop: for (let rule of rules) {
         let record = {};
+        let network = null;
         ruleSwitch: switch (rule) {
           case "verifysignature":
             const usersPublicKey = req.body.publicKey || req.query.publicKey;
-            record = await userDetails(usersPublicKey);
+            network = getNetwork(usersPublicKey);
+            record = await userDetails(usersPublicKey, network);
             if (!record) {
               return next(new Errors.NotFoundError());
             }
             let authentic = verifySignature(
               usersPublicKey,
               record.message,
-              req.body.signedMessage
+              req.body.signedMessage,
+              record.network
             );
             if (!authentic) {
               return next(new Errors.AuthenticationError());
@@ -50,7 +53,8 @@ module.exports = (rules, clauses = []) => {
                 req.body.fromPublicKey ||
                 req.query.publicKey ||
                 req.body.publicKey;
-              record = await userDetails(publicKey);
+              network = getNetwork(publicKey);
+              record = await userDetails(publicKey, network);
               if (!record) {
                 return next(new Errors.NotFoundError());
               }
@@ -75,6 +79,7 @@ module.exports = (rules, clauses = []) => {
             if (!accessData) {
               return next(new Errors.AuthenticationError());
             }
+            network = getNetwork(accessData.publicKey);
             record = await userDetails(accessData.publicKey);
             if (!record) {
               return next(new Errors.NotFoundError());
@@ -88,14 +93,15 @@ module.exports = (rules, clauses = []) => {
             break ruleSwitch;
           case "verifypublickey":
             const publicKey = req.body.publicKey || req.query.publicKey;
+            network = getNetwork(publicKey);
             if (clauses.includes("useWeb3")) {
-              if (!web3.utils.isAddress(publicKey)) {
+              if (!network) {
                 return next(new Errors.RequestValidationError([
                   { msg: "Invalid public key!!!" },
                 ]));
               }
             }
-            record = await userDetails(publicKey); // Check if user already exist
+            record = await userDetails(publicKey, network); // Check if user already exist
             if (!clauses.includes("useNewUserBypass")) {
               if (!record) {
                 return next(new Errors.NotFoundError());
@@ -108,6 +114,7 @@ module.exports = (rules, clauses = []) => {
               }
             }
             req.user = record;
+            req.network = network;
             break ruleSwitch;
           default:
             continue rulesLoop;

@@ -20,20 +20,17 @@ exports.verify_signer = async (req, res, next) => {
       algorithm: "HS256",
     });
 
-    let date = new Date(); // Now
-    date = date.setDate(date.getDate() + 7); // Expire in 7 days
-    const message = date;
-
     const updatedDetails = {
       publicKey: record.publicKey,
-      message: message,
+      message: Date.now(),
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
-      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: refreshToken,
-      tokenExpires: date,
       faucet: record.faucet,
+      network: record.network,
+      createdAt: record.createdAt,
+      updatedAt: Date.now()
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -86,10 +83,11 @@ exports.remove_refresh_access_token = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
-      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: null,
-      tokenExpires: record.tokenExpires,
       faucet: record.faucet,
+      network: record.network,
+      createdAt: record.createdAt,
+      updatedAt: Date.now()
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -104,9 +102,12 @@ exports.remove_refresh_access_token = async (req, res, next) => {
 exports.get_message = async (req, res, next) => {
   try {
     const publicKey = req.query.publicKey;
+    const network = req.network;
     const record = req.user;
+
+    const timestamp = Date.now();
     const message = 
-      "Please prove you are owner of this wallet by signing this message\r\nnonce=" + Date.now();
+      "Please prove you are the owner of this wallet by signing this message, nonce=" + timestamp;
 
     const updatedDetails = {
       publicKey: publicKey,
@@ -118,13 +119,14 @@ exports.get_message = async (req, res, next) => {
           ? SHA256(uuidv4().toString()).toString()
           : record.apiKey
         : SHA256(uuidv4().toString()).toString(),
-      encryptionPublicKey: record ? record.encryptionPublicKey : "",
       accessToken: record ? record.accessToken : "",
-      tokenExpires: record ? record.tokenExpires : 0,
       faucet: record ? record.faucet : {},
+      network: network,
+      createdAt: record ? record.createdAt : timestamp,
+      updatedAt: timestamp
     };
 
-    const _ = await updateUserDetails(updatedDetails);
+    const _ = await updateUserDetails(updatedDetails, network);
 
     res.status(200).json(message);
   } catch (error) {
@@ -142,10 +144,11 @@ exports.get_api_key = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: SHA256(apiKey).toString(),
-      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
-      tokenExpires: record.tokenExpires,
       faucet: record.faucet,
+      network: record.network,
+      createdAt: record.createdAt,
+      updatedAt: Date.now()
     };
 
     const _ = await updateUserDetails(updatedDetails);
@@ -192,10 +195,11 @@ exports.tweet_recharge = async (req, res, next) => {
       dataLimit: record.dataLimit + freeDataLimitInBytes,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
-      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
-      tokenExpires: record.tokenExpires,
       faucet: { twitter: "used" },
+      network: record.network,
+      createdAt: record.createdAt,
+      updatedAt: Date.now()
     };
 
     const _ = await updateUserDetails(updatedDetails);
