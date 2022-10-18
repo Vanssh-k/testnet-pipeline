@@ -245,6 +245,9 @@ exports.add_cid_to_queue = async (req, res, next) => {
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
       faucet: record.faucet,
+      network: record.network,
+      createdAt: record.createdAt,
+      updatedAt: Date.now()
     };
 
     const updateResponse = await updateUserDetails(updatedDetails);
