@@ -1,4 +1,4 @@
-const userTable = "UsersTable";
+const userTable = "Users";
 const fileTable = "files";
 const gatewayTable = "SubDomainManagement";
 const fileTableEncryption = "fileTableTest";
