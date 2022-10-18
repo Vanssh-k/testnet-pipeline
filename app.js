@@ -14,6 +14,10 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 app.use(cors());
 
+app.get("/api/health", (req, res)=>{
+  res.status(200).send("OK")
+});
+
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/user", require("./routes/user"));
 app.use("/api/gateway", require("./routes/gateway"));
