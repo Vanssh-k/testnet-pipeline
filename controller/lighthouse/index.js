@@ -1,9 +1,10 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const addCID = require("../../repository/addCID");
-const createOrder = require("../../repository/createOrder");
-const cidOrderStatus = require("../../repository/cidOrderStatus");
-const orderDetails = require("../../repository/orderDetails");
+const verifyCID = require("../../utils/verifyCID");
+const addMigrationCIDs = require("../../repository/addMigrationCIDs");
+const createMigrationRequest = require("../../repository/createMigrationRequest");
+const listMigrationRequests = require("../../repository/listMigrationRequests");
+const migrationRequestInfo = require("../../repository/migrationRequestInfo");
 const fileDetailsByCid = require("../../repository/fileDetailsByCid");
 const saveFileMetaData = require("../../repository/saveFileMetaData");
 const updateUserDetails = require("../../repository/updateUserDetails");
@@ -74,8 +75,8 @@ const addCid = async (name, cid) => {
   }
 };
 
-// add cid in bulk
-exports.bulk_cid_add = async (req, res, next) => {
+// create db record for all CID and trigger migration
+exports.migration_request = async (req, res, next) => {
   try {
     const record = req.user;
 
@@ -84,49 +85,54 @@ exports.bulk_cid_add = async (req, res, next) => {
     if(data.length === 0) {
       throw new DatabaseError("No CID included");
     }
-    const orderID = uuidv4().toString();
 
-    // Save Order
+    // Verify CID's
+    for (let i = 0; i < data.length; i++) {
+      if(!verifyCID(data[i])){
+        throw new BadRequestError("Row " + i + "is not a CID");
+      }
+    }
+
+    // Save Migration Request
     const timestamp = Date.now();
-    const orderSave = await createOrder({
-      id: uuidv4().toString(),
+    const requestID = uuidv4().toString();
+    const saveRequest = await createMigrationRequest({
+      id: requestID,
       publicKey: record.publicKey,
-      orderID: orderID,
       totalCID: data.length,
-      orderStatus: "queued",
+      migrationStatus: "queued",
       createdAt: timestamp,
       lastUpdate: timestamp,
     });
-    if (!orderSave) {
+    if (!saveRequest) {
       throw new DatabaseError();
     }
 
+    // Save all CIDs
     for (let i = 0; i < data.length; i++) {
-      const save = await addCID({
+      const saveCIDs = await addMigrationCIDs({
         id: uuidv4().toString(),
         cid: data[i],
-        orderID: orderID,
+        requestID: requestID,
         fileName: "",
         fileSizeInBytes: "",
         txHash: "",
         cidStatus: "queued",
         deal: "",
+        lastUpdate: timestamp
       });
-      if (!save) {
-        //TODO handle failed item
-      }
     }
-    // Add data to SQS
-    const startMigration = axios.get("http://34.67.216.167:8082/?order_id=" + orderID)
-    res.status(200).json({ orderID: orderID });
+    
+    // const startMigration = axios.get("http://13.235.13.61/?order_id=" + orderID)
+    res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
   }
 };
 
-exports.cid_order_status = async (req, res, next) => {
+exports.list_migration_requests = async (req, res, next) => {
   try {
-    const record = await cidOrderStatus(req.query.publicKey.toLowerCase());
+    const record = await listMigrationRequests(req.query.publicKey.toLowerCase());
     if (!record) {
       throw new NotFoundError();
     }
@@ -137,9 +143,9 @@ exports.cid_order_status = async (req, res, next) => {
   }
 };
 
-exports.order_details = async (req, res, next) => {
+exports.migration_request_info = async (req, res, next) => {
   try {
-    const record = await orderDetails(req.query.orderId);
+    const record = await migrationRequestInfo(req.query.requestId);
     if (!record) {
       throw new NotFoundError();
     }
