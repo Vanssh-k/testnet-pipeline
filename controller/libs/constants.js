@@ -2,8 +2,8 @@ const userTable = "Users";
 const fileTable = "files";
 const gatewayTable = "SubDomainManagement";
 const fileTableEncryption = "fileTableTest";
-const bulkCIDAdd = "bulkCIDAdd";
-const cidOrderTable = "cidOrderTable";
+const migrationCIDs = "migrationCIDs";
+const migrationRequestTable = "migrationRequestTable";
 const ProposalTable = "ProposalTable";
 const subscriptionPurchaseTransactions = "subscriptionPurchaseTransactions";
 const subscriptionPlans = "subscriptionPlans";
@@ -15,8 +15,8 @@ module.exports = {
   freeDataLimitInBytes,
   gatewayTable,
   fileTableEncryption,
-  bulkCIDAdd,
-  cidOrderTable,
+  migrationCIDs,
+  migrationRequestTable,
   subscriptionPurchaseTransactions,
   ProposalTable,
   subscriptionPlans
