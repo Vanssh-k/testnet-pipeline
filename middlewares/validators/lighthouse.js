@@ -21,7 +21,7 @@ module.exports.addCidSchema = joi.object({
   }),
 });
 
-module.exports.bulkCidAddSchema = joi.object({
+module.exports.migrationRequestSchema = joi.object({
   data: joi.string().required().messages({
     "any.required": `data not found`,
   }),
@@ -33,9 +33,9 @@ module.exports.bulkCidAddSchema = joi.object({
   }),
 });
 
-module.exports.orderIdSchema = joi.object({
-  orderId: joi.string().required().messages({
-    "any.required": `orderId not found`,
+module.exports.requestIdSchema = joi.object({
+  requestId: joi.string().required().messages({
+    "any.required": `requestId not found`,
   }),
 });
 
