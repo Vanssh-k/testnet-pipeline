@@ -31,22 +31,22 @@ router.post(
 );
 
 router.post(
-  "/bulk_cid_add",
-  validate(validator.bulkCidAddSchema, { body: true }),
+  "/migration_request",
+  validate(validator.migrationRequestSchema, { body: true }),
   authenticator(["verifysignature"]),
-  LighthouseController.bulk_cid_add
+  LighthouseController.migration_request
 );
 
 router.get(
-  "/cid_order_status",
+  "/list_migration_requests",
   validate(validator.publicKeySchema, { query: true }),
-  LighthouseController.cid_order_status
+  LighthouseController.list_migration_requests
 );
 
 router.get(
-  "/order_details",
-  validate(validator.orderIdSchema, { query: true }),
-  LighthouseController.order_details
+  "/migration_request_info",
+  validate(validator.requestIdSchema, { query: true }),
+  LighthouseController.migration_request_info
 );
 
 router.post(
