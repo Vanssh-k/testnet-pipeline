@@ -1,6 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 const userDetails = require("../repository/userDetails");
-const verifySignature = require("../controller/authentication/verifySignature");
+const verifySignature = require("../utils/verifySignature");
 const Errors = require("../errors");
 const helpers = require("../helpers");
 const getNetwork = require("./getNetwork");
