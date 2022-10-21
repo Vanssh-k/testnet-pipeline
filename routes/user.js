@@ -25,4 +25,11 @@ router.get(
   UserController.faucet_status
 );
 
+router.get(
+  "/update_data_usage",
+  validate(validator.migrationRequestIdSchema, { query: true }),
+  authenticator(["verifyMigrationRequest"], ["protectedRoute"]),
+  UserController.update_data_usage
+);
+
 module.exports = router;
