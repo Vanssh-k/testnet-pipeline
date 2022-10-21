@@ -5,7 +5,7 @@ module.exports = async (publicKey) => {
   try{
     const params = {
       TableName: migrationRequestTable,
-      IndexName: "publicKey-createdAt-index",
+      IndexName: "publicKey-index",
       KeyConditionExpression: "publicKey = :p",
       ExpressionAttributeValues: {
         ":p": publicKey,

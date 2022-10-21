@@ -5,7 +5,7 @@ module.exports = async (requestID) => {
   try{
     const params = {
       TableName: migrationCIDs,
-      IndexName: "requestID-lastUpdate-index",
+      IndexName: "requestID-index",
       KeyConditionExpression: "requestID = :r",
       ExpressionAttributeValues: {
         ":r": requestID,
