@@ -33,7 +33,7 @@ module.exports.migrationRequestSchema = joi.object({
   }),
 });
 
-module.exports.requestIdSchema = joi.object({
+module.exports.migrationRequestIdSchema = joi.object({
   requestId: joi.string().required().messages({
     "any.required": `requestId not found`,
   }),

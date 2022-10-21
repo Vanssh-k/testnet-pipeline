@@ -116,14 +116,15 @@ exports.migration_request = async (req, res, next) => {
         requestID: requestID,
         fileName: "",
         fileSizeInBytes: "",
+        userDataUpdated: false,
         txHash: "",
         cidStatus: "queued",
         deal: "",
         lastUpdate: timestamp
       });
     }
-    
-    // const startMigration = axios.get("http://13.235.13.61/?order_id=" + orderID)
+
+    // const startMigration = axios.get("http://13.235.13.61/?request_id=" + requestID)
     res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
@@ -247,9 +248,7 @@ exports.add_cid_to_queue = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: parseInt(record.dataUsed) + parseInt(req.body.size),
       apiKey: record.apiKey,
-      encryptionPublicKey: record.encryptionPublicKey,
       accessToken: record.accessToken,
-      tokenExpires: record.tokenExpires,
       faucet: record.faucet,
       network: record.network,
       createdAt: record.createdAt,
