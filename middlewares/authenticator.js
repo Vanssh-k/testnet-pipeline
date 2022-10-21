@@ -1,5 +1,6 @@
 const SHA256 = require("crypto-js/sha256");
 const userDetails = require("../repository/userDetails");
+const getMigrationRequestInfo = require("../repository/getMigrationRequestInfo");
 const verifySignature = require("../utils/verifySignature");
 const Errors = require("../errors");
 const helpers = require("../helpers");
@@ -31,6 +32,7 @@ module.exports = (rules, clauses = []) => {
             }
             req.user = record;
             break ruleSwitch;
+          
           case "verifyjwt":
             if (clauses.includes("useSHA256WithApiKey")) {
               const apiKey = req.headers["authorization"]?.split(" ")[1];
@@ -91,6 +93,7 @@ module.exports = (rules, clauses = []) => {
             }
             req.user = record;
             break ruleSwitch;
+          
           case "verifypublickey":
             const publicKey = req.body.publicKey || req.query.publicKey;
             network = getNetwork(publicKey);
@@ -116,6 +119,21 @@ module.exports = (rules, clauses = []) => {
             req.user = record;
             req.network = network;
             break ruleSwitch;
+          
+          case "verifyMigrationRequest":
+            const requestId = req.query.requestId;
+            const requestInfo = await getMigrationRequestInfo(requestId);
+            if (!requestInfo) {
+              return next(new Errors.NotFoundError());
+            }
+            network = getNetwork(requestInfo["publicKey"]);
+            record = await userDetails(requestInfo["publicKey"], network);
+            if (!record) {
+              return next(new Errors.NotFoundError());
+            }
+            req.user = record;
+            break ruleSwitch;
+
           default:
             continue rulesLoop;
         }
