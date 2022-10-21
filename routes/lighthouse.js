@@ -45,7 +45,7 @@ router.get(
 
 router.get(
   "/migration_request_info",
-  validate(validator.requestIdSchema, { query: true }),
+  validate(validator.migrationRequestIdSchema, { query: true }),
   LighthouseController.migration_request_info
 );
 
