@@ -37,6 +37,13 @@ router.post(
   LighthouseController.migration_request
 );
 
+router.post(
+  "/migration_request_ent",
+  validate(validator.migrationRequestEntSchema, { body: true }),
+  authenticator(["enterpriseRoute"]),
+  LighthouseController.migration_request_ent
+);
+
 router.get(
   "/list_migration_requests",
   validate(validator.publicKeySchema, { query: true }),
