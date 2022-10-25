@@ -36,13 +36,10 @@ module.exports = (rules, clauses = []) => {
           case "verifyjwt":
             if (clauses.includes("useSHA256WithApiKey")) {
               const apiKey = req.headers["authorization"]?.split(" ")[1];
-              console.log(apiKey)
               if (!apiKey){
                 return next(new Errors.AuthenticationError());
               }
-              console.log(SHA256(apiKey).toString())
               const record = await checkApiKey(SHA256(apiKey).toString());
-              console.log(record)
               if (!record) {
                 return next(new Errors.AuthenticationError());
               }
