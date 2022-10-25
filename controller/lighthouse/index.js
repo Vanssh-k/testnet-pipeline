@@ -101,6 +101,7 @@ exports.migration_request = async (req, res, next) => {
       publicKey: record.publicKey,
       totalCID: data.length,
       migrationStatus: "queued",
+      enterprise: "lighthouse",
       createdAt: timestamp,
       lastUpdate: timestamp,
     });
@@ -124,6 +125,65 @@ exports.migration_request = async (req, res, next) => {
       });
     }
 
+    // const startMigration = axios.get("http://13.235.13.61/?request_id=" + requestID)
+    res.status(200).json({ requestID: requestID });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.migration_request_ent = async (req, res, next) => {
+  try {
+    let publicKey = req.body.publicKey.trim();
+    if(req.network==="evm"){
+      publicKey = publicKey.toLowerCase();
+    }
+
+    // Get CID, filename array
+    const data = JSON.parse(req.body.data);
+    if(data.length === 0) {
+      throw new DatabaseError("No CID included");
+    }
+
+    // Verify CID's
+    for (let i = 0; i < data.length; i++) {
+      if(!verifyCID(data[i])){
+        throw new BadRequestError("Row " + i + "is not a CID");
+      }
+    }
+    
+    // Save Migration Request
+    const timestamp = Date.now();
+    const requestID = uuidv4().toString();
+    const saveRequest = await createMigrationRequest({
+      id: requestID,
+      publicKey: publicKey,
+      totalCID: data.length,
+      migrationStatus: "queued",
+      enterprise: req.body.enterprise,
+      createdAt: timestamp,
+      lastUpdate: timestamp,
+    });
+    if (!saveRequest) {
+      throw new DatabaseError();
+    }
+    
+    // Save all CIDs
+    for (let i = 0; i < data.length; i++) {
+      const saveCIDs = await addMigrationCIDs({
+        id: uuidv4().toString(),
+        cid: data[i],
+        requestID: requestID,
+        fileName: "",
+        fileSizeInBytes: "",
+        userDataUpdated: false,
+        txHash: "",
+        cidStatus: "queued",
+        deal: "",
+        lastUpdate: timestamp
+      });
+    }
+    
     // const startMigration = axios.get("http://13.235.13.61/?request_id=" + requestID)
     res.status(200).json({ requestID: requestID });
   } catch (error) {

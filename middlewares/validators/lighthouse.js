@@ -33,6 +33,18 @@ module.exports.migrationRequestSchema = joi.object({
   }),
 });
 
+module.exports.migrationRequestEntSchema = joi.object({
+  data: joi.string().required().messages({
+    "any.required": `data not found`,
+  }),
+  publicKey: joi.string().required().messages({
+    "any.required": `publicKey not found`,
+  }),
+  enterprise: joi.string().required().messages({
+    "any.required": `enterprise name not found`,
+  }),
+});
+
 module.exports.migrationRequestIdSchema = joi.object({
   requestId: joi.string().required().messages({
     "any.required": `requestId not found`,

@@ -36,10 +36,13 @@ module.exports = (rules, clauses = []) => {
           case "verifyjwt":
             if (clauses.includes("useSHA256WithApiKey")) {
               const apiKey = req.headers["authorization"]?.split(" ")[1];
+              console.log(apiKey)
               if (!apiKey){
                 return next(new Errors.AuthenticationError());
               }
+              console.log(SHA256(apiKey).toString())
               const record = await checkApiKey(SHA256(apiKey).toString());
+              console.log(record)
               if (!record) {
                 return next(new Errors.AuthenticationError());
               }
@@ -49,28 +52,6 @@ module.exports = (rules, clauses = []) => {
             let accessToken = req.headers["authorization"]?.split(" ")[1];
             if (!accessToken){
               return next(new Errors.AuthenticationError());
-            }
-            if (clauses.includes("useSHA256WithAccessTokenAndApiKey")) {
-              let publicKey =
-                req.body.fromPublicKey ||
-                req.query.publicKey ||
-                req.body.publicKey;
-              network = getNetwork(publicKey);
-              record = await userDetails(publicKey, network);
-              if (!record) {
-                return next(new Errors.NotFoundError());
-              }
-              let authentic = false;
-              if (
-                SHA256(accessToken).toString() === record["accessToken"] ||
-                SHA256(accessToken).toString() === record["apiKey"]
-              ) {
-                authentic = true;
-              }
-              if (!authentic) {
-                return next(new Errors.AuthenticationError());
-              }
-              break ruleSwitch;
             }
             let accessData = helpers.verifyJWT(
               accessToken,
@@ -87,7 +68,7 @@ module.exports = (rules, clauses = []) => {
               return next(new Errors.NotFoundError());
             }
             if (clauses.includes("useRefreshEquality")) {
-              if (record.accessToken !== accessToken) {
+              if (record.refreshToken !== SHA256(accessToken).toString()) {
                 return next(new Errors.AuthenticationError());
               }
             }
@@ -131,7 +112,20 @@ module.exports = (rules, clauses = []) => {
             if (!record) {
               return next(new Errors.NotFoundError());
             }
+            req.info = requestInfo;
             req.user = record;
+            break ruleSwitch;
+
+          case "enterpriseRoute":
+            const routeAccessToken = req.headers["authorization"]?.split(" ")[1];
+            let verificationToken = null;
+            if(req.body.enterprise==="ocean_protocol"){
+              verificationToken = process.env.MIGRATION_OCEAN_ACCESS_TOKEN;
+            }
+            if (routeAccessToken!==verificationToken || !verificationToken) {
+              return next(new Errors.NotFoundError());
+            }
+            req.network = getNetwork(req.body.publicKey);
             break ruleSwitch;
 
           default:
