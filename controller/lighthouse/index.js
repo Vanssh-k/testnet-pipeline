@@ -125,7 +125,7 @@ exports.migration_request = async (req, res, next) => {
       });
     }
 
-    // const startMigration = axios.get("http://13.235.13.61/?request_id=" + requestID)
+    const startMigration = axios.get("http://13.235.13.61/api?requestId" + requestID);
     res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
@@ -184,7 +184,7 @@ exports.migration_request_ent = async (req, res, next) => {
       });
     }
     
-    // const startMigration = axios.get("http://13.235.13.61/?request_id=" + requestID)
+    const startMigration = axios.get("http://13.235.13.61/api?requestId" + requestID);
     res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
