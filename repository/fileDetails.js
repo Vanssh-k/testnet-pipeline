@@ -9,7 +9,7 @@ module.exports = async (usersPublicKey) => {
       ScanIndexForward: false,
       KeyConditionExpression: "publicKey = :p",
       ExpressionAttributeValues: {
-        ":p": usersPublicKey.trim().toLowerCase(),
+        ":p": usersPublicKey,
       },
     };
 

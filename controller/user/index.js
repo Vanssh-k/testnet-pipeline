@@ -1,3 +1,4 @@
+const getNetwork = require("../../middlewares/getNetwork");
 const fileDetails = require("../../repository/fileDetails");
 const migrationRequestInfo = require("../../repository/migrationRequestInfo");
 const updateUserDetails = require("../../repository/updateUserDetails");
@@ -5,7 +6,12 @@ const updateMigrationCIDRecord = require("../../repository/updateMigrationCIDRec
 
 exports.get_uploads = async (req, res, next) => {
   try {
-    const files = await fileDetails(req.query.publicKey);
+    let publicKey = req.query.publicKey.trim();
+    const network = getNetwork(publicKey);
+    if(network==="evm"){
+      publicKey = publicKey.toLowerCase();
+    }
+    const files = await fileDetails();
     res.status(200).send(files);
   } catch (error) {
     next(error);
