@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const verifyCID = require("../../utils/verifyCID");
+const getNetwork = require("../../middlewares/getNetwork");
 const addMigrationCIDs = require("../../repository/addMigrationCIDs");
 const createMigrationRequest = require("../../repository/createMigrationRequest");
 const listMigrationRequests = require("../../repository/listMigrationRequests");
@@ -193,7 +194,12 @@ exports.migration_request_ent = async (req, res, next) => {
 
 exports.list_migration_requests = async (req, res, next) => {
   try {
-    const record = await listMigrationRequests(req.query.publicKey.toLowerCase());
+    let publicKey = req.query.publicKey.trim();
+    const network = getNetwork(publicKey);
+    if(network==="evm"){
+      publicKey = publicKey.toLowerCase();
+    }
+    const record = await listMigrationRequests(publicKey);
     if (!record) {
       throw new NotFoundError();
     }

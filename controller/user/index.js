@@ -11,7 +11,7 @@ exports.get_uploads = async (req, res, next) => {
     if(network==="evm"){
       publicKey = publicKey.toLowerCase();
     }
-    const files = await fileDetails();
+    const files = await fileDetails(publicKey);
     res.status(200).send(files);
   } catch (error) {
     next(error);
