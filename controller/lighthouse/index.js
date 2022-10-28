@@ -125,7 +125,7 @@ exports.migration_request = async (req, res, next) => {
       });
     }
 
-    const startMigration = axios.get("http://13.235.13.61/api?requestId" + requestID);
+    const startMigration = axios.get("http://13.235.13.61/api?requestId=" + requestID);
     res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
@@ -184,7 +184,7 @@ exports.migration_request_ent = async (req, res, next) => {
       });
     }
     
-    const startMigration = axios.get("http://13.235.13.61/api?requestId" + requestID);
+    const startMigration = axios.get("http://13.235.13.61/api?requestId=" + requestID);
     res.status(200).json({ requestID: requestID });
   } catch (error) {
     next(error);
@@ -259,6 +259,7 @@ exports.add_cid_to_queue = async (req, res, next) => {
   try {
     const publicKey = req.body.publicKey.toLowerCase();
     const record = req.user;
+    const network = req.network;
 
     const timestamp = Date.now();
     if (req.body.size > record.dataLimit - record.dataUsed) {
@@ -315,7 +316,7 @@ exports.add_cid_to_queue = async (req, res, next) => {
       updatedAt: Date.now()
     };
 
-    const updateResponse = await updateUserDetails(updatedDetails);
+    const updateResponse = await updateUserDetails(updatedDetails, network);
     if (!updateResponse) {
       throw new DatabaseError("Put item failed");
     }
