@@ -257,9 +257,12 @@ exports.file_info = async (req, res, next) => {
 // Add file to queue for bundled transaction
 exports.add_cid_to_queue = async (req, res, next) => {
   try {
-    const publicKey = req.body.publicKey.toLowerCase();
     const record = req.user;
     const network = req.network;
+    let publicKey = req.body.publicKey;
+    if(network==="evm"){
+      publicKey = publicKey.trim().toLowerCase();
+    }
 
     const timestamp = Date.now();
     if (req.body.size > record.dataLimit - record.dataUsed) {
