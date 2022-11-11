@@ -25,6 +25,12 @@ router.get(
   AuthController.refresh_access_token
 );
 
+router.delete(
+  "/remove_refresh_token",
+  authenticator(["verifyjwt"], ["useRefreshSecret", "useRefreshEquality"]),
+  AuthController.remove_refresh_token
+);
+
 router.get(
   "/get_message",
   validate(validator.publicKeySchema, { query: true }),
