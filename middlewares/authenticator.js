@@ -1,7 +1,8 @@
 const SHA256 = require("crypto-js/sha256");
 const userDetails = require("../repository/userDetails");
-const getMigrationRequestInfo = require("../repository/getMigrationRequestInfo");
+const getMigrationRequestInfo = require("../repository/migration/getMigrationRequestInfo");
 const verifySignature = require("../utils/verifySignature");
+const { messageString } = require("../controller/libs/constants");
 const Errors = require("../errors");
 const helpers = require("../helpers");
 const getNetwork = require("./getNetwork");
@@ -23,7 +24,7 @@ module.exports = (rules, clauses = []) => {
             }
             let authentic = verifySignature(
               usersPublicKey,
-              record.message,
+              messageString + record.message,
               req.body.signedMessage,
               record.network
             );
