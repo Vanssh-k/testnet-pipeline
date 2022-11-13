@@ -1,5 +1,7 @@
-const { tweetRecharge } = require("./helper/tweetHelper");
-const { getMessage, verifySigner, refreshAccessToken, removeRefreshToken, getApiKey } = require("./helper/authHelper");
+const { tweetRecharge } = require('./helper/tweetHelper');
+const {
+  getMessage, verifySigner, refreshAccessToken, removeRefreshToken, getApiKey,
+} = require('./helper/authHelper');
 
 // Get message - user will sign this message to verify himself
 exports.get_message = async (req, res, next) => {
@@ -80,7 +82,7 @@ exports.verify_api_key = async (req, res, next) => {
 exports.tweet_recharge = async (req, res, next) => {
   try {
     const _ = await tweetRecharge(req.user, req.query.twitterID);
-    res.status(200).json("Data Limit Upgraded");
+    res.status(200).json('Data Limit Upgraded');
   } catch (error) {
     next(error);
   }

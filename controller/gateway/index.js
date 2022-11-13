@@ -1,27 +1,29 @@
+/* istanbul ignore file */
+/* Under Development flow might change */
 const {
   checkSubdomain,
   getRecord,
   userTransactions,
   purchasedPlans,
-} = require("../../repository/subdomain");
-const updateSubDomain = require("../../repository/updateSubDomain");
-const NotFoundError = require("../../errors/not-found-error");
-const ForbiddenError = require("../../errors/forbidden");
-const { getSubscriptionStatus } = require("../../services/blockchain/billing");
+} = require('../../repository/subdomain');
+const updateSubDomain = require('../../repository/updateSubDomain');
+const NotFoundError = require('../../errors/not-found-error');
+const ForbiddenError = require('../../errors/forbidden');
+const { getSubscriptionStatus } = require('../../services/blockchain/billing');
 
 const restrictedNames = [
-  "api",
-  "gateway",
-  "testnet",
-  "mainnet",
-  "node",
-  "encryption",
+  'api',
+  'gateway',
+  'testnet',
+  'mainnet',
+  'node',
+  'encryption',
 ];
 exports.add_subdomain = async (req, res, next) => {
   try {
     if (
-      restrictedNames.includes(req.body.subDomain) ||
-      /[^A-Za-z0-9]/.test(req.body.subDomain)
+      restrictedNames.includes(req.body.subDomain)
+      || /[^A-Za-z0-9]/.test(req.body.subDomain)
     ) {
       throw new ForbiddenError();
     }
@@ -39,28 +41,27 @@ exports.add_subdomain = async (req, res, next) => {
       if (subscriptionId > Number.MAX_SAFE_INTEGER) {
         return res
           .status(401)
-          .json({ data: { message: "kindly purchase an active plan" } });
-      } else {
-        //TODO: Replace message with plan details
-        // throw new ForbiddenError();
-        return res.status(401).json({
-          data: {
-            message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
-          },
-        });
+          .json({ data: { message: 'kindly purchase an active plan' } });
       }
+      // TODO: Replace message with plan details
+      // throw new ForbiddenError();
+      return res.status(401).json({
+        data: {
+          message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
+        },
+      });
     }
     const timestamp = Date.now();
 
     const _ = await updateSubDomain({
-      publicKey: publicKey,
+      publicKey,
       subDomain: req.body.subDomain,
       subscriptionID: subscriptionId.toString(),
       createdAt: timestamp,
       updatedAt: timestamp,
     });
 
-    res.status(200).json("SubDomain Created");
+    res.status(200).json('SubDomain Created');
   } catch (error) {
     console.error(error);
     next(error);
@@ -70,8 +71,8 @@ exports.add_subdomain = async (req, res, next) => {
 exports.check_subdomain = async (req, res, next) => {
   try {
     if (
-      restrictedNames.includes(req.body.subDomain) ||
-      /[^A-Za-z0-9]/.test(req.body.subDomain)
+      restrictedNames.includes(req.body.subDomain)
+      || /[^A-Za-z0-9]/.test(req.body.subDomain)
     ) {
       throw new ForbiddenError();
     }
@@ -80,7 +81,7 @@ exports.check_subdomain = async (req, res, next) => {
     if (!exists) {
       throw new NotFoundError();
     }
-    res.status(200).json("Exists");
+    res.status(200).json('Exists');
   } catch (error) {
     next(error);
   }
@@ -93,7 +94,7 @@ exports.get_subdomain = async (req, res, next) => {
       throw new NotFoundError();
     }
 
-    res.status(200).json(record["subDomain"]);
+    res.status(200).json(record.subDomain);
   } catch (error) {
     next(error);
   }
@@ -127,16 +128,15 @@ exports.get_active_plan = async (req, res, next) => {
       if (subscriptionId > Number.MAX_SAFE_INTEGER) {
         return res
           .status(401)
-          .json({ data: { message: "kindly purchase an active plan" } });
-      } else {
-        //TODO: Replace message with plan details
-        // throw new ForbiddenError();
-        return res.status(401).json({
-          data: {
-            message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
-          },
-        });
+          .json({ data: { message: 'kindly purchase an active plan' } });
       }
+      // TODO: Replace message with plan details
+      // throw new ForbiddenError();
+      return res.status(401).json({
+        data: {
+          message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
+        },
+      });
     }
     res
       .status(200)

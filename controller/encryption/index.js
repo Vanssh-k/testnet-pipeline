@@ -1,15 +1,15 @@
 /* istanbul ignore file */
 /* Not in use replaced with BLS key splitting */
-const { v4: uuidv4 } = require("uuid");
-const saveFileMetaData = require("../../repository/saveFileMetaData");
-const updateUserDetails = require("../../repository/updateUserDetails");
-const fileDetails = require("../../repository/fileDetails");
-const fileList = require("../../repository/fileList");
-const ForbiddenError = require("../../errors/forbidden");
+const { v4: uuidv4 } = require('uuid');
+const saveFileMetaData = require('../../repository/saveFileMetaData');
+const updateUserDetails = require('../../repository/user/updateUserDetails');
+const fileDetails = require('../../repository/fileDetails');
+const fileList = require('../../repository/fileList');
+const ForbiddenError = require('../../errors/forbidden');
 
 exports.save_encryption_publicKey = async (req, res, next) => {
   try {
-    const encryptionPublicKey = req.body.encryptionPublicKey;
+    const { encryptionPublicKey } = req.body;
     const record = req.user;
 
     const updatedDetails = {
@@ -18,7 +18,7 @@ exports.save_encryption_publicKey = async (req, res, next) => {
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
       apiKey: record.apiKey,
-      encryptionPublicKey: encryptionPublicKey,
+      encryptionPublicKey,
       accessToken: record.accessToken,
       tokenExpires: record.tokenExpires,
       faucet: record.faucet,
@@ -26,7 +26,7 @@ exports.save_encryption_publicKey = async (req, res, next) => {
 
     const _ = await updateUserDetails(updatedDetails);
 
-    res.status(200).json("Success");
+    res.status(200).json('Success');
   } catch (error) {
     next(error);
   }
@@ -60,7 +60,7 @@ exports.save_file_encryption_key = async (req, res, next) => {
 
     const _ = await saveFileMetaData(toSave);
 
-    res.status(200).json("Success");
+    res.status(200).json('Success');
   } catch (error) {
     next(error);
   }
@@ -68,13 +68,13 @@ exports.save_file_encryption_key = async (req, res, next) => {
 
 exports.get_file_encryption_key = async (req, res, next) => {
   try {
-    const cid = req.query.cid;
-    const sharedTo = req.query.sharedTo;
+    const { cid } = req.query;
+    const { sharedTo } = req.query;
     const files = await fileDetails(cid);
 
     let record = null;
     for (let i = 0; i < files.length; i++) {
-      if (files[i]["sharedTo"] === sharedTo) {
+      if (files[i].sharedTo === sharedTo) {
         record = files[i];
         break;
       }
@@ -92,7 +92,7 @@ exports.get_file_encryption_key = async (req, res, next) => {
 
 exports.get_encrypted_uploads = async (req, res, next) => {
   try {
-    const publicKey = req.query.publicKey;
+    const { publicKey } = req.query;
     const fileDetails = fileList(publicKey);
 
     res.status(200).json(fileDetails);

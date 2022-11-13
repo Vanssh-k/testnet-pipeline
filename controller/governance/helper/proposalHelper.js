@@ -1,17 +1,17 @@
-const { v4: uuidv4 } = require("uuid");
-const { addProposal, allProposals } = require("../../../repository/governance/proposals");
+const { v4: uuidv4 } = require('uuid');
+const { addProposal, allProposals } = require('../../../repository/governance/proposals');
 
 exports.createProposal = async (publicKey, proposal) => {
   try {
     const timestamp = Date.now();
     const _ = await addProposal({
       id: uuidv4().toString(),
-      publicKey: publicKey,
-      proposal: proposal,
+      publicKey,
+      proposal,
       createdAt: timestamp,
-      updatedAt: timestamp
+      updatedAt: timestamp,
     });
-    return("Success");
+    return ('Success');
   } catch (error) {
     next(error);
   }
@@ -19,7 +19,7 @@ exports.createProposal = async (publicKey, proposal) => {
 
 exports.listProposals = async () => {
   try {
-    return(await allProposals());
+    return (await allProposals());
   } catch (error) {
     next(error);
   }

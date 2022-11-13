@@ -53,7 +53,7 @@ test("Add SubDomain Forbidden: POST /add_subdomain", async () => {
         signedMessage: signedMessage,
         subDomain: "api"
       };
-    
+
       await supertest(app)
         .post("/api/gateway/add_subdomain")
         .send(data)
@@ -88,7 +88,7 @@ test("Check Sub Domain Main Case: GET /check_subdomain", async () => {
 test("Check Sub Domain Not Found: GET /check_subdomain", async () => {
   await supertest(app)
     .get("/api/gateway/check_subdomain?subDomain=gateway")
-    .expect(403);
+    .expect(404);
 }, 30000);
 
 // get_subdomain
