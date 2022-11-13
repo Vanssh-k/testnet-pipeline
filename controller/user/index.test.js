@@ -6,7 +6,7 @@ const app = require('../../app');
 test('Get Uploads: GET /get_uploads', async () => {
   await supertest(app)
     .get(
-      '/api/user/get_uploads?publicKey=0xC88C729Ef2c18baf1074EA0Df537d61a54A8CE7b',
+      '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=1',
     )
     .expect(200)
     .then((response) => {
@@ -16,11 +16,31 @@ test('Get Uploads: GET /get_uploads', async () => {
     });
 }, 30000);
 
+test('Get Uploads Page no 0: GET /get_uploads', async () => {
+  await supertest(app)
+    .get(
+      '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=0',
+    )
+    .expect(502);
+}, 30000);
+
+test('Get Uploads Page no>count: GET /get_uploads', async () => {
+  await supertest(app)
+    .get(
+      '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=10',
+    )
+    .expect(200)
+    .then((response) => {
+      const uploads = JSON.parse(response.text);
+      expect(uploads.length).toBe(0);
+    });
+}, 30000);
+
 // user_data_usage
 test('User Data Usage: GET /user_data_usage', async () => {
   await supertest(app)
     .get(
-      '/api/user/user_data_usage?publicKey=0xC88C729Ef2c18baf1074EA0Df537d61a54A8CE7b',
+      '/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD',
     )
     .expect(200)
     .then((response) => {
@@ -33,7 +53,7 @@ test('User Data Usage: GET /user_data_usage', async () => {
 test('User Data Usage Record Not Found Error: GET /user_data_usage', async () => {
   await supertest(app)
     .get(
-      '/api/user/user_data_usage?publicKey=0xC88C729Ef2c18baf1074EA0Df537d61a54A8CE7c',
+      '/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD',
     )
     .expect(404);
 }, 30000);
