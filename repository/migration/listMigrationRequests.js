@@ -1,23 +1,23 @@
-const dbbClient = require("../ddbClient");
-const { migrationRequestTable } = require("../../controller/libs/constants");
+const dbbClient = require('../ddbClient');
+const { migrationRequestTable } = require('../../controller/libs/constants');
 
-const DatabaseError = require("../../errors/database-error");
+const DatabaseError = require('../../errors/database-error');
 
 module.exports = async (publicKey) => {
-  try{
+  try {
     const params = {
       TableName: migrationRequestTable,
-      IndexName: "publicKey-index",
-      KeyConditionExpression: "publicKey = :p",
+      IndexName: 'publicKey-index',
+      KeyConditionExpression: 'publicKey = :p',
       ExpressionAttributeValues: {
-        ":p": publicKey,
+        ':p': publicKey,
       },
     };
-  
+
     const record = await dbbClient.query(params).promise();
     const { Items } = record;
     return Items;
-  } catch(error) {
+  } catch (error) {
     throw new DatabaseError();
   }
 };

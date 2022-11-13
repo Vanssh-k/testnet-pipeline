@@ -1,7 +1,7 @@
-const chalk = require("chalk");
-const dbbClient = require("../ddbClient");
-const { migrationRequestTable } = require("../../controller/libs/constants");
-const DatabaseError = require("../../errors/database-error");
+const chalk = require('chalk');
+const dbbClient = require('../ddbClient');
+const { migrationRequestTable } = require('../../controller/libs/constants');
+const DatabaseError = require('../../errors/database-error');
 
 module.exports = async (record) => {
   try {
@@ -14,7 +14,7 @@ module.exports = async (record) => {
     return save;
   } catch (error) {
     console.log(
-      chalk.yellow("Order save error: ") + chalk.red(error.message)
+      chalk.yellow('Order save error: ') + chalk.red(error.message),
     );
     throw new DatabaseError();
   }

@@ -1,14 +1,13 @@
 const chalk = require('chalk');
 const dbbClient = require('../ddbClient');
-const { migrationRequestTable } = require('../../controller/libs/constants');
-const DatabaseError = require('../../errors/database-error');
+const { userTable } = require('../../controller/libs/constants');
 
-module.exports = async (requestId) => {
+module.exports = async (usersPublicKey, network) => {
   try {
     const params = {
-      TableName: migrationRequestTable,
+      TableName: userTable,
       Key: {
-        id: requestId,
+        publicKey: network === 'evm' ? usersPublicKey.trim().toLowerCase() : usersPublicKey,
       },
     };
 
@@ -18,6 +17,6 @@ module.exports = async (requestId) => {
     console.log(
       chalk.yellow('User Detail Fetch Error: ') + chalk.red(error.message),
     );
-    throw new DatabaseError();
+    return null;
   }
 };

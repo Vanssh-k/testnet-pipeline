@@ -1,23 +1,23 @@
-const dbbClient = require("../ddbClient");
-const { migrationCIDs } = require("../../controller/libs/constants");
+const dbbClient = require('../ddbClient');
+const { migrationCIDs } = require('../../controller/libs/constants');
 
-const DatabaseError = require("../../errors/database-error");
+const DatabaseError = require('../../errors/database-error');
 
 module.exports = async (requestID) => {
-  try{
+  try {
     const params = {
       TableName: migrationCIDs,
-      IndexName: "requestID-index",
-      KeyConditionExpression: "requestID = :r",
+      IndexName: 'requestID-index',
+      KeyConditionExpression: 'requestID = :r',
       ExpressionAttributeValues: {
-        ":r": requestID,
+        ':r': requestID,
       },
     };
-  
+
     const record = await dbbClient.query(params).promise();
     const { Items } = record;
     return Items;
-  } catch(error) {
+  } catch (error) {
     throw new DatabaseError();
   }
 };
