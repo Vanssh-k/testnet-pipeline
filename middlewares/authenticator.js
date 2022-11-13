@@ -1,5 +1,5 @@
 const SHA256 = require("crypto-js/sha256");
-const userDetails = require("../repository/userDetails");
+const userDetails = require("../repository/user/userDetails");
 const getMigrationRequestInfo = require("../repository/migration/getMigrationRequestInfo");
 const verifySignature = require("../utils/verifySignature");
 const { messageString } = require("../controller/libs/constants");
@@ -119,6 +119,9 @@ module.exports = (rules, clauses = []) => {
             let verificationToken = null;
             if(req.body.enterprise==="ocean_protocol"){
               verificationToken = process.env.MIGRATION_OCEAN_ACCESS_TOKEN;
+            }
+            if(req.body.enterprise==="test_org"){
+              verificationToken = process.env.MIGRATION_TEST_ACCESS_TOKEN;
             }
             if (routeAccessToken!==verificationToken || !verificationToken) {
               return next(new Errors.NotFoundError());
