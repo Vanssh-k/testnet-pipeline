@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get(
   '/get_uploads',
-  validate(validator.publicKeySchema, { query: true }),
+  validate(validator.userUploadsSchema, { query: true }),
   UserController.get_uploads,
 );
 
