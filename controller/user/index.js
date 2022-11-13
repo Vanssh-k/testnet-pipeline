@@ -3,7 +3,10 @@ const { getUploads, updateDataUsage } = require('./helper/userHelper');
 exports.get_uploads = async (req, res, next) => {
   try {
     const fileList = await getUploads(req.query.publicKey.trim());
-    res.status(200).send(fileList);
+    res.status(200).send({
+      data: fileList.Items,
+      next: fileList.LastEvaluatedKey,
+    });
   } catch (error) {
     next(error);
   }
