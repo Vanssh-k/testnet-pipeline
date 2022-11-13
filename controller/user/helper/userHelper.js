@@ -4,12 +4,12 @@ const migrationRequestInfo = require('../../../repository/migration/migrationReq
 const updateUserData = require('../../../repository/user/updateUserData');
 const updateMigrationCIDRecord = require('../../../repository/migration/updateMigrationCIDRecord');
 
-exports.getUploads = async (publicKey) => {
+exports.getUploads = async (publicKey, pageNo) => {
   const network = getNetwork(publicKey);
   if (network === 'evm') {
     publicKey = publicKey.toLowerCase();
   }
-  const files = await userUploads(publicKey);
+  const files = await userUploads(publicKey, pageNo);
   return (files);
 };
 
