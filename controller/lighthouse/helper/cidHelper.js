@@ -19,9 +19,7 @@ exports.cidDealStatus = async (cid) => {
 
   let deals = [];
   for (let i = data.length - 1; i >= 0; i--) {
-    console.log(i);
     if (data[i].deals.length > 0) {
-      console.log(data[i].deals);
       deals = data[i].deals;
       break;
     }
