@@ -20,7 +20,7 @@ exports.get_ticker = async (req, res, next) => {
 };
 
 // get status of a CID, returns filecoin miner details
-exports.cid_status = async (req, res, next) => {
+exports.deal_status = async (req, res, next) => {
   try {
     const status = await cidDealStatus(req.query.cid);
     res.status(200).json(status);

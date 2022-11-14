@@ -19,9 +19,9 @@ router.get(
 );
 
 router.get(
-  '/cid_status',
+  '/deal_status',
   validate(validator.cidSchema, { query: true }),
-  LighthouseController.cid_status,
+  LighthouseController.deal_status,
 );
 
 router.post(
