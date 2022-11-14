@@ -12,13 +12,21 @@ exports.cidDealStatus = async (cid) => {
     Accept: 'application/json',
   };
 
-  const status = (
-    await axios.get(
-      `https://api.estuary.tech/content/by-cid/${cid}`,
-      { headers },
-    )
-  ).data;
-  return (status);
+  const { data } = await axios.get(
+    `https://api.estuary.tech/content/by-cid/${cid}`,
+    { headers },
+  );
+
+  let deals = [];
+  for (let i = data.length - 1; i >= 0; i--) {
+    console.log(i);
+    if (data[i].deals.length > 0) {
+      console.log(data[i].deals);
+      deals = data[i].deals;
+      break;
+    }
+  }
+  return (deals);
 };
 
 const addCid = async (name, cid) => {
