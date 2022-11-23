@@ -53,7 +53,7 @@ test('User Data Usage: GET /user_data_usage', async () => {
 test('User Data Usage Record Not Found Error: GET /user_data_usage', async () => {
   await supertest(app)
     .get(
-      '/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD',
+      '/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5Ceq',
     )
     .expect(404);
 }, 30000);
