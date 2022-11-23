@@ -1,12 +1,13 @@
-const dbbClient = require("./ddbClient");
-const { migrationCIDs } = require("../controller/libs/constants");
+const dbbClient = require('../ddbClient');
+const { migrationCIDs } = require('../../controller/libs/constants');
+const DatabaseError = require('../../errors/database-error');
 
 module.exports = async (id, data) => {
   try {
     const params = {
       TableName: migrationCIDs,
       Key: {
-        "id": id,
+        id,
       },
       UpdateExpression: 'set userDataUpdated = :u',
       ExpressionAttributeValues: {
@@ -15,8 +16,8 @@ module.exports = async (id, data) => {
     };
 
     await dbbClient.update(params).promise();
-    return "Update Successful";
+    return 'Update Successful';
   } catch (error) {
-    return null;
+    throw new DatabaseError();
   }
 };

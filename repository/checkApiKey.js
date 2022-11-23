@@ -1,14 +1,14 @@
-const dbbClient = require("./ddbClient");
-const { userTable } = require("../controller/libs/constants");
+const dbbClient = require('./ddbClient');
+const { userTable } = require('../controller/libs/constants');
 
 module.exports = async (apiKey) => {
   try {
     const params = {
       TableName: userTable,
-      IndexName: "apiKey-index",
-      KeyConditionExpression: "apiKey = :a",
+      IndexName: 'apiKey-index',
+      KeyConditionExpression: 'apiKey = :a',
       ExpressionAttributeValues: {
-        ":a": apiKey,
+        ':a': apiKey,
       },
     };
 
@@ -17,7 +17,7 @@ module.exports = async (apiKey) => {
     return Items[0];
   } catch (error) {
     console.log(
-      chalk.yellow("Check Api Key Error: ") + chalk.red(error.message)
+      chalk.yellow('Check Api Key Error: ') + chalk.red(error.message),
     );
     return false;
   }

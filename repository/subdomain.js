@@ -1,17 +1,17 @@
-const dbbClient = require("./ddbClient");
-const { gatewayTable } = require("../controller/libs/constants");
+const dbbClient = require('./ddbClient');
+const { gatewayTable } = require('../controller/libs/constants');
 const {
   subscriptionPurchaseTransactions,
   subscriptionPlans,
-} = require("../controller/libs/constants");
+} = require('../controller/libs/constants');
 
 const checkSubdomain = async (subDomain) => {
   try {
     const params = {
       TableName: gatewayTable,
-      FilterExpression: "subDomain = :s",
+      FilterExpression: 'subDomain = :s',
       ExpressionAttributeValues: {
-        ":s": subDomain,
+        ':s': subDomain,
       },
     };
 
@@ -43,9 +43,9 @@ const userTransactions = async (publicKey) => {
   try {
     const params = {
       TableName: subscriptionPurchaseTransactions,
-      FilterExpression: "publicKey = :p",
+      FilterExpression: 'publicKey = :p',
       ExpressionAttributeValues: {
-        ":p": publicKey.toLowerCase(),
+        ':p': publicKey.toLowerCase(),
       },
     };
 
@@ -62,9 +62,9 @@ const purchasedPlans = async (publicKey) => {
     // TODO: filter active plans
     const params = {
       TableName: subscriptionPlans,
-      FilterExpression: "isActive = :a",
+      FilterExpression: 'isActive = :a',
       ExpressionAttributeValues: {
-        ":a": "true",
+        ':a': 'true',
       },
     };
 

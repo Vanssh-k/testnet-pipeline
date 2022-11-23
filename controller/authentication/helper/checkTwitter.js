@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 
 module.exports = async (publicKey, twitterID) => {
   try {
@@ -6,12 +6,12 @@ module.exports = async (publicKey, twitterID) => {
       `https://api.twitter.com/2/tweets/${twitterID}`,
       {
         headers: {
-          Authorization: "Bearer " + process.env.TWITTER_API_KEY,
+          Authorization: `Bearer ${process.env.TWITTER_API_KEY}`,
         },
-      }
+      },
     );
 
-    const tweetContent = response["data"]["data"]["text"];
+    const tweetContent = response.data.data.text;
     return tweetContent.toLowerCase().includes(publicKey.toLowerCase());
   } catch (error) {
     return null;

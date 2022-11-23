@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index",
     "dev": "nodemon index",
-    "lint": "trunk check",
+    "lint":"eslint --fix ./controller/**/*.js",
     "test": "jest",
     "test-coverage": "jest --coverage --coverageDirectory=tests/coverage"
   },
@@ -37,6 +37,9 @@
     "web3": "^1.7.4"
   },
   "devDependencies": {
+    "eslint": "^8.27.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "jest": "^27.4.5",
     "nodemon": "^2.0.15",
     "supertest": "^6.1.6"
