@@ -7,8 +7,6 @@ const { getTicker } = require('./helper/tickerHelper');
 const { cidDealStatus, addCidEstuary, addCidToQueue } = require('./helper/cidHelper');
 const { migrationRequest, migrationRequestEnt } = require('./helper/migrationHelper');
 
-const NotFoundError = require('../../errors/not-found-error');
-
 // get ticker of a token by its symbol as input
 exports.get_ticker = async (req, res, next) => {
   try {
@@ -60,11 +58,8 @@ exports.list_migration_requests = async (req, res, next) => {
     if (network === 'evm') {
       publicKey = publicKey.toLowerCase();
     }
-    const record = await listMigrationRequests(publicKey);
-    if (!record) {
-      throw new NotFoundError();
-    }
 
+    const record = await listMigrationRequests(publicKey);
     res.status(200).json(record);
   } catch (error) {
     next(error);
@@ -74,10 +69,6 @@ exports.list_migration_requests = async (req, res, next) => {
 exports.migration_request_info = async (req, res, next) => {
   try {
     const record = await migrationRequestInfo(req.query.requestId);
-    if (!record) {
-      throw new NotFoundError();
-    }
-
     res.status(200).json(record);
   } catch (error) {
     next(error);
@@ -98,9 +89,6 @@ exports.add_cid = async (req, res, next) => {
 exports.file_info = async (req, res, next) => {
   try {
     const record = await fileDetailsByCid(req.query.cid);
-    if (!record) {
-      throw new NotFoundError();
-    }
 
     res.status(200).json({
       fileSizeInBytes: record.fileSizeInBytes,

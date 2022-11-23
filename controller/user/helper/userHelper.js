@@ -13,17 +13,20 @@ exports.getUploads = async (publicKey, pageNo) => {
   return (files);
 };
 
+// Scope for optimization here
 exports.updateDataUsage = async (record, requestId, enterprise) => {
   if (enterprise === 'lighthouse') {
     // Get all CID
     const cidList = await migrationRequestInfo(requestId);
     if (!cidList) {
+      /* istanbul ignore next */
       throw new NotFoundError();
     }
 
     // Sum usage for CID pinned but userDataUpdated is false
     let totalUsage = 0;
     for (let i = 0; i < cidList.length; i++) {
+      /* istanbul ignore next */
       if (!cidList[i].userDataUpdated
           && cidList[i].cidStatus === 'pinned'
           && cidList[i].fileSizeInBytes
