@@ -98,5 +98,9 @@ test('Update Data Usage Migration: GET /update_data_usage', async () => {
   await supertest(app)
     .get('/api/user/update_data_usage?requestId=706da465-c11d-49c1-af80-5f2e74bc6821')
     .set('Authorization', `Bearer ${process.env.ROUTE_ACCESS_TOKEN}`)
-    .expect(200);
+    .expect(200)
+    .then(async (response) => {
+      const res = JSON.parse(response.text)
+      expect(typeof res).toBe("string")
+    });
 }, 10000);
