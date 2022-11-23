@@ -1,44 +1,66 @@
-const express = require("express");
-const LighthouseController = require("../controller/lighthouse");
-const { body, query } = require("express-validator");
+const express = require('express');
+const LighthouseController = require('../controller/lighthouse');
+const authenticator = require('../middlewares/authenticator');
+const validate = require('../middlewares/validate');
+const validator = require('../middlewares/validators');
 
 const router = express.Router();
-const validate = require("../middlewares/validate");
 
 router.get(
-  "/get_ticker",
-  [query("symbol").not().isEmpty().withMessage("token symbol not found")],
-  validate,
-  LighthouseController.get_ticker
+  '/get_ticker',
+  validate(validator.symbolSchema, { query: true }),
+  LighthouseController.get_ticker,
 );
 
 router.get(
-  "/cid_status",
-  [query("cid").not().isEmpty().withMessage("cid not found")],
-  validate,
-  LighthouseController.cid_status
+  '/file_info',
+  validate(validator.cidSchema, { query: true }),
+  LighthouseController.file_info,
+);
+
+router.get(
+  '/deal_status',
+  validate(validator.cidSchema, { query: true }),
+  LighthouseController.deal_status,
 );
 
 router.post(
-  "/add_cid",
-  [
-    body("name").trim().not().isEmpty().withMessage("file name not found"),
-    body("cid").trim().not().isEmpty().withMessage("cid not found"),
-  ],
-  validate,
-  LighthouseController.add_cid
+  '/add_cid',
+  validate(validator.addCidSchema, { body: true }),
+  LighthouseController.add_cid,
 );
 
 router.post(
-  "/add_cid_to_queue",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("name").trim().not().isEmpty().withMessage("file name not found"),
-    body("cid").trim().not().isEmpty().withMessage("cid not found"),
-    body("size").trim().not().isEmpty().withMessage("file size not found"),
-  ],
-  validate,
-  LighthouseController.add_cid_to_queue
+  '/migration_request',
+  validate(validator.migrationRequestSchema, { body: true }),
+  authenticator(['verifysignature']),
+  LighthouseController.migration_request,
+);
+
+router.post(
+  '/migration_request_ent',
+  validate(validator.migrationRequestEntSchema, { body: true }),
+  authenticator(['enterpriseRoute']),
+  LighthouseController.migration_request_ent,
+);
+
+router.get(
+  '/list_migration_requests',
+  validate(validator.publicKeySchema, { query: true }),
+  LighthouseController.list_migration_requests,
+);
+
+router.get(
+  '/migration_request_info',
+  validate(validator.migrationRequestIdSchema, { query: true }),
+  LighthouseController.migration_request_info,
+);
+
+router.post(
+  '/add_cid_to_queue',
+  validate(validator.addCIDToQueueSchema, { body: true }),
+  authenticator(['verifypublickey'], ['protectedRoute']),
+  LighthouseController.add_cid_to_queue,
 );
 
 module.exports = router;

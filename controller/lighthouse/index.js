@@ -1,83 +1,104 @@
-const axios = require("axios");
-const updateUserDetails = require("../authentication/updateUserDetails");
-const userDetails = require("../authentication/userDetails");
-const saveFileMetaData = require("./saveFileMetaData");
+const getNetwork = require('../../middlewares/getNetwork');
+const listMigrationRequests = require('../../repository/migration/listMigrationRequests');
+const migrationRequestInfo = require('../../repository/migration/migrationRequestInfo');
+const fileDetailsByCid = require('../../repository/fileDetailsByCid');
 
-const ForbiddenError = require("../../errors/forbidden");
-const DatabaseError = require("../../errors/database-error");
-const NotFoundError = require("../../errors/not-found-error");
-const BadRequestError = require("../../errors/bad-request");
+const { getTicker } = require('./helper/tickerHelper');
+const { cidDealStatus, addCidEstuary, addCidToQueue } = require('./helper/cidHelper');
+const { migrationRequest, migrationRequestEnt } = require('./helper/migrationHelper');
 
 // get ticker of a token by its symbol as input
 exports.get_ticker = async (req, res, next) => {
   try {
-    const token_prices = (
-      await axios.get(
-        `https://data.messari.io/api/v1/assets/${req.query.symbol}/metrics/market-data`
-      )
-    ).data;
-
-    const token_price_usd = token_prices.data.market_data.price_usd;
-    res.status(200).json(token_price_usd);
+    const tokenPricesUSD = await getTicker(req.query.symbol);
+    res.status(200).json(tokenPricesUSD);
   } catch (error) {
     next(error);
   }
 };
 
 // get status of a CID, returns filecoin miner details
-exports.cid_status = async (req, res, next) => {
+exports.deal_status = async (req, res, next) => {
   try {
-    const headers = {
-      Authorization: `Bearer ${process.env.EST_API_KEY}`,
-      Accept: "application/json",
-    };
-
-    const response = (
-      await axios.get(
-        `https://api.estuary.tech/content/by-cid/${req.query.cid}`,
-        { headers: headers }
-      )
-    ).data;
-
-    res.status(200).json(response);
+    const status = await cidDealStatus(req.query.cid);
+    res.status(200).json(status);
   } catch (error) {
     next(error);
   }
 };
 
-const addCid = async (name, cid) => {
+// create db record for all CID and trigger migration
+exports.migration_request = async (req, res, next) => {
   try {
-    const headers = {
-      Authorization: `Bearer ${process.env.EST_API_KEY}`,
-      Accept: "application/json",
-    };
-
-    const response = (
-      await axios.post(
-        `https://api.estuary.tech/content/add-ipfs`,
-        {
-          name: name,
-          root: cid,
-        },
-        { headers: headers }
-      )
-    ).data;
-
-    return response;
+    const requestID = await migrationRequest(req.user, req.body.data);
+    res.status(200).json({ requestID });
   } catch (error) {
-    return null;
+    next(error);
+  }
+};
+
+exports.migration_request_ent = async (req, res, next) => {
+  try {
+    let publicKey = req.body.publicKey.trim();
+    if (req.network === 'evm') {
+      publicKey = publicKey.toLowerCase();
+    }
+    const requestID = await migrationRequestEnt(publicKey, req.body.data, req.body.enterprise);
+
+    res.status(200).json({ requestID });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.list_migration_requests = async (req, res, next) => {
+  try {
+    let publicKey = req.query.publicKey.trim();
+    const network = getNetwork(publicKey);
+    if (network === 'evm') {
+      publicKey = publicKey.toLowerCase();
+    }
+
+    const record = await listMigrationRequests(publicKey);
+    res.status(200).json(record);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.migration_request_info = async (req, res, next) => {
+  try {
+    const record = await migrationRequestInfo(req.query.requestId);
+    res.status(200).json(record);
+  } catch (error) {
+    next(error);
   }
 };
 
 // add cid for filecoin deal
 exports.add_cid = async (req, res, next) => {
   try {
-    const addCidResponse = await addCid(req.body.name, req.body.cid);
-    if (!addCidResponse) {
-      throw new BadRequestError();
-    }
+    const _ = await addCidEstuary(req.body.name, req.body.cid);
+    res.status(200).json('Added To Queue');
+  } catch (error) {
+    next(error);
+  }
+};
 
-    res.status(200).json("Added To Queue");
+// Get details of a file
+exports.file_info = async (req, res, next) => {
+  try {
+    const record = await fileDetailsByCid(req.query.cid);
+
+    res.status(200).json({
+      fileSizeInBytes: record.fileSizeInBytes,
+      cid: record.cid,
+      encryption: record.encryption,
+      fileName: record.fileName,
+      mimeType: record.mimeType,
+      txHash: record.txHash,
+      cidStatus: record.cidStatus,
+    });
   } catch (error) {
     next(error);
   }
@@ -86,69 +107,8 @@ exports.add_cid = async (req, res, next) => {
 // Add file to queue for bundled transaction
 exports.add_cid_to_queue = async (req, res, next) => {
   try {
-    const publicKey = req.body.publicKey.toLowerCase();
-    const record = await userDetails(publicKey); // Get record of user
-
-    if (!record) {
-      throw new NotFoundError();
-    }
-
-    if (req.body.size > record.dataLimit - record.dataUsed) {
-      // Create record of file
-      await saveFileMetaData(
-        publicKey,
-        req.body.cid,
-        req.body.name,
-        req.body.size,
-        req.body.encryption,
-        req.body.mimeType,
-        "payment pending"
-      );
-
-      throw new ForbiddenError();
-    }
-
-    // Create record of file
-    const saveFileResponse = await saveFileMetaData(
-      publicKey,
-      req.body.cid,
-      req.body.name,
-      req.body.size,
-      req.body.encryption,
-      req.body.mimeType,
-      "queued"
-    );
-
-    if (!saveFileResponse) {
-      throw new DatabaseError("Save File failed");
-    }
-
-    // Update data usage
-    const updatedDetails = {
-      publicKey: publicKey,
-      message: record.message,
-      dataLimit: record.dataLimit,
-      dataUsed: parseInt(record.dataUsed) + parseInt(req.body.size),
-      apiKey: record.apiKey,
-      encryptionPublicKey: record.encryptionPublicKey,
-      accessToken: record.accessToken,
-      tokenExpires: record.tokenExpires,
-      faucet: record.faucet
-    }; 
-
-    const updateResponse = await updateUserDetails(updatedDetails);
-    if (!updateResponse) {
-      throw new DatabaseError("Put item failed");
-    }
-
-    // Send CID to Estuary
-    const addCidResponse = await addCid(req.body.name, req.body.cid);
-
-    if (!addCidResponse) {
-      throw new DatabaseError("Add CID Failed");
-    }
-
-    res.status(200).json("Success");
+    const response = await addCidToQueue(req.user, req.body);
+    res.status(200).json(response);
   } catch (error) {
     next(error);
   }

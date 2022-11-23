@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:          
       - name: Use Node.js ${{ matrix.node-version }} 🛎️
@@ -27,9 +27,6 @@ jobs:
 
       - name: Install 🔧
         run: npm install
-
-#       - name: Lint 🧐
-#         run: npm run lint
         
       - name: Test 🚨
         run: npm test

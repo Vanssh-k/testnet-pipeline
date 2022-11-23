@@ -1,40 +1,40 @@
-const express = require("express");
-const GatewayController = require("../controller/gateway");
-const { body, query } = require("express-validator");
+const express = require('express');
+const GatewayController = require('../controller/gateway');
+const validate = require('../middlewares/validate');
+const validator = require('../middlewares/validators');
+const authenticator = require('../middlewares/authenticator');
 
 const router = express.Router();
-const validate = require("../middlewares/validate");
 
 router.post(
-  "/add_subdomain",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("subDomain").trim().not().isEmpty().withMessage("subDomain not found"),
-    body("signedMessage").trim().not().isEmpty().withMessage("signedMessage not found"),
-  ],
-  validate,
-  GatewayController.add_subdomain
+  '/add_subdomain',
+  validate(validator.addSubdomainSchema, { body: true }),
+  authenticator(['verifysignature']),
+  GatewayController.add_subdomain,
 );
 
 router.get(
-  "/check_subdomain",
-  [query("subDomain").not().isEmpty().withMessage("subDomain not found")],
-  validate,
-  GatewayController.check_subdomain
+  '/check_subdomain',
+  validate(validator.subdomainSchema, { query: true }),
+  GatewayController.check_subdomain,
 );
 
 router.get(
-  "/get_subdomain",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
-  validate,
-  GatewayController.get_subdomain
+  '/get_subdomain',
+  validate(validator.publicKeySchema, { query: true }),
+  GatewayController.get_subdomain,
 );
 
 router.get(
-  "/get_transaction_details",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
-  validate,
-  GatewayController.get_transaction_details
+  '/get_transaction_details',
+  validate(validator.publicKeySchema, { query: true }),
+  GatewayController.get_transaction_details,
+);
+
+router.get('/get_plans', GatewayController.get_purchaseable_plans);
+router.get(
+  '/get_active',
+  GatewayController.get_active_plan,
 );
 
 module.exports = router;

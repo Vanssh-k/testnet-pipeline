@@ -1,25 +1,40 @@
-const { v4: uuidv4 } = require("uuid");
-const SHA256 = require("crypto-js/sha256");
+/* istanbul ignore file */
+/* Not in use replaced with BLS key splitting */
+const { v4: uuidv4 } = require('uuid');
+const saveFileMetaData = require('../../repository/saveFileMetaData');
+const updateUserDetails = require('../../repository/user/updateUserDetails');
+const fileDetails = require('../../repository/fileDetails');
+const fileList = require('../../repository/fileList');
+const ForbiddenError = require('../../errors/forbidden');
 
-const userDetails = require("../authentication/userDetails");
-const saveFileMetaData = require("./saveFileMetaData");
-const fileDetails = require("./fileDetails");
-const fileList = require("./fileList");
+exports.save_encryption_publicKey = async (req, res, next) => {
+  try {
+    const { encryptionPublicKey } = req.body;
+    const record = req.user;
 
-const AuthenticationError = require("../../errors/authentication-error");
-const NotFoundError = require("../../errors/not-found-error");
-const ForbiddenError = require("../../errors/forbidden");
+    const updatedDetails = {
+      publicKey: record.publicKey,
+      message: record.message,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      apiKey: record.apiKey,
+      encryptionPublicKey,
+      accessToken: record.accessToken,
+      tokenExpires: record.tokenExpires,
+      faucet: record.faucet,
+    };
+
+    const _ = await updateUserDetails(updatedDetails);
+
+    res.status(200).json('Success');
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.get_encryption_publicKey = async (req, res, next) => {
   try {
-    const record = await userDetails(req.query.publicKey);
-    if (!record) {
-      throw new NotFoundError();
-    }
-    if (!record.encryptionPublicKey) {
-      throw new NotFoundError();
-    }
-
+    const record = req.user;
     res.status(200).json({ encryptionPublicKey: record.encryptionPublicKey });
   } catch (error) {
     next(error);
@@ -28,22 +43,6 @@ exports.get_encryption_publicKey = async (req, res, next) => {
 
 exports.save_file_encryption_key = async (req, res, next) => {
   try {
-    const usersPublicKey = req.body.fromPublicKey;
-    const accessToken = req.headers["authorization"].split(" ")[1];
-
-    const record = await userDetails(usersPublicKey);
-    let authentic = false;
-    if(
-      SHA256(accessToken).toString() === record["accessToken"] || 
-      SHA256(accessToken).toString() === record["apiKey"]
-    ){
-      authentic = true;
-    }
-    
-    if (!authentic) {
-      throw new AuthenticationError();
-    }
-
     const timestamp = Date.now();
     const toSave = {
       id: uuidv4(),
@@ -56,12 +55,12 @@ exports.save_file_encryption_key = async (req, res, next) => {
       sharedFrom: req.body.sharedFrom,
       sharedTo: req.body.sharedTo,
       createdAt: timestamp,
-      lastUpdate: timestamp
+      lastUpdate: timestamp,
     };
 
     const _ = await saveFileMetaData(toSave);
 
-    res.status(200).json("Success");
+    res.status(200).json('Success');
   } catch (error) {
     next(error);
   }
@@ -69,19 +68,19 @@ exports.save_file_encryption_key = async (req, res, next) => {
 
 exports.get_file_encryption_key = async (req, res, next) => {
   try {
-    const cid = req.query.cid;
-    const sharedTo = req.query.sharedTo;
+    const { cid } = req.query;
+    const { sharedTo } = req.query;
     const files = await fileDetails(cid);
-    
+
     let record = null;
-    for(let i=0; i<files.length; i++){
-      if(files[i]["sharedTo"]===sharedTo){
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].sharedTo === sharedTo) {
         record = files[i];
         break;
       }
     }
 
-    if(!record){
+    if (!record) {
       throw new ForbiddenError();
     }
 
@@ -93,7 +92,7 @@ exports.get_file_encryption_key = async (req, res, next) => {
 
 exports.get_encrypted_uploads = async (req, res, next) => {
   try {
-    const publicKey = req.query.publicKey;
+    const { publicKey } = req.query;
     const fileDetails = fileList(publicKey);
 
     res.status(200).json(fileDetails);

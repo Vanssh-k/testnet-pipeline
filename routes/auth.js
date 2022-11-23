@@ -1,71 +1,61 @@
-const express = require("express");
-const AuthController = require("../controller/authentication");
-const { body, query } = require("express-validator");
+const express = require('express');
+const AuthController = require('../controller/authentication');
+const validator = require('../middlewares/validators');
+const validate = require('../middlewares/validate');
+const authenticator = require('../middlewares/authenticator');
 
 const router = express.Router();
-const validate = require("../middlewares/validate");
 
 router.post(
-  "/verify_signer",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("signedMessage")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("signedMessage not found"),
-  ],
-  validate,
-  AuthController.verify_signer
+  '/verify_signer',
+  validate(validator.verifySignerSchema, { body: true }),
+  authenticator(['verifysignature']),
+  AuthController.verify_signer,
 );
 
 router.get(
-  "/verify_access_token",
-  validate,
-  AuthController.verify_access_token
+  '/verify_access_token',
+  authenticator(['verifyjwt']),
+  AuthController.verify_access_token,
 );
 
 router.get(
-  "/get_message",
-  [query("publicKey").not().isEmpty().withMessage("publicKey not found")],
-  validate,
-  AuthController.get_message
+  '/refresh_access_token',
+  authenticator(['verifyjwt'], ['useRefreshSecret', 'useRefreshEquality']),
+  AuthController.refresh_access_token,
 );
 
-router.post(
-  "/get_api_key",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("signedMessage")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("signedMessage not found"),
-  ],
-  validate,
-  AuthController.get_api_key
+router.delete(
+  '/remove_refresh_token',
+  authenticator(['verifyjwt'], ['useRefreshSecret', 'useRefreshEquality']),
+  AuthController.remove_refresh_token,
 );
 
 router.get(
-  "/tweet_recharge",
-  [
-    query("publicKey").not().isEmpty().withMessage("publicKey not found"),
-    query("twitterID").not().isEmpty().withMessage("twitterID not found")
-  ],
-  validate,
-  AuthController.tweet_recharge
+  '/get_message',
+  validate(validator.publicKeySchema, { query: true }),
+  authenticator(['verifypublickey'], ['useWeb3', 'useNewUserBypass']),
+  AuthController.get_message,
 );
 
-router.get("/verify_api_key", AuthController.verify_api_key);
-
 router.post(
-  "/save_encryption_publicKey",
-  [
-    body("publicKey").trim().not().isEmpty().withMessage("publicKey not found"),
-    body("encryptionPublicKey").trim().not().isEmpty().withMessage("subDomain not found"),
-  ],
-  validate,
-  AuthController.save_encryption_publicKey
+  '/get_api_key',
+  validate(validator.verifySignerSchema, { body: true }),
+  authenticator(['verifysignature']),
+  AuthController.get_api_key,
+);
+
+router.get(
+  '/tweet_recharge',
+  validate(validator.tweetRechargeSchema, { query: true }),
+  authenticator(['verifyjwt']),
+  AuthController.tweet_recharge,
+);
+
+router.get(
+  '/verify_api_key',
+  authenticator(['verifyjwt'], ['useSHA256WithApiKey']),
+  AuthController.verify_api_key,
 );
 
 module.exports = router;
