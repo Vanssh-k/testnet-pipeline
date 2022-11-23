@@ -1,4 +1,5 @@
 const coverageToNumber = 80; // [0..100]
+const coverageBranches = 60;
 
 // Or async function
 module.exports = async () => ({
@@ -16,7 +17,7 @@ module.exports = async () => ({
   coverageReporters: ['lcov'],
   coverageThreshold: {
     global: {
-      branches: coverageToNumber,
+      branches: coverageBranches,
       functions: coverageToNumber,
       lines: coverageToNumber,
       statements: coverageToNumber,
