@@ -37,10 +37,10 @@ const addCid = async (name, cid) => {
     const response = (
       await axios.post(
         'https://api.estuary.tech/content/add-ipfs',
-        {
-          name,
-          root: cid,
-        },
+        JSON.stringify({
+          name: name,
+          cid: 'QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc',
+        }),
         { headers },
       )
     ).data;
