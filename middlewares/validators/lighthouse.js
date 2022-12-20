@@ -64,7 +64,7 @@ module.exports.addCIDToQueueSchema = joi.object({
   cid: joi.string().required().messages({
     "any.required": `cid not found`,
   }),
-  mimeType: joi.string(),
+  mimeType: joi.any(),
   encryption: joi.boolean().required().messages({
     "any.required": `encryption not found`,
   }),
