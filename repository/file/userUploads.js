@@ -19,7 +19,7 @@ module.exports = async (usersPublicKey, pageNo) => {
         ExpressionAttributeValues: {
           ':p': usersPublicKey,
         },
-        Limit: 200,
+        Limit: 20000,
         ExclusiveStartKey: exclusiveStartKey,
       };
 
