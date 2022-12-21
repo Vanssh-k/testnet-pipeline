@@ -39,7 +39,7 @@ const addCid = async (name, cid) => {
         'https://api.estuary.tech/content/add-ipfs',
         JSON.stringify({
           name: name,
-          cid: 'QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc',
+          cid: cid,
         }),
         { headers },
       )
