@@ -1,20 +1,21 @@
-const axios = require('axios');
-const { v4: uuidv4 } = require('uuid');
+const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 
-const updateUserData = require('../../../repository/user/updateUserData');
-const saveFileMetaData = require('../../../repository/file/saveFileMetaData');
-const DatabaseError = require('../../../errors/database-error');
-const ForbiddenError = require('../../../errors/forbidden');
+const updateUserData = require("../../../repository/user/updateUserData");
+const saveFileMetaData = require("../../../repository/file/saveFileMetaData");
+const DatabaseError = require("../../../errors/database-error");
+const ForbiddenError = require("../../../errors/forbidden");
+const { clearCacheStartsWith } = require("../../../repository/cacheClient");
 
 exports.cidDealStatus = async (cid) => {
   const headers = {
     Authorization: `Bearer ${process.env.EST_API_KEY}`,
-    Accept: 'application/json',
+    Accept: "application/json",
   };
 
   const { data } = await axios.get(
     `https://api.estuary.tech/content/by-cid/${cid}`,
-    { headers },
+    { headers }
   );
 
   let deals = [];
@@ -24,14 +25,14 @@ exports.cidDealStatus = async (cid) => {
       break;
     }
   }
-  return (deals);
+  return deals;
 };
 
 const addCid = async (name, cid) => {
   try {
     const headers = {
       Authorization: `Bearer ${process.env.EST_API_KEY}`,
-      Accept: 'application/json',
+      Accept: "application/json",
     };
 
     const response = (
@@ -56,7 +57,7 @@ exports.addCidEstuary = async (name, cid) => {
   if (!addCidResponse) {
     throw new BadRequestError();
   }
-  return (addCidResponse);
+  return addCidResponse;
 };
 
 exports.addCidToQueue = async (record, bodyData) => {
@@ -69,11 +70,10 @@ exports.addCidToQueue = async (record, bodyData) => {
       cid: bodyData.cid,
       fileName: bodyData.name,
       fileSizeInBytes: bodyData.size,
-      encryption:
-        bodyData.encryption.toString() === 'true',
+      encryption: bodyData.encryption.toString() === "true",
       mimeType: bodyData.mimeType,
-      status: 'payment pending',
-      txHash: '',
+      status: "payment pending",
+      txHash: "",
       createdAt: timestamp,
       lastUpdate: timestamp,
     });
@@ -88,11 +88,10 @@ exports.addCidToQueue = async (record, bodyData) => {
     cid: bodyData.cid,
     fileName: bodyData.name,
     fileSizeInBytes: bodyData.size,
-    encryption:
-      bodyData.encryption.toString() === 'true',
+    encryption: bodyData.encryption.toString() === "true",
     mimeType: bodyData.mimeType,
-    status: 'queued',
-    txHash: '',
+    status: "queued",
+    txHash: "",
     createdAt: timestamp,
     lastUpdate: timestamp,
   });
@@ -104,8 +103,10 @@ exports.addCidToQueue = async (record, bodyData) => {
   // Send CID to Estuary
   const addCidResponse = await addCid(bodyData.name, bodyData.cid);
   if (!addCidResponse) {
-    throw new DatabaseError('Add CID Failed');
+    throw new DatabaseError("Add CID Failed");
+  } else {
+    await clearCacheStartsWith(`getUpload-${publicKey}`);
   }
 
-  return ('Success');
+  return "Success";
 };

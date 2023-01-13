@@ -2,7 +2,7 @@ const getNetwork = require('../../middlewares/getNetwork');
 const listMigrationRequests = require('../../repository/migration/listMigrationRequests');
 const migrationRequestInfo = require('../../repository/migration/migrationRequestInfo');
 const fileDetailsByCid = require('../../repository/fileDetailsByCid');
-
+const { cacheFunction } = require("../../repository/cacheClient");
 const { getTicker } = require('./helper/tickerHelper');
 const { cidDealStatus, addCidEstuary, addCidToQueue } = require('./helper/cidHelper');
 const { migrationRequest, migrationRequestEnt } = require('./helper/migrationHelper');
@@ -88,7 +88,13 @@ exports.add_cid = async (req, res, next) => {
 // Get details of a file
 exports.file_info = async (req, res, next) => {
   try {
-    const record = await fileDetailsByCid(req.query.cid);
+    const record = await cacheFunction(
+      async () => await fileDetailsByCid(req.query.cid),
+      `cid-${req.query.cid}`
+    );
+    if (!record) {
+      throw new NotFoundError();
+    }
 
     res.status(200).json({
       fileSizeInBytes: record.fileSizeInBytes,
