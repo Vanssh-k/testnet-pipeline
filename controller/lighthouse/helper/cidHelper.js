@@ -104,9 +104,13 @@ exports.addCidToQueue = async (record, bodyData) => {
   const addCidResponse = await addCid(bodyData.name, bodyData.cid);
   if (!addCidResponse) {
     throw new DatabaseError("Add CID Failed");
-  } else {
-    await clearCacheStartsWith(`getUpload-${publicKey}`);
   }
 
+  // Send CID to Lighthouse Deal Maker
+  const __ = await axios.get(
+    `http://34.131.213.156/api/deal/add_cid?cid=${bodyData.cid}`
+  );
+
+  await clearCacheStartsWith(`getUpload-${record.publicKey}`);
   return "Success";
 };
