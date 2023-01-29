@@ -47,7 +47,7 @@ exports.migrationRequest = async (record, bodyData) => {
     });
   }
 
-  const startMigration = axios.get(`http://13.235.13.61/api?requestId=${requestID}`);
+  const startMigration = axios.get(`http://43.205.115.104/api?requestId=${requestID}`);
   return (requestID);
 };
 
@@ -94,6 +94,6 @@ exports.migrationRequestEnt = async (publicKey, bodyData, enterprise) => {
     });
   }
 
-  const startMigration = axios.get(`http://13.235.13.61/api?requestId=${requestID}`);
+  const startMigration = axios.get(`http://43.205.115.104/api?requestId=${requestID}`);
   return (requestID);
 };
