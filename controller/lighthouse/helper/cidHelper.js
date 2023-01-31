@@ -7,23 +7,48 @@ const DatabaseError = require("../../../errors/database-error");
 const ForbiddenError = require("../../../errors/forbidden");
 const { clearCacheStartsWith } = require("../../../repository/cacheClient");
 
+const getCIDRecord = require("../../../repository/filecoin/getCIDRecord");
+const getBundleRecord = require("../../../repository/filecoin/getBundleRecord");
+const filecoinDeal = require("../../../repository/filecoin/filecoinDeal");
+
 exports.cidDealStatus = async (cid) => {
-  const headers = {
-    Authorization: `Bearer ${process.env.EST_API_KEY}`,
-    Accept: "application/json",
-  };
+  // const headers = {
+  //   Authorization: `Bearer ${process.env.EST_API_KEY}`,
+  //   Accept: "application/json",
+  // };
 
-  const { data } = await axios.get(
-    `https://api.estuary.tech/content/by-cid/${cid}`,
-    { headers }
-  );
+  // const { data } = await axios.get(
+  //   `https://api.estuary.tech/content/by-cid/${cid}`,
+  //   { headers }
+  // );
 
+  // let deals = [];
+  // for (let i = data.length - 1; i >= 0; i--) {
+  //   if (data[i].deals.length > 0) {
+  //     deals = data[i].deals;
+  //     break;
+  //   }
+  // }
+  // return deals;
+  // Get CID record
+  const cidRecord = await getCIDRecord(cid);
+
+  // Get bundle record
+  let bundleRecord = null;
+  if(cidRecord[0]["bundledIn"]!=="none"){
+    bundleRecord = await getBundleRecord(cidRecord[0]["bundledIn"]);
+    console.log(bundleRecord)
+  }
+  // Check bundle status
+  // If initiated then get miner details
   let deals = [];
-  for (let i = data.length - 1; i >= 0; i--) {
-    if (data[i].deals.length > 0) {
-      deals = data[i].deals;
-      break;
-    }
+  if(bundleRecord["bundleStatus"] === "deal initiated"){
+    deals = await filecoinDeal(bundleRecord["bundleId"]);
+  }
+
+  for(let i=0; i<deals.length; i++){
+    deals[i].dealId = deals[i]["chainDealID"];
+    deals[i].miner = deals[i]["storageProvider"];
   }
   return deals;
 };
