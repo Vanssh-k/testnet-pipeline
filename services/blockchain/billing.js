@@ -17,4 +17,9 @@ const getSubscriptionStatus = async (publicKey) => {
   return { status: data[0], subscriptionId: data[1] };
 };
 
-module.exports = { getSubscriptionStatus };
+const getPurchasablePlans = async () => {
+  const data = await mumbaiBillingContract.getActivePlans();
+  return { activePurchasablePlans: data };
+};
+
+module.exports = { getSubscriptionStatus, getPurchasablePlans };
