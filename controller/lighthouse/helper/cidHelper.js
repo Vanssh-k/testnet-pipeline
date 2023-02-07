@@ -37,7 +37,6 @@ exports.cidDealStatus = async (cid) => {
   let bundleRecord = null;
   if(cidRecord[0]["bundledIn"]!=="none"){
     bundleRecord = await getBundleRecord(cidRecord[0]["bundledIn"]);
-    console.log(bundleRecord)
   }
   // Check bundle status
   // If initiated then get miner details
@@ -47,8 +46,9 @@ exports.cidDealStatus = async (cid) => {
   }
 
   for(let i=0; i<deals.length; i++){
-    deals[i].dealId = deals[i]["chainDealID"];
+    deals[i].dealId = parseInt(deals[i]["chainDealID"]);
     deals[i].miner = deals[i]["storageProvider"];
+    deals[i].content = parseInt(cidRecord[0]["fileSize"]);// only used in package
   }
   return deals;
 };
