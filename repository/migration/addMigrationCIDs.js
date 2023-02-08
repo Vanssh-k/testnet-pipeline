@@ -1,21 +1,19 @@
-const chalk = require('chalk');
-const dbbClient = require('../ddbClient');
-const { migrationCIDs } = require('../../controller/libs/constants');
-const DatabaseError = require('../../errors/database-error');
+const chalk = require('chalk')
+const dbbClient = require('../ddbClient')
+const { migrationCIDs } = require('../../controller/libs/constants')
+const DatabaseError = require('../../errors/database-error')
 
 module.exports = async (record) => {
-  try {
-    const params = {
-      TableName: migrationCIDs,
-      Item: record,
-    };
+    try {
+        const params = {
+            TableName: migrationCIDs,
+            Item: record,
+        }
 
-    const save = await dbbClient.put(params).promise();
-    return save;
-  } catch (error) {
-    console.log(
-      chalk.yellow('CID save error: ') + chalk.red(error.message),
-    );
-    throw new DatabaseError();
-  }
-};
+        const save = await dbbClient.put(params).promise()
+        return save
+    } catch (error) {
+        console.log(chalk.yellow('CID save error: ') + chalk.red(error.message))
+        throw new DatabaseError()
+    }
+}

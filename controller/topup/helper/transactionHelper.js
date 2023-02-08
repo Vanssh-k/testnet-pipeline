@@ -1,10 +1,10 @@
 const {
-  userTransactions
-} = require('../../../repository/topup/userTransactions');
+    userTransactions,
+} = require('../../../repository/topup/userTransactions')
 
 const getUserTransactionDetails = async (publicKey) => {
-  const record = await userTransactions(publicKey);
-  return record;
-};
+    const record = await userTransactions(publicKey)
+    return record
+}
 
-module.exports = { getUserTransactionDetails };
+module.exports = { getUserTransactionDetails }
