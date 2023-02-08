@@ -89,7 +89,7 @@ exports.verify_api_key = async (req, res, next) => {
 
 exports.tweet_recharge = async (req, res, next) => {
     try {
-        const _ = await tweetRecharge(req.user, req.query.twitterID)
+        await tweetRecharge(req.user, req.query.twitterID)
         res.status(200).json('Data Limit Upgraded')
     } catch (error) {
         next(error)

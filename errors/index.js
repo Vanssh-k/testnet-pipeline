@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 module.exports = {
     NotFoundError: require('./not-found-error'),
     RequestValidationError: require('./request-validation-error'),

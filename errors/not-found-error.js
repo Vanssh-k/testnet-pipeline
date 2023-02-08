@@ -6,7 +6,8 @@ module.exports = class NotFoundError extends CustomError {
         this.statusCode = 404
         Object.setPrototypeOf(this, NotFoundError.prototype)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return [{ message: 'Not Found' }]
     }
 }

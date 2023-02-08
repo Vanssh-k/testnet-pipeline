@@ -6,7 +6,8 @@ module.exports = class AuthenticationError extends CustomError {
         this.statusCode = 401
         Object.setPrototypeOf(this, AuthenticationError.prototype)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return [{ message: 'Unauthorized' }]
     }
 }

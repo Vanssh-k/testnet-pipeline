@@ -6,7 +6,8 @@ module.exports = class BadRequestError extends CustomError {
         this.statusCode = 400
         Object.setPrototypeOf(this, BadRequestError.prototype)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return [{ message: 'Bad Request' }]
     }
 }

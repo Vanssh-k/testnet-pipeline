@@ -1,4 +1,3 @@
-
 const dbbClient = require('../ddbClient')
 const { userTable } = require('../../controller/libs/constants')
 const DatabaseError = require('../../errors/database-error')

@@ -29,7 +29,7 @@ exports.getMessage = async (publicKey, network, record) => {
         updatedAt: timestamp,
     }
 
-    const _ = await updateUserDetails(updatedDetails, network)
+    await updateUserDetails(updatedDetails, network)
     return message
 }
 
@@ -44,7 +44,7 @@ exports.verifySigner = async (record) => {
         algorithm: 'HS256',
     })
 
-    const _ = await updateRefreshToken(
+    await updateRefreshToken(
         record.publicKey,
         SHA256(uuidv4()).toString(),
         SHA256(refreshToken).toString()
@@ -63,16 +63,13 @@ exports.refreshAccessToken = (record) => {
 }
 
 exports.removeRefreshToken = async (record) => {
-    const _ = await removeRefreshToken(
-        record.publicKey,
-        SHA256(uuidv4()).toString()
-    )
+    await removeRefreshToken(record.publicKey, generateToken())
     return 'Refresh token removed'
 }
 
 exports.getApiKey = async (record) => {
-    const apiKey = uuidv4().toString()
-    const _ = await updateAPIKey(
+    const apiKey = generateToken()
+    await updateAPIKey(
         record.publicKey,
         SHA256(uuidv4()).toString(),
         SHA256(apiKey).toString()

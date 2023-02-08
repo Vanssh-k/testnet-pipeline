@@ -4,7 +4,6 @@ const { generateToken } = require('./randomToken')
 describe('utils', () => {
     test('generateRandomToken', () => {
         const token = generateToken()
-
         expect(typeof token).toBe("string")
     }, 10000)
     test('Verify Signature Main Case: signature verification function', () => {

@@ -6,7 +6,8 @@ module.exports = class ForbiddenError extends CustomError {
         this.statusCode = 403
         Object.setPrototypeOf(this, ForbiddenError.prototype)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return [{ message: 'Forbidden' }]
     }
 }

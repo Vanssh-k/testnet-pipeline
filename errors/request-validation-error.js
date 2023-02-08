@@ -9,7 +9,8 @@ module.exports = class RequestValidationError extends CustomError {
         Object.setPrototypeOf(this, RequestValidationError.prototype)
         Error.captureStackTrace(this, this.constructor)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return this.errors.map((err) => {
             return { message: err.msg, field: err.param }
         })

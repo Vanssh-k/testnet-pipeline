@@ -16,8 +16,8 @@ exports.tweetRecharge = async (record, twitterID) => {
         throw new ForbiddenError()
     }
 
-    const updatedLimit = parseInt(record.dataLimit) + freeDataLimitInBytes
-    const _ = await faucetRecharge(record.publicKey, updatedLimit, {
+    const updatedLimit = parseInt(record.dataLimit, 10) + freeDataLimitInBytes
+    await faucetRecharge(record.publicKey, updatedLimit, {
         twitter: 'used',
     })
     return 'Recharge Success'

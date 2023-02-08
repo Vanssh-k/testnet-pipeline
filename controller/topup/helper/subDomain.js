@@ -46,9 +46,9 @@ const createSubDomain = async (publicKey, subDomain) => {
 
     const timestamp = Date.now()
 
-    const _ = await updateSubDomain({
+    await updateSubDomain({
         publicKey,
-        subDomainName: req.body.subDomain,
+        subDomainName: subDomain,
         subscriptionID: data.data.subscriptionId.toString(),
         updatedAt: timestamp,
     })

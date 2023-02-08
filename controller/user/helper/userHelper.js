@@ -3,6 +3,7 @@ const userUploads = require('../../../repository/file/userUploads')
 const migrationRequestInfo = require('../../../repository/migration/migrationRequestInfo')
 const updateUserData = require('../../../repository/user/updateUserData')
 const updateMigrationCIDRecord = require('../../../repository/migration/updateMigrationCIDRecord')
+const NotFoundError = require('../../../errors/not-found-error')
 
 exports.getUploads = async (publicKey, pageNo) => {
     const network = getNetwork(publicKey)
@@ -25,21 +26,23 @@ exports.updateDataUsage = async (record, requestId, enterprise) => {
 
         // Sum usage for CID pinned but userDataUpdated is false
         let totalUsage = 0
-        for (let i = 0; i < cidList.length; i++) {
-            /* istanbul ignore next */
-            if (
-                !cidList[i].userDataUpdated &&
-                cidList[i].cidStatus === 'pinned' &&
-                cidList[i].fileSizeInBytes
-            ) {
-                totalUsage += parseInt(cidList[i].fileSizeInBytes)
-                // userDataUpdated -> true
-                const _ = await updateMigrationCIDRecord(cidList[i].id, true)
-            }
-        }
 
-        const dataUsed = parseInt(record.dataUsed) + parseInt(totalUsage)
-        const _ = await updateUserData(record.publicKey, dataUsed)
+        const requests = cidList
+            .filter(
+                (cid) =>
+                    !cid.userDataUpdated &&
+                    cid.cidStatus === 'pinned' &&
+                    cid.fileSizeInBytes
+            )
+            .map(async (cid) => {
+                totalUsage += parseInt(cid.fileSizeInBytes, 10)
+                await updateMigrationCIDRecord(cid.id, true)
+            })
+
+        await Promise.all(requests)
+        const dataUsed =
+            parseInt(record.dataUsed, 10) + parseInt(totalUsage, 10)
+        await updateUserData(record.publicKey, dataUsed)
         return 'Success'
     }
     // TODO handle data usage update for other entreprise

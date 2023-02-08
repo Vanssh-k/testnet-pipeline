@@ -9,6 +9,7 @@ class CustomError extends Error {
 
         Error.captureStackTrace(this, this.constructor)
     }
+
     serializeErrors() {
         return [{ message: this.errors }]
     }

@@ -3,7 +3,7 @@ const { createProposal, listProposals } = require('./helper/proposalHelper')
 exports.create_proposal = async (req, res, next) => {
     try {
         const { proposal, publicKey } = req.body
-        const _ = createProposal(publicKey, proposal)
+        createProposal(publicKey, proposal)
         res.status(200).json('Proposal Added')
     } catch (error) {
         next(error)

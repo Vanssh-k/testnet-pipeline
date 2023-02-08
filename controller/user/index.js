@@ -5,7 +5,7 @@ exports.get_uploads = async (req, res, next) => {
     try {
         const fileList = await cacheFunction(
             async () =>
-                await getUploads(req.query.publicKey.trim(), req.query.pageNo),
+                getUploads(req.query.publicKey.trim(), req.query.pageNo),
             `getUpload-${req.query.publicKey.trim()}-page-${req.query.pageNo}`
         )
         res.status(200).send(fileList)

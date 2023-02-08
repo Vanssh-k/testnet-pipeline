@@ -4,6 +4,7 @@ const migrationRequestInfo = require('../../repository/migration/migrationReques
 const fileDetailsByCid = require('../../repository/fileDetailsByCid')
 const { cacheFunction } = require('../../repository/cacheClient')
 const { getTicker } = require('./helper/tickerHelper')
+const NotFoundError = require('../../errors/not-found-error')
 const {
     cidDealStatus,
     addCidEstuary,
@@ -89,7 +90,7 @@ exports.migration_request_info = async (req, res, next) => {
 // add cid for filecoin deal
 exports.add_cid = async (req, res, next) => {
     try {
-        const _ = await addCidEstuary(req.body.name, req.body.cid)
+        await addCidEstuary(req.body.name, req.body.cid)
         res.status(200).json('Added To Queue')
     } catch (error) {
         next(error)
@@ -100,7 +101,7 @@ exports.add_cid = async (req, res, next) => {
 exports.file_info = async (req, res, next) => {
     try {
         const record = await cacheFunction(
-            async () => await fileDetailsByCid(req.query.cid),
+            async () => fileDetailsByCid(req.query.cid),
             `cid-${req.query.cid}`
         )
         if (!record) {

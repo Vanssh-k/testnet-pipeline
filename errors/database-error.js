@@ -6,7 +6,8 @@ module.exports = class DatabaseError extends CustomError {
         this.statusCode = 502
         Object.setPrototypeOf(this, DatabaseError.prototype)
     }
-    serializeErrors() {
+
+    static serializeErrors() {
         return [{ message: 'Something Went Wrong' }]
     }
 }

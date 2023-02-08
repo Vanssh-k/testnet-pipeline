@@ -10,7 +10,6 @@ module.exports = {
     },
     plugins: ['prettier', 'jest'],
     rules: {
-        'promise/catch-or-return': 'error',
         'prettier/prettier': [
             'error',
             {
@@ -18,5 +17,7 @@ module.exports = {
                 semi: false,
             },
         ],
+        'no-param-reassign': 0,
+        'no-nested-ternary': 0,
     },
 }
