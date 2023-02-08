@@ -11,6 +11,7 @@ module.exports = async () => {
         testMatch: [
             '<rootDir>/controller/**/*.test.js',
             '<rootDir>/**/*.spec.js',
+            '<rootDir>/**/*.test.js',
         ], // match only tests inside /tests folder
         testPathIgnorePatterns: [
             '<rootDir>/node_modules/',

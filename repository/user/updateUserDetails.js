@@ -1,5 +1,4 @@
-const { v4: uuidv4 } = require('uuid')
-const SHA256 = require('crypto-js/sha256')
+
 const dbbClient = require('../ddbClient')
 const { userTable } = require('../../controller/libs/constants')
 const DatabaseError = require('../../errors/database-error')
