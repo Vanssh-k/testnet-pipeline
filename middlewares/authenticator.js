@@ -7,6 +7,7 @@ const Errors = require('../errors')
 const helpers = require('../helpers')
 const getNetwork = require('./getNetwork')
 const checkApiKey = require('../repository/checkApiKey')
+const { getCache } = require('../repository/cacheClient')
 
 module.exports = (rules = [], clauses = []) => {
     return async (req, res, next) => {
@@ -22,18 +23,21 @@ module.exports = (rules = [], clauses = []) => {
                     const usersPublicKey =
                         req.body.publicKey || req.query.publicKey
                     network = getNetwork(usersPublicKey)
-                    record = await userDetails(usersPublicKey, network)
-                    if (!record) {
-                        return next(new Errors.NotFoundError())
-                    }
+                    const recordx = getCache(
+                        `publicKeyMessage-${usersPublicKey}`
+                    )
                     let authentic = verifySignature(
                         usersPublicKey,
-                        messageString + record.message,
+                        messageString + recordx.message,
                         req.body.signedMessage,
-                        record.network
+                        recordx.network
                     )
                     if (!authentic) {
                         return next(new Errors.AuthenticationError())
+                    }
+                    record = await userDetails(usersPublicKey, network)
+                    if (!record) {
+                        return next(new Errors.NotFoundError())
                     }
                     req.user = record
                     break

@@ -7,6 +7,7 @@ const updateRefreshToken = require('../../../repository/user/updateRefreshToken'
 const removeRefreshToken = require('../../../repository/user/removeRefreshToken')
 const { freeDataLimitInBytes, messageString } = require('../../libs/constants')
 const { generateToken } = require('../../../utils/randomToken')
+const { setCache } = require('../../../repository/cacheClient')
 
 exports.getMessage = async (publicKey, network, record) => {
     const timestamp = Date.now()
@@ -29,7 +30,10 @@ exports.getMessage = async (publicKey, network, record) => {
         updatedAt: timestamp,
     }
 
-    await updateUserDetails(updatedDetails, network)
+    await Promise.all([
+        setCache(`publicKeyMessage-${publicKey}`, { message, network }),
+        updateUserDetails(updatedDetails, network),
+    ])
     return message
 }
 

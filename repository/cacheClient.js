@@ -7,7 +7,7 @@ module.exports.setCache = async (key, value) => {
 }
 
 module.exports.getCache = async (key) => {
-    if (redis.status == 'ready') {
+    if (redis.status === 'ready') {
         return redis
             .get(key)
             .then((result) => {
@@ -22,14 +22,13 @@ module.exports.getCache = async (key) => {
 }
 
 module.exports.removeCache = async (key) => {
-    if (redis.status == 'ready') {
+    if (redis.status === 'ready') {
         return redis
             .del(key)
             .then((result) => {
                 return JSON.parse(result)
             })
-            .catch((err) => {
-                console.error(err)
+            .catch(() => {
                 return null
             })
     }
@@ -37,23 +36,24 @@ module.exports.removeCache = async (key) => {
 }
 
 module.exports.cacheFunction = async (fn, key) => {
-    if (redis.status == 'ready') {
-        let data = await this.getCache(key)
+    if (redis.status === 'ready') {
+        const data = await this.getCache(key)
         if (data) {
             return data
         }
     }
-    data = await fn()
-    if (redis.status == 'ready') {
+    const data = await fn()
+    if (redis.status === 'ready') {
         await this.setCache(key, data)
     }
     return data
 }
 
 module.exports.clearCacheStartsWith = async (keyword) => {
-    if (redis.status == 'ready') {
+    if (redis.status === 'ready') {
         let cursor = '0'
         do {
+            // eslint-disable-next-line no-await-in-loop
             const [nextCursor, keys] = await redis.scan(
                 cursor,
                 'MATCH',
@@ -61,6 +61,7 @@ module.exports.clearCacheStartsWith = async (keyword) => {
             )
             cursor = nextCursor
             if (keys.length > 0) {
+                // eslint-disable-next-line no-await-in-loop
                 await redis.del(keys)
             }
         } while (cursor !== '0')
