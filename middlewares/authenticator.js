@@ -28,9 +28,9 @@ module.exports = (rules = [], clauses = []) => {
                     )
                     let authentic = verifySignature(
                         usersPublicKey,
-                        messageString + recordx.message,
+                        messageString + recordx?.message,
                         req.body.signedMessage,
-                        recordx.network
+                        recordx?.network
                     )
                     if (!authentic) {
                         return next(new Errors.AuthenticationError())
