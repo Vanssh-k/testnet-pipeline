@@ -5,7 +5,7 @@ describe('utils', () => {
     test('generateRandomToken', () => {
         const token = generateToken()
 
-        expect(token).toBe(true)
+        expect(typeof token).toBe("string")
     }, 10000)
     test('Verify Signature Main Case: signature verification function', () => {
         const verify = verifySignature(
