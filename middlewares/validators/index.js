@@ -3,6 +3,6 @@ module.exports = {
     ...require('./lighthouse'),
     ...require('./encryption'),
     ...require('./governance'),
-    ...require('./gateway'),
+    ...require('./topup'),
     ...require('./auth'),
 }
