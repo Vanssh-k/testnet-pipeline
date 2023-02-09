@@ -1,11 +1,11 @@
 const userTable = 'Users'
 const fileTable = 'files'
-const gatewayTable = 'SubDomainManagement'
+const gatewayTable = 'dedicatedGatewayRecords'
 const fileTableEncryption = 'fileTableTest'
 const migrationCIDs = 'migrationCIDs'
 const migrationRequestTable = 'migrationRequestTable'
 const ProposalTable = 'ProposalTable'
-const subscriptionPurchaseTransactions = 'subscriptionPurchaseTransactions'
+const userTransactions = 'userTransactions'
 const subscriptionPlans = 'subscriptionPlans'
 const messageString =
     'Please prove you are the owner of this wallet by signing this message, nonce='
@@ -19,7 +19,7 @@ module.exports = {
     fileTableEncryption,
     migrationCIDs,
     migrationRequestTable,
-    subscriptionPurchaseTransactions,
+    userTransactions,
     ProposalTable,
     subscriptionPlans,
     messageString,
