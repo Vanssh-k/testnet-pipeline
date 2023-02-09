@@ -1,71 +1,81 @@
+const { v4: uuidv4 } = require('uuid')
 const {
-  checkSubdomain,
-  getRecord,
-  updateSubDomain
-} = require('../../../repository/topup/subdomain');
-const { usersActivePlan } = require("./plansHelper");
+    checkSubdomain,
+    getRecord,
+    updateSubDomain,
+} = require('../../../repository/topup/subdomain')
+const { usersActivePlan, getPlanDetails } = require('./plansHelper')
+const addDNSRecord = require('./cloudFlareHelper')
 
-const ForbiddenError = require('../../../errors/forbidden');
-const NotFoundError = require('../../../errors/not-found-error');
+const ForbiddenError = require('../../../errors/forbidden')
+const NotFoundError = require('../../../errors/not-found-error')
 
-const subDomainExists = async (subDomain) =>{
-  const restrictedNames = [
-    'api',
-    'gateway',
-    'testnet',
-    'mainnet',
-    'node',
-    'docs',
-    'encryption',
-  ];
-  if (
-    restrictedNames.includes(subDomain)
-    || /[^A-Za-z0-9]/.test(subDomain)
-  ) {
-    return "exist";
-  }
+const subDomainExists = async (subDomain) => {
+    const restrictedNames = [
+        'api',
+        'gateway',
+        'testnet',
+        'mainnet',
+        'node',
+        'docs',
+        'encryption',
+    ]
+    if (restrictedNames.includes(subDomain) || /[^A-Za-z0-9]/.test(subDomain)) {
+        return 'exist'
+    }
 
-  const exists = await checkSubdomain(subDomain);
-  if(!exists){
-    return "not-exist"
-  }
+    const exists = await checkSubdomain(subDomain)
+    if (!exists) {
+        return 'not-exist'
+    }
 
-  return "exist";
+    return 'exist'
+}
+
+const getUserSubDomainDomain = async (publicKey) => {
+    const record = await getRecord(publicKey)
+    if (!record) {
+        throw new NotFoundError()
+    }
+
+    return record
 }
 
 const createSubDomain = async (publicKey, subDomain) => {
-  // Does the dub domain exist
-  const exists = await subDomainExists(subDomain);
-  if (exists === "exist") {
-    throw new ForbiddenError();
-  }
+    // Does the sub domain exist
+    const exists = await subDomainExists(subDomain)
+    if (exists === 'exist') {
+        throw new ForbiddenError()
+    }
 
-  // has user subscribed to plan
-  const data = await usersActivePlan(publicKey);
+    // has user subscribed to plan
+    const data = await usersActivePlan(publicKey)
 
-  if(data.status!==200){
-    throw new ForbiddenError();
-  }
+    if (data.status !== 200) {
+        throw new ForbiddenError()
+    }
 
-  const timestamp = Date.now();
+    // Get plan details
+    const planInfo = (await getPlanDetails(data.data.subscriptionId.toString())).data
+    const allowedSubDomainCount = parseInt(planInfo['dedicatedGateway'])
 
-  const _ = await updateSubDomain({
-    publicKey,
-    subDomainName: req.body.subDomain,
-    subscriptionID: data.data.subscriptionId.toString(),
-    updatedAt: timestamp,
-  });
+    // Does user already have a sub domain
+    const userDomainRecord = await getRecord(publicKey)
+    if (userDomainRecord.length >= allowedSubDomainCount) {
+        throw new ForbiddenError('User already own gateway')
+    }
 
-  return {status: 200, data: "Success"};
-};
+    const _ = await updateSubDomain({
+        id: uuidv4().toString(),
+        publicKey,
+        subDomainName: req.body.subDomain,
+        subscriptionID: data.data.subscriptionId.toString(),
+        updatedAt: Date.now(),
+    })
 
-const getUserSubDomainDomain = async (publicKey) => {
-  const record = await getRecord(publicKey);
-  if (!record) {
-    throw new NotFoundError();
-  }
+    const dNSRecord = await addDNSRecord(req.body.subDomain)
 
-  return(record.subDomainName);
-};
+    return { status: 200, data: 'Success' }
+}
 
-module.exports = { subDomainExists, createSubDomain, getUserSubDomainDomain };
+module.exports = { subDomainExists, createSubDomain, getUserSubDomainDomain }
