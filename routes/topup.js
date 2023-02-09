@@ -45,6 +45,10 @@ router.get(
 
 router.get('/get_active_plan_list', TopupController.get_active_plan_list)
 
-router.get('/users_active_plan', TopupController.users_active_plan)
+router.get(
+    '/users_active_plan',
+    validate(validator.publicKeySchema, { query: true }),
+    TopupController.users_active_plan
+)
 
 module.exports = router
