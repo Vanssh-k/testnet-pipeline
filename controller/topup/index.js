@@ -8,7 +8,19 @@ const {
     subDomainExists,
     getUserSubDomainDomain,
 } = require('./helper/subDomain')
-const { getUserTransactionDetails } = require('./helper/transactionHelper')
+const {
+    recordUserTransaction,
+    getUserTransactionDetails,
+} = require('./helper/transactionHelper')
+
+exports.record_transaction = async (req, res, next) => {
+    try {
+        const data = await recordUserTransaction(req.body, req.user)
+        res.status(data.status).json({ data: data.data })
+    } catch (error) {
+        next(error)
+    }
+}
 
 exports.create_subdomain = async (req, res, next) => {
     try {
@@ -33,14 +45,14 @@ exports.check_subdomain = async (req, res, next) => {
 
 exports.get_subdomain = async (req, res, next) => {
     try {
-        const record = await getUserSubDomainDomain(req.query.publicKey)
-        res.status(200).json(record)
+        const records = await getUserSubDomainDomain(req.query.publicKey)
+        res.status(200).json(records)
     } catch (error) {
         next(error)
     }
 }
 
-exports.get_user_transaction_details = async (req, res, next) => {
+exports.get_user_transactions = async (req, res, next) => {
     try {
         const record = await getUserTransactionDetails(req.query.publicKey)
         res.status(200).json(record)
