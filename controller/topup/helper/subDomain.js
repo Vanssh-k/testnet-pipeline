@@ -5,7 +5,7 @@ const {
     updateSubDomain,
 } = require('../../../repository/topup/subdomain')
 const { usersActivePlan, getPlanDetails } = require('./plansHelper')
-const addDNSRecord = require('./cloudFlareHelper')
+const { addDNSRecord } = require('./cloudFlareHelper')
 
 const ForbiddenError = require('../../../errors/forbidden')
 const NotFoundError = require('../../../errors/not-found-error')
@@ -42,40 +42,43 @@ const getUserSubDomainDomain = async (publicKey) => {
 }
 
 const createSubDomain = async (publicKey, subDomain) => {
-    // Does the sub domain exist
-    const exists = await subDomainExists(subDomain)
-    if (exists === 'exist') {
-        throw new ForbiddenError()
+    try{
+        // Does the sub domain exist
+        const exists = await subDomainExists(subDomain)
+        if (exists === 'exist') {
+            throw new ForbiddenError()
+        }
+
+        // has user subscribed to plan
+        const data = await usersActivePlan(publicKey)
+
+        if (data.status !== 200) {
+            throw new ForbiddenError()
+        }
+
+        // Get plan details
+        const planInfo = (await getPlanDetails(data.data.subscriptionId.toString())).data
+        const allowedSubDomainCount = parseInt(planInfo['dedicatedGateway'])
+
+        // Does user already have a sub domain
+        const userDomainRecord = await getRecord(publicKey)
+        if (userDomainRecord.length >= allowedSubDomainCount) {
+            throw new ForbiddenError('User already own gateway')
+        }
+        
+        const _ = await updateSubDomain({
+            id: uuidv4().toString(),
+            publicKey: publicKey,
+            subDomainName: subDomain,
+            subscriptionID: data.data.subscriptionId.toString(),
+            updatedAt: Date.now(),
+        })
+        
+        const dNSRecord = await addDNSRecord(subDomain)
+        return { status: 200, data: 'Success' }
+    } catch(error){
+        console.log(error)
     }
-
-    // has user subscribed to plan
-    const data = await usersActivePlan(publicKey)
-
-    if (data.status !== 200) {
-        throw new ForbiddenError()
-    }
-
-    // Get plan details
-    const planInfo = (await getPlanDetails(data.data.subscriptionId.toString())).data
-    const allowedSubDomainCount = parseInt(planInfo['dedicatedGateway'])
-
-    // Does user already have a sub domain
-    const userDomainRecord = await getRecord(publicKey)
-    if (userDomainRecord.length >= allowedSubDomainCount) {
-        throw new ForbiddenError('User already own gateway')
-    }
-
-    const _ = await updateSubDomain({
-        id: uuidv4().toString(),
-        publicKey,
-        subDomainName: req.body.subDomain,
-        subscriptionID: data.data.subscriptionId.toString(),
-        updatedAt: Date.now(),
-    })
-
-    const dNSRecord = await addDNSRecord(req.body.subDomain)
-
-    return { status: 200, data: 'Success' }
 }
 
 module.exports = { subDomainExists, createSubDomain, getUserSubDomainDomain }

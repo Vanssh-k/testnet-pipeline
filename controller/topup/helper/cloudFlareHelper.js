@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-exports.addDNSRecord = async (name) => {
+const addDNSRecord = async (name) => {
     try {
         const data = {
             type: 'CNAME',
@@ -28,3 +28,5 @@ exports.addDNSRecord = async (name) => {
         throw new Error()
     }
 }
+
+module.exports = { addDNSRecord }
