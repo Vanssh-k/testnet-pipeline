@@ -158,6 +158,21 @@ module.exports = (rules = [], clauses = []) => {
                     req.network = getNetwork(req.body.publicKey)
                     break
 
+                case 'transactionProtectRoute':
+                    const transactionRouteAccessToken =
+                        req.headers['authorization']?.split(' ')[1]
+                    if (
+                        transactionRouteAccessToken !==
+                            process.env.TRANSACTION_ROUTE_TOKEN ||
+                        !transactionRouteAccessToken
+                    ) {
+                        return next(new Errors.NotFoundError())
+                    }
+                    network = getNetwork(req.body.depositor)
+                    record = await userDetails(req.body.depositor, network)
+                    req.user = record
+                    break
+
                 default:
                     continue
             }
