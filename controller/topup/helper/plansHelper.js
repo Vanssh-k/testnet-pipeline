@@ -1,4 +1,4 @@
-const updateUserData = require('../../../repository/user/updateUserData')
+const updateUserDataLimit = require('../../../repository/user/updateUserDataLimit')
 const {
     getSubscriptionStatus,
     getPurchasablePlans,
@@ -83,8 +83,8 @@ const activatePlan = async (userRecord) => {
 
     // update datacap
     if (dataCapPurchased) {
-        const newDataLimit = parseInt(userRecord.dataUsed) + dataCapPurchased
-        const updateDataCapResponse = await updateUserData(
+        const newDataLimit = parseInt(userRecord.dataLimit) + dataCapPurchased
+        const updateDataCapResponse = await updateUserDataLimit(
             userRecord.publicKey,
             newDataLimit
         )
