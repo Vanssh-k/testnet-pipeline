@@ -1,19 +1,20 @@
 const dbbClient = require('../ddbClient')
 const { gatewayTable } = require('../../controller/libs/constants')
 
-const checkSubdomain = async (subDomain) => {
+const checkSubdomain = async (name) => {
     try {
+        console.log(name)
         const params = {
             TableName: gatewayTable,
-            FilterExpression: 'subDomain = :s',
+            IndexName: 'subDomainName-index',
+            KeyConditionExpression: 'subDomainName = :n',
             ExpressionAttributeValues: {
-                ':s': subDomain,
+                ':n': name,
             },
         }
 
-        const record = await dbbClient.scan(params).promise()
-        const { Items } = record
-        return Items[0]
+        const record = await dbbClient.query(params).promise()
+        return record.Items[0]
     } catch (error) {
         return null
     }
@@ -23,13 +24,15 @@ const getRecord = async (publicKey) => {
     try {
         const params = {
             TableName: gatewayTable,
-            Key: {
-                publicKey: publicKey.toLowerCase(),
+            IndexName: 'publicKey-index',
+            KeyConditionExpression: 'publicKey = :p',
+            ExpressionAttributeValues: {
+                ':p': publicKey,
             },
         }
 
-        const record = await dbbClient.get(params).promise()
-        return record.Item
+        const record = await dbbClient.query(params).promise()
+        return record.Items
     } catch (error) {
         return null
     }
