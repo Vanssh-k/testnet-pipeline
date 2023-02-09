@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid')
 const { activatePlan } = require('./plansHelper')
 const {
-    userTransactions,
+    getUserTransactions,
     recordTransactions,
 } = require('../../../repository/topup/userTransactions')
 
@@ -21,7 +21,7 @@ const recordUserTransaction = async (bodyData, userRecord) => {
 }
 
 const getUserTransactionDetails = async (publicKey) => {
-    const record = await userTransactions(publicKey)
+    const record = await getUserTransactions(publicKey)
     return record
 }
 
