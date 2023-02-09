@@ -12,7 +12,7 @@ const { setCache } = require('../../../repository/cacheClient')
 exports.getMessage = async (publicKey, network, record) => {
     const timestamp = Date.now()
     const message = messageString + timestamp
-
+    
     const updatedDetails = {
         publicKey,
         message: timestamp,
@@ -30,10 +30,7 @@ exports.getMessage = async (publicKey, network, record) => {
         updatedAt: timestamp,
     }
 
-    await Promise.all([
-        setCache(`publicKeyMessage-${publicKey}`, { message, network }),
-        updateUserDetails(updatedDetails, network),
-    ])
+    const _ = await updateUserDetails(updatedDetails, network);
     return message
 }
 

@@ -23,9 +23,10 @@ module.exports = (rules = [], clauses = []) => {
                     const usersPublicKey =
                         req.body.publicKey || req.query.publicKey
                     network = getNetwork(usersPublicKey)
-                    const recordx = getCache(
-                        `publicKeyMessage-${usersPublicKey}`
-                    )
+                    record = await userDetails(usersPublicKey, network);
+                    if (!record) {
+                        return next(new Errors.NotFoundError());
+                    }
                     let authentic = verifySignature(
                         usersPublicKey,
                         messageString + recordx?.message,
@@ -177,6 +178,6 @@ module.exports = (rules = [], clauses = []) => {
                     continue
             }
         }
-        return next(new Error('Did not match any rule in auth'))
+        return next();
     }
 }
