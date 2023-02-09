@@ -74,7 +74,7 @@ exports.get_active_plan_list = async (req, res, next) => {
 
 exports.users_active_plan = async (req, res, next) => {
     try {
-        const data = await usersActivePlan(req.body.publicKey)
+        const data = await usersActivePlan(req.query.publicKey)
         res.status(data.status).json({ data: data.data })
     } catch (error) {
         next(error)
@@ -90,11 +90,12 @@ exports.plan_details_by_id = async (req, res, next) => {
     }
 }
 
-exports.activate_plan = async (req, res, next) => {
-    try {
-        const data = await activatePlan(req.query.publicKey)
-        res.status(data.status).json({ data: data.data })
-    } catch (error) {
-        next(error)
-    }
-}
+// exports.activate_plan = async (req, res, next) => {
+//     try {
+//         const record = await userDetails(req.query.publicKey, "evm")
+//         const data = await activatePlan(record)
+//         res.status(data.status).json({ data: data.data })
+//     } catch (error) {
+//         next(error)
+//     }
+// }
