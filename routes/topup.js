@@ -33,6 +33,11 @@ router.get(
 )
 
 router.get(
+    '/plan_details_by_id',
+    TopupController.plan_details_by_id
+)
+
+router.get(
     '/get_user_transactions',
     validate(validator.publicKeySchema, { query: true }),
     TopupController.get_user_transactions
