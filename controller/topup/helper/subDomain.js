@@ -56,10 +56,8 @@ const createSubDomain = async (publicKey, subDomain) => {
     }
 
     // Get plan details
-    const planInfo = JSON.parse(
-        await getPlanDetails(data.data.subscriptionId.toString())
-    )
-    const allowedSubDomainCount = parseInt(planInfo['dedicated gateway'])
+    const planInfo = (await getPlanDetails(data.data.subscriptionId.toString())).data
+    const allowedSubDomainCount = parseInt(planInfo['dedicatedGateway'])
 
     // Does user already have a sub domain
     const userDomainRecord = await getRecord(publicKey)

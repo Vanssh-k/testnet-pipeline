@@ -10,8 +10,13 @@ const getActivePlanList = async () => {
     const planDetails = (await getPurchasablePlans()).activePurchasablePlans
     const filterPlans = []
     for (let i = 0; i < planDetails.length; i++) {
+        const temp = planDetails[i].detail.split(",")
         filterPlans.push({
-            index: Number(planDetails[i].index),
+            subscriptionId: Number(planDetails[i].index),
+            planName: temp[0].split(":")[1].replace(/['"]+/g, '').trim(),
+            dataCap: parseInt(temp[1].split(":")[1].replace(/['"]+/g, '').trim()),
+            bandwidth: parseInt(temp[2].split(":")[1].replace(/['"]+/g, '').trim()),
+            dedicatedGateway: parseInt(temp[3].split(":")[1].replace(/['"]+/g, '').trim()),
             frequencyOfDeduction: planDetails[i].frequencyOfDeduction,
             nextDeductionInNumOfBlocks:
                 planDetails[i].nextDeductionInNumOfBlocks,
@@ -49,14 +54,13 @@ const usersActivePlan = async (publicKey) => {
 
 const getPlanDetails = async (planId) => {
     const planList = await getActivePlanList()
-    const planToReturn = null
-    for (let i = 0; i < planList.length; i++) {
-        if (planList[i].id === planId) {
-            planToReturn = planList[i]
+    let i;
+    for (i = 0; i < planList.length; i++) {
+        if (planList[i].subscriptionId === parseInt(planId)) {
             break
         }
     }
-    return planToReturn
+    return {status: 200, data: planList[i]}
 }
 
 const activatePlan = async (userRecord) => {
@@ -75,8 +79,7 @@ const activatePlan = async (userRecord) => {
         throw new NotFoundError('Plan does not exist')
     }
 
-    const planDetailsJSON = JSON.parse(planDetails)
-    const dataCapPurchased = parseInt(planDetailsJSON.data)
+    const dataCapPurchased = parseInt(planDetails.data.dataCap)
 
     // update datacap
     if (dataCapPurchased) {
@@ -93,4 +96,4 @@ const activatePlan = async (userRecord) => {
     }
 }
 
-module.exports = { getActivePlanList, usersActivePlan, activatePlan }
+module.exports = { getActivePlanList, getPlanDetails, usersActivePlan, activatePlan }
