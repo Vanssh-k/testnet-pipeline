@@ -7,6 +7,13 @@ const authenticator = require('../middlewares/authenticator')
 const router = express.Router()
 
 router.post(
+    '/record_transaction',
+    validate(validator.recordTransactionSchema, { body: true }),
+    authenticator(['transactionProtectRoute']),
+    TopupController.record_transaction
+)
+
+router.post(
     '/create_subdomain',
     validate(validator.addSubdomainSchema, { body: true }),
     authenticator(['verifysignature']),
@@ -26,9 +33,9 @@ router.get(
 )
 
 router.get(
-    '/get_user_transaction_details',
+    '/get_user_transactions',
     validate(validator.publicKeySchema, { query: true }),
-    TopupController.get_user_transaction_details
+    TopupController.get_user_transactions
 )
 
 router.get('/get_active_plan_list', TopupController.get_active_plan_list)
