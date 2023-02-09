@@ -1,19 +1,22 @@
+const updateUserData = require('../../../repository/user/updateUserData')
 const {
     getSubscriptionStatus,
     getPurchasablePlans,
 } = require('../../../services/blockchain/billing')
+
+const NotFoundError = require('../../../errors/not-found-error')
 
 const getActivePlanList = async () => {
     const planDetails = (await getPurchasablePlans()).activePurchasablePlans
     const filterPlans = []
     for (let i = 0; i < planDetails.length; i++) {
         filterPlans.push({
-            index: Number(planDetails[i]['index']),
-            frequencyOfDeduction: planDetails[i]['frequencyOfDeduction'],
+            index: Number(planDetails[i].index),
+            frequencyOfDeduction: planDetails[i].frequencyOfDeduction,
             nextDeductionInNumOfBlocks:
-                planDetails[i]['nextDeductionInNumOfBlocks'],
-            amount: Number(planDetails[i]['amount']),
-            detail: planDetails[i]['detail'],
+                planDetails[i].nextDeductionInNumOfBlocks,
+            amount: Number(planDetails[i].amount),
+            detail: planDetails[i].detail,
         })
     }
     return filterPlans
@@ -48,7 +51,7 @@ const getPlanDetails = async (planId) => {
     const planList = await getActivePlanList()
     const planToReturn = null
     for (let i = 0; i < planList.length; i++) {
-        if (planList[i]['id'] === planId) {
+        if (planList[i].id === planId) {
             planToReturn = planList[i]
             break
         }
@@ -56,22 +59,33 @@ const getPlanDetails = async (planId) => {
     return planToReturn
 }
 
-const activatePlan = async (publicKey) => {
-    const activePlan = await usersActivePlan(publicKey)
+const activatePlan = async (userRecord) => {
+    const activePlan = await usersActivePlan(userRecord.publicKey)
     if (activePlan.status !== 200) {
         return {
             status: 403,
-            data: { message: `No active plan for user ${publicKey}` },
+            data: {
+                message: `No active plan for user ${userRecord.publicKey}`,
+            },
         }
     }
 
     const planDetails = await getPlanDetails(activePlan.data.subscriptionId)
     if (!planDetails) {
+        throw new NotFoundError('Plan does not exist')
     }
+
     const planDetailsJSON = JSON.parse(planDetails)
-    const dataCapPurchased = parseInt(planDetailsJSON['data'])
-    console.log(dataCapPurchased)
+    const dataCapPurchased = parseInt(planDetailsJSON.data)
+
     // update datacap
+    if (dataCapPurchased) {
+        const newDataLimit = parseInt(userRecord.dataUsed) + dataCapPurchased
+        const updateDataCapResponse = await updateUserData(
+            userRecord.publicKey,
+            newDataLimit
+        )
+    }
 
     return {
         status: 200,

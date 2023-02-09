@@ -1,9 +1,11 @@
+const { v4: uuidv4 } = require('uuid')
 const {
     checkSubdomain,
     getRecord,
     updateSubDomain,
 } = require('../../../repository/topup/subdomain')
-const { usersActivePlan } = require('./plansHelper')
+const { usersActivePlan, getPlanDetails } = require('./plansHelper')
+const addDNSRecord = require('./cloudFlareHelper')
 
 const ForbiddenError = require('../../../errors/forbidden')
 const NotFoundError = require('../../../errors/not-found-error')
@@ -30,8 +32,17 @@ const subDomainExists = async (subDomain) => {
     return 'exist'
 }
 
+const getUserSubDomainDomain = async (publicKey) => {
+    const record = await getRecord(publicKey)
+    if (!record) {
+        throw new NotFoundError()
+    }
+
+    return record
+}
+
 const createSubDomain = async (publicKey, subDomain) => {
-    // Does the dub domain exist
+    // Does the sub domain exist
     const exists = await subDomainExists(subDomain)
     if (exists === 'exist') {
         throw new ForbiddenError()
@@ -44,25 +55,29 @@ const createSubDomain = async (publicKey, subDomain) => {
         throw new ForbiddenError()
     }
 
-    const timestamp = Date.now()
+    // Get plan details
+    const planInfo = JSON.parse(
+        await getPlanDetails(data.data.subscriptionId.toString())
+    )
+    const allowedSubDomainCount = parseInt(planInfo['dedicated gateway'])
 
-    await updateSubDomain({
-        publicKey,
-        subDomainName: subDomain,
-        subscriptionID: data.data.subscriptionId.toString(),
-        updatedAt: timestamp,
-    })
-
-    return { status: 200, data: 'Success' }
-}
-
-const getUserSubDomainDomain = async (publicKey) => {
-    const record = await getRecord(publicKey)
-    if (!record) {
-        throw new NotFoundError()
+    // Does user already have a sub domain
+    const userDomainRecord = await getRecord(publicKey)
+    if (userDomainRecord.length >= allowedSubDomainCount) {
+        throw new ForbiddenError('User already own gateway')
     }
 
-    return record.subDomainName
+    const _ = await updateSubDomain({
+        id: uuidv4().toString(),
+        publicKey,
+        subDomainName: req.body.subDomain,
+        subscriptionID: data.data.subscriptionId.toString(),
+        updatedAt: Date.now(),
+    })
+
+    const dNSRecord = await addDNSRecord(req.body.subDomain)
+
+    return { status: 200, data: 'Success' }
 }
 
 module.exports = { subDomainExists, createSubDomain, getUserSubDomainDomain }
