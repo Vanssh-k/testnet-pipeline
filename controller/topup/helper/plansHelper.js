@@ -37,7 +37,6 @@ const getPlanDetails = async (planId) => {
 
 const usersActivePlan = async (publicKey) => {
     const { status, subscriptionId } = await getSubscriptionStatus(publicKey)
-
     if (!status) {
         if (subscriptionId > Number.MAX_SAFE_INTEGER) {
             return {
@@ -59,9 +58,8 @@ const usersActivePlan = async (publicKey) => {
     return {
         status: 200,
         data: {
-            status,
             subscriptionId: subscriptionId.toString(),
-            planDetails: planDetails
+            planDetails: planDetails.data
         },
     }
 }
@@ -86,6 +84,7 @@ const activatePlan = async (userRecord) => {
             userRecord.publicKey,
             newDataLimit
         )
+        console.log("plan updated")
     }
 
     return {
