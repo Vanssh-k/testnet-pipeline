@@ -4,7 +4,7 @@ const {
     getRecord,
     updateSubDomain,
 } = require('../../../repository/topup/subdomain')
-const { usersActivePlan, getPlanDetails } = require('./plansHelper')
+const { usersActivePlan } = require('./plansHelper')
 const { addDNSRecord } = require('./cloudFlareHelper')
 
 const ForbiddenError = require('../../../errors/forbidden')
@@ -57,8 +57,7 @@ const createSubDomain = async (publicKey, subDomain) => {
         }
 
         // Get plan details
-        const planInfo = (await getPlanDetails(data.data.subscriptionId.toString())).data
-        const allowedSubDomainCount = parseInt(planInfo['dedicatedGateway'])
+        const allowedSubDomainCount = parseInt(data.data.planDetails['dedicatedGateway'])
 
         // Does user already have a sub domain
         const userDomainRecord = await getRecord(publicKey)
