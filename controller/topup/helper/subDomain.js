@@ -42,7 +42,7 @@ const getUserSubDomainDomain = async (publicKey) => {
 }
 
 const createSubDomain = async (publicKey, subDomain) => {
-    try{
+    try {
         // Does the sub domain exist
         const exists = await subDomainExists(subDomain)
         if (exists === 'exist') {
@@ -57,26 +57,29 @@ const createSubDomain = async (publicKey, subDomain) => {
         }
 
         // Get plan details
-        const allowedSubDomainCount = parseInt(data.data.planDetails['dedicatedGateway'])
+        const allowedSubDomainCount = parseInt(
+            data.data.planDetails.dedicatedGateway
+        )
 
         // Does user already have a sub domain
         const userDomainRecord = await getRecord(publicKey)
         if (userDomainRecord.length >= allowedSubDomainCount) {
             throw new ForbiddenError('User already own gateway')
         }
-        
+
         const _ = await updateSubDomain({
             id: uuidv4().toString(),
-            publicKey: publicKey,
+            publicKey,
             subDomainName: subDomain,
             subscriptionID: data.data.subscriptionId.toString(),
             updatedAt: Date.now(),
         })
-        
+
         const dNSRecord = await addDNSRecord(subDomain)
         return { status: 200, data: 'Success' }
-    } catch(error){
+    } catch (error) {
         console.log(error)
+        return { status: 403, data: 'Forbidden' }
     }
 }
 

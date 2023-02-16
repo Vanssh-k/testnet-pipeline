@@ -35,3 +35,9 @@ module.exports.subdomainSchema = joi.object({
         'any.required': `subDomain not found`,
     }),
 })
+
+module.exports.subscriptionIdSchema = joi.object({
+    subscriptionId: joi.string().required().messages({
+        'any.required': `subscriptionId not found`,
+    }),
+})
