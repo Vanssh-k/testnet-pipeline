@@ -3,7 +3,7 @@
 
 const defaultConfig = {
     URL: 'https://api.lighthouse.storage',
-    lighthouse_billing_address: '0x304D48Aee9e31AE574A6D7eBd05caf53Ac868743',
+    lighthouse_billing_address: '0xbf592beD2f5d9ff6eA44C8475F6F51a0Dfa77039',
     gbInBytes: 1073741824,
     fantom: {
         symbol: 'FTM',
