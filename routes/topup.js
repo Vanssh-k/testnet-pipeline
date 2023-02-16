@@ -34,6 +34,7 @@ router.get(
 
 router.get(
     '/plan_details_by_id',
+    validate(validator.subscriptionIdSchema, { query: true }),
     TopupController.plan_details_by_id
 )
 
