@@ -1,8 +1,7 @@
 const {
     getActivePlanList,
     usersActivePlan,
-    activatePlan,
-    getPlanDetails
+    getPlanDetails,
 } = require('./helper/plansHelper')
 const {
     createSubDomain,
@@ -13,15 +12,6 @@ const {
     recordUserTransaction,
     getUserTransactionDetails,
 } = require('./helper/transactionHelper')
-
-exports.record_transaction = async (req, res, next) => {
-    try {
-        const data = await recordUserTransaction(req.body, req.user)
-        res.status(data.status).json({ data: data.data })
-    } catch (error) {
-        next(error)
-    }
-}
 
 exports.create_subdomain = async (req, res, next) => {
     try {
@@ -48,6 +38,15 @@ exports.get_subdomain = async (req, res, next) => {
     try {
         const records = await getUserSubDomainDomain(req.query.publicKey)
         res.status(200).json(records)
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.record_transaction = async (req, res, next) => {
+    try {
+        const data = await recordUserTransaction(req.body, req.user)
+        res.status(data.status).json({ data: data.data })
     } catch (error) {
         next(error)
     }
@@ -89,13 +88,3 @@ exports.plan_details_by_id = async (req, res, next) => {
         next(error)
     }
 }
-
-// exports.activate_plan = async (req, res, next) => {
-//     try {
-//         const record = await userDetails(req.query.publicKey, "evm")
-//         const data = await activatePlan(record)
-//         res.status(data.status).json({ data: data.data })
-//     } catch (error) {
-//         next(error)
-//     }
-// }
