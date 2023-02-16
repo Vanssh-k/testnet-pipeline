@@ -16,7 +16,7 @@ const recordUserTransaction = async (bodyData, userRecord) => {
         createdAt: Date.now(),
     }
     const saveRecord = await recordTransactions(record)
-    activatePlan(userRecord)
+    const activate = await activatePlan(userRecord)
     return { status: 200, data: 'Success!!!' }
 }
 
