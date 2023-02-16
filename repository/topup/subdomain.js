@@ -3,7 +3,6 @@ const { gatewayTable } = require('../../controller/libs/constants')
 
 const checkSubdomain = async (name) => {
     try {
-        console.log(name)
         const params = {
             TableName: gatewayTable,
             IndexName: 'subDomainName-index',
