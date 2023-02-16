@@ -43,6 +43,17 @@ test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () 
         })
 }, 10000)
 
+test('Api Key test on old key: GET /verify_api_key', async () => {
+    await supertest(app)
+        .get('/api/auth/verify_api_key')
+        .set('Authorization', `Bearer 2b25a7bd-6f63-4e36-aaaa-e4b1589e5d99`)
+        .expect(200)
+        .then((response) => {
+            const data = JSON.parse(response.text)
+            expect(typeof data.publicKey).toBe('string')
+        })
+}, 10000)
+
 test('Api Key Record Not Found: POST /get_api_key', async () => {
     const data = {
         publicKey: '0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb1A0',
