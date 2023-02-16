@@ -29,19 +29,19 @@ test('Migration Request Info: GET /migration_request_info', async () => {
 test('Migration Request: POST /migration_request', async () => {
     await supertest(app)
         .get(
-            '/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
+            '/api/auth/get_message?publicKey=0x75a22ede971080c8448c46de6ae5df3f64c67475'
         )
         .expect(200)
         .then(async (response) => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET4_PRIVATE_KEY,
+                process.env.TEST_WALLET6_PRIVATE_KEY,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
             const data = {
-                publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+                publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
                 signedMessage,
                 data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc"]',
             }
@@ -60,19 +60,19 @@ test('Migration Request: POST /migration_request', async () => {
 test('Migration Request No CID: POST /migration_request', async () => {
     await supertest(app)
         .get(
-            '/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
+            '/api/auth/get_message?publicKey=0x75a22ede971080c8448c46de6ae5df3f64c67475'
         )
         .expect(200)
         .then(async (response) => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET4_PRIVATE_KEY,
+                process.env.TEST_WALLET6_PRIVATE_KEY,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
             const data = {
-                publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+                publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
                 signedMessage,
                 data: '[]',
             }
@@ -87,19 +87,19 @@ test('Migration Request No CID: POST /migration_request', async () => {
 test('Migration Request Wrong CID: POST /migration_request', async () => {
     await supertest(app)
         .get(
-            '/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
+            '/api/auth/get_message?publicKey=0x75a22ede971080c8448c46de6ae5df3f64c67475'
         )
         .expect(200)
         .then(async (response) => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET4_PRIVATE_KEY,
+                process.env.TEST_WALLET6_PRIVATE_KEY,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
             const data = {
-                publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+                publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
                 signedMessage,
                 data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2c"]',
             }
@@ -114,7 +114,7 @@ test('Migration Request Wrong CID: POST /migration_request', async () => {
 // Enterprise
 test('Migration Request: POST /migration_request_ent', async () => {
     const data = {
-        publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+        publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
         enterprise: 'test_org',
         data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc"]',
     }
@@ -135,7 +135,7 @@ test('Migration Request: POST /migration_request_ent', async () => {
 
 test('Migration Request No CID: POST /migration_request', async () => {
     const data = {
-        publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+        publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
         enterprise: 'test_org',
         data: '[]',
     }
@@ -152,7 +152,7 @@ test('Migration Request No CID: POST /migration_request', async () => {
 
 test('Migration Request Wrong CID: POST /migration_request', async () => {
     const data = {
-        publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
+        publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
         enterprise: 'test_org',
         data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2c"]',
     }
