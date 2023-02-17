@@ -46,7 +46,7 @@ test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () 
 test('Api Key test on old key: GET /verify_api_key', async () => {
     await supertest(app)
         .get('/api/auth/verify_api_key')
-        .set('Authorization', `Bearer 2b25a7bd-6f63-4e36-aaaa-e4b1589e5d99`)
+        .set('Authorization', `Bearer c9b321bd-7220-47a6-a866-0ca0f4584e28`)
         .expect(200)
         .then((response) => {
             const data = JSON.parse(response.text)
