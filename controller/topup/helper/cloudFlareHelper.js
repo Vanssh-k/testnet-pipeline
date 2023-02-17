@@ -20,8 +20,6 @@ const addDNSRecord = async (name) => {
             }
         )
 
-        console.log(response.data.result)
-        console.log(response.data.result.name)
         return 'success'
     } catch (error) {
         console.log(error.response.data.errors)
