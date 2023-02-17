@@ -1,14 +1,16 @@
-const Redis = require('ioredis')
-
-const redis = new Redis()
+const redis = require('redis');
+const client = redis.createClient({
+    host: '127.0.0.1',
+    port: '6379'
+});
 
 module.exports.setCache = async (key, value) => {
-    return redis.set(key, JSON.stringify(value))
+    return client.set(key, JSON.stringify(value))
 }
 
 module.exports.getCache = async (key) => {
-    if (redis.status === 'ready') {
-        return redis
+    if (client.status === 'ready') {
+        return client
             .get(key)
             .then((result) => {
                 return JSON.parse(result)
@@ -22,8 +24,8 @@ module.exports.getCache = async (key) => {
 }
 
 module.exports.removeCache = async (key) => {
-    if (redis.status === 'ready') {
-        return redis
+    if (client.status === 'ready') {
+        return client
             .del(key)
             .then((result) => {
                 return JSON.parse(result)
@@ -36,25 +38,25 @@ module.exports.removeCache = async (key) => {
 }
 
 module.exports.cacheFunction = async (fn, key) => {
-    if (redis.status === 'ready') {
+    if (client.status === 'ready') {
         const data = await this.getCache(key)
         if (data) {
             return data
         }
     }
     const data = await fn()
-    if (redis.status === 'ready') {
+    if (client.status === 'ready') {
         await this.setCache(key, data)
     }
     return data
 }
 
 module.exports.clearCacheStartsWith = async (keyword) => {
-    if (redis.status === 'ready') {
+    if (client.status === 'ready') {
         let cursor = '0'
         do {
             // eslint-disable-next-line no-await-in-loop
-            const [nextCursor, keys] = await redis.scan(
+            const [nextCursor, keys] = await client.scan(
                 cursor,
                 'MATCH',
                 `${keyword}*`
@@ -62,7 +64,7 @@ module.exports.clearCacheStartsWith = async (keyword) => {
             cursor = nextCursor
             if (keys.length > 0) {
                 // eslint-disable-next-line no-await-in-loop
-                await redis.del(keys)
+                await client.del(keys)
             }
         } while (cursor !== '0')
     }
