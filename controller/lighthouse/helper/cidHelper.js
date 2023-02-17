@@ -41,7 +41,7 @@ exports.cidDealStatus = async (cid) => {
     // Check bundle status
     // If initiated then get miner details
     let deals = []
-    if (bundleRecord['bundleStatus'] === 'deal initiated') {
+    if (bundleRecord && bundleRecord['bundleStatus'] === 'deal initiated') {
         deals = await filecoinDeal(bundleRecord['bundleId'])
     }
 
