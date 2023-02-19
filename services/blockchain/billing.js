@@ -1,20 +1,25 @@
-const billingABI = require("../../abi/billing");
-const { lighthouse_billing_address } = require("../../lighthouse.config");
-const ethers = require("ethers");
+const billingABI = require('../../abi/billing')
+const { lighthouse_billing_address } = require('../../lighthouse.config')
+const ethers = require('ethers')
 
 const mumbaiProvider = new ethers.providers.JsonRpcProvider(
-  process.env.POLYGON_RPC
-);
+    process.env.POLYGON_RPC
+)
 
 const mumbaiBillingContract = new ethers.Contract(
-  lighthouse_billing_address,
-  billingABI,
-  mumbaiProvider
-);
+    lighthouse_billing_address,
+    billingABI,
+    mumbaiProvider
+)
 
 const getSubscriptionStatus = async (publicKey) => {
-  const data = await mumbaiBillingContract.subscriptionStatus(publicKey);
-  return { status: data[0], subscriptionId: data[1] };
-};
+    const data = await mumbaiBillingContract.subscriptionStatus(publicKey)
+    return { status: data[0], subscriptionId: data[1] }
+}
 
-module.exports = { getSubscriptionStatus };
+const getPurchasablePlans = async () => {
+    const data = await mumbaiBillingContract.getActivePlans()
+    return { activePurchasablePlans: data }
+}
+
+module.exports = { getSubscriptionStatus, getPurchasablePlans }
