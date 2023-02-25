@@ -1,6 +1,6 @@
 import dbbClient from '../ddbClient'
 import DatabaseError from '../../errors/database-error'
-const fileBundleRecords = 'file-bundle-records'
+import { fileBundleRecords } from '../../controller/libs/constants'
 
 export default async (cid: string) => {
     try {
@@ -14,8 +14,7 @@ export default async (cid: string) => {
         }
 
         const record = await dbbClient.query(params).promise()
-        const { Items } = record
-        return Items
+        return record.Items ?? []
     } catch (error) {
         throw new DatabaseError()
     }

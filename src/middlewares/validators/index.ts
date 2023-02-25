@@ -25,7 +25,7 @@ import {
     saveEncryptionPublicKeySchema,
 } from './auth'
 
-export {
+export default {
     verifySignerSchema,
     tweetRechargeSchema,
     saveEncryptionPublicKeySchema,

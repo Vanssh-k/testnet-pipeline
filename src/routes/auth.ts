@@ -9,11 +9,7 @@ import {
     get_api_key,
     tweet_recharge,
 } from '../controller/authentication'
-import {
-    verifySignerSchema,
-    publicKeySchema,
-    tweetRechargeSchema,
-} from '../middlewares/validators'
+import validator from '../middlewares/validators'
 import validate from '../middlewares/validate'
 import authenticator from '../middlewares/authenticator'
 
@@ -21,7 +17,7 @@ const router = express.Router()
 
 router.post(
     '/verify_signer',
-    validate(verifySignerSchema, { body: true }),
+    validate(validator.verifySignerSchema, { body: true }),
     authenticator(['verifysignature']),
     verify_signer
 )
@@ -46,21 +42,21 @@ router.delete(
 
 router.get(
     '/get_message',
-    validate(publicKeySchema, { query: true }),
+    validate(validator.publicKeySchema, { query: true }),
     authenticator(['verifypublickey'], ['useWeb3', 'useNewUserBypass']),
     get_message
 )
 
 router.post(
     '/get_api_key',
-    validate(verifySignerSchema, { body: true }),
+    validate(validator.verifySignerSchema, { body: true }),
     authenticator(['verifysignature']),
     get_api_key
 )
 
 router.get(
     '/tweet_recharge',
-    validate(tweetRechargeSchema, { query: true }),
+    validate(validator.tweetRechargeSchema, { query: true }),
     authenticator(['verifyjwt']),
     tweet_recharge
 )

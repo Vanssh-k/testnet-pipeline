@@ -1,17 +1,17 @@
-const axios  from 'axios')
-import {v4: uuidv4 }  from 'uuid')
+import axios from 'axios'
+import { v4 } from 'uuid'
 
-const updateUserData  from '../../../repository/user/updateUserData')
-const saveFileMetaData  from '../../../repository/file/saveFileMetaData')
-const DatabaseError  from '../../../errors/database-error')
-const ForbiddenError  from '../../../errors/forbidden')
-import {clearCacheStartsWith }  from '../../../repository/cacheClient')
+import updateUserData from '../../../repository/user/updateUserData'
+import saveFileMetaData from '../../../repository/file/saveFileMetaData'
+import DatabaseError from '../../../errors/database-error'
+import { ForbiddenError, BadRequestError } from '../../../errors'
+import { clearCacheStartsWith } from '../../../repository/cacheClient'
 
-const getCIDRecord  from '../../../repository/filecoin/getCIDRecord')
-const getBundleRecord  from '../../../repository/filecoin/getBundleRecord')
-const filecoinDeal  from '../../../repository/filecoin/filecoinDeal')
+import getCIDRecord from '../../../repository/filecoin/getCIDRecord'
+import getBundleRecord from '../../../repository/filecoin/getBundleRecord'
+import filecoinDeal from '../../../repository/filecoin/filecoinDeal'
 
-export const cidDealStatus = async (cid) => {
+export const cidDealStatus = async (cid: string) => {
     // const headers = {
     //   Authorization: `Bearer ${process.env.EST_API_KEY}`,
     //   Accept: "application/json",
@@ -40,7 +40,7 @@ export const cidDealStatus = async (cid) => {
     }
     // Check bundle status
     // If initiated then get miner details
-    let deals = []
+    let deals: any[] = []
     if (bundleRecord && bundleRecord['bundleStatus'] === 'deal initiated') {
         deals = await filecoinDeal(bundleRecord['bundleId'])
     }
@@ -53,10 +53,10 @@ export const cidDealStatus = async (cid) => {
     return deals
 }
 
-const addCid = async (name, cid) => {
+const addCid = async (name: string, cid: string) => {
     try {
         const headers = {
-            Authorization: `Bearer ${process.env.EST_API_KEY}`,
+            Authorization: `Bearer ${process.env.EST_API_KEY ?? ''}`,
             Accept: 'application/json',
         }
 
@@ -77,7 +77,7 @@ const addCid = async (name, cid) => {
     }
 }
 
-export const addCidEstuary = async (name, cid) => {
+export const addCidEstuary = async (name: string, cid: string) => {
     const addCidResponse = await addCid(name, cid)
     if (!addCidResponse) {
         throw new BadRequestError()
@@ -85,12 +85,12 @@ export const addCidEstuary = async (name, cid) => {
     return addCidResponse
 }
 
-export const addCidToQueue = async (record, bodyData) => {
+export const addCidToQueue = async (record: any, bodyData: any) => {
     const timestamp = Date.now()
     if (bodyData.size > record.dataLimit - record.dataUsed) {
         // Create record of file
         await saveFileMetaData({
-            id: uuidv4(),
+            id: v4(),
             publicKey: record.publicKey,
             cid: bodyData.cid,
             fileName: bodyData.name,
@@ -108,7 +108,7 @@ export const addCidToQueue = async (record, bodyData) => {
 
     // Create record of file
     const saveFileResponse = await saveFileMetaData({
-        id: uuidv4(),
+        id: v4(),
         publicKey: record.publicKey,
         cid: bodyData.cid,
         fileName: bodyData.name,

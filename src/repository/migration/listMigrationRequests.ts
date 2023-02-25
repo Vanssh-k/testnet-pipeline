@@ -1,9 +1,8 @@
-const dbbClient  from '../ddbClient')
-import {migrationRequestTable }  from '../../controller/libs/constants')
+import dbbClient from '../ddbClient'
+import { migrationRequestTable } from '../../controller/libs/constants'
+import DatabaseError from '../../errors/database-error'
 
-const DatabaseError  from '../../errors/database-error')
-
-export default  async (publicKey) => {
+export default async (publicKey: string) => {
     try {
         const params = {
             TableName: migrationRequestTable,
@@ -15,7 +14,7 @@ export default  async (publicKey) => {
         }
 
         const record = await dbbClient.query(params).promise()
-        import {Items } = record
+        const Items = record.Items ?? []
         return Items
     } catch (error) {
         throw new DatabaseError()

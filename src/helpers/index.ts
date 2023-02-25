@@ -1,6 +1,6 @@
-import  jwt from "jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
-export const verifyJWT = (accessToken:string, secret:string) => {
+export const verifyJWT = (accessToken: string, secret: string) => {
     try {
         const userData = jwt.verify(accessToken, secret)
         return userData

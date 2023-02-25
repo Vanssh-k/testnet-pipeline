@@ -1,8 +1,8 @@
-const dbbClient  from '../ddbClient')
-import {migrationCIDs }  from '../../controller/libs/constants')
-const DatabaseError  from '../../errors/database-error')
+import dbbClient from '../ddbClient'
+import { migrationCIDs } from '../../controller/libs/constants'
+import DatabaseError from '../../errors/database-error'
 
-export default  async (id, data) => {
+export default async (id: string, data: any) => {
     try {
         const params = {
             TableName: migrationCIDs,

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 
 export default (schema: any, intercept: any) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        let payload =
+        const payload =
             intercept.query && intercept.body
                 ? { ...req.query, ...req.body }
                 : intercept.body
@@ -11,7 +11,7 @@ export default (schema: any, intercept: any) => {
                 : { ...req.query }
         const validated = schema.validate(payload, { allowUnknown: false })
         if (validated.error) {
-            let errors = validated.error.details.map((err: any) => {
+            const errors = validated.error.details.map((err: any) => {
                 return {
                     msg: err.message.replace(/"/g, ''),
                     param: err.context.key,

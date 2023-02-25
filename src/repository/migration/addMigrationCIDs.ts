@@ -1,9 +1,9 @@
-const chalk  from 'chalk')
-const dbbClient  from '../ddbClient')
-import {migrationCIDs }  from '../../controller/libs/constants')
-const DatabaseError  from '../../errors/database-error')
+import chalk from 'chalk'
+import dbbClient from '../ddbClient'
+import { migrationCIDs } from '../../controller/libs/constants'
+import DatabaseError from '../../errors/database-error'
 
-export default  async (record) => {
+export default async (record: any) => {
     try {
         const params = {
             TableName: migrationCIDs,
@@ -12,7 +12,7 @@ export default  async (record) => {
 
         const save = await dbbClient.put(params).promise()
         return save
-    } catch (error) {
+    } catch (error: any) {
         console.log(chalk.yellow('CID save error: ') + chalk.red(error.message))
         throw new DatabaseError()
     }

@@ -2,7 +2,7 @@ import dbbClient from '../ddbClient'
 import { ProposalTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 
-const addProposal = async (proposalDetail: string) => {
+const addProposal = async (proposalDetail: any) => {
     try {
         const params: any = {
             TableName: ProposalTable,
@@ -23,11 +23,11 @@ const allProposals = async () => {
         }
 
         const record = await dbbClient.scan(params).promise()
-        import {Items } = record
+        const { Items } = record
         return Items
     } catch (error: any) {
         throw new DatabaseError({})
     }
 }
 
-export default { addProposal, allProposals }
+export { addProposal, allProposals }

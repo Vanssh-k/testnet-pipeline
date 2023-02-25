@@ -7,7 +7,7 @@ export const create_proposal = async (
     next: NextFunction
 ) => {
     try {
-        import {proposal, publicKey } = req.body
+        const { proposal, publicKey } = req.body
         createProposal(publicKey, proposal)
         res.status(200).json('Proposal Added')
     } catch (error) {

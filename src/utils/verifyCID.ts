@@ -1,4 +1,4 @@
-export default (cid) => {
+export default (cid: string) => {
     if (cid.startsWith('Qm')) {
         return /^[A-HJ-NP-Za-km-z1-9]*$/.test(cid) && cid.length == 46
     }

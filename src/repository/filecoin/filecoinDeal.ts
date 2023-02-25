@@ -14,8 +14,7 @@ export default async (bundleId: string) => {
         }
 
         const record = await dbbClient.query(params).promise()
-        const { Items } = record
-        return Items
+        return record.Items ?? []
     } catch (error) {
         throw new DatabaseError()
     }

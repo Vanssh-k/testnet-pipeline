@@ -70,7 +70,7 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                     if (!accessToken) {
                         return next(new AuthenticationError())
                     }
-                    const accessData = verifyJWT(
+                    const accessData: any = verifyJWT(
                         accessToken,
                         clauses.includes('useRefreshSecret')
                             ? process.env.JWT_REFRESH_SECRET ?? ''
