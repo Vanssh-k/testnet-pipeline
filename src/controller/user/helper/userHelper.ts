@@ -1,0 +1,53 @@
+import getNetwork from '../../../middlewares/getNetwork'
+import userUploads from '../../../repository/file/userUploads'
+import migrationRequestInfo from '../../../repository/migration/migrationRequestInfo'
+import updateUserData from '../../../repository/user/updateUserData'
+import updateMigrationCIDRecord from '../../../repository/migration/updateMigrationCIDRecord'
+import NotFoundError from '../../../errors/not-found-error'
+
+export const getUploads = async (publicKey: string, pageNo: number) => {
+    const network = getNetwork(publicKey)
+    if (network === 'evm') {
+        publicKey = publicKey.toLowerCase()
+    }
+    const files = await userUploads(publicKey, pageNo)
+    return files
+}
+
+// Scope for optimization here
+export const updateDataUsage = async (
+    record: any,
+    requestId: string,
+    enterprise: string
+) => {
+    if (enterprise === 'lighthouse') {
+        // Get all CID
+        const cidList = await migrationRequestInfo(requestId)
+        if (!cidList) {
+            /* istanbul ignore next */
+            throw new NotFoundError()
+        }
+
+        // Sum usage for CID pinned but userDataUpdated is false
+        let totalUsage = 0
+
+        const requests = cidList
+            .filter(
+                (cid: any) =>
+                    !cid.userDataUpdated &&
+                    cid.cidStatus === 'pinned' &&
+                    cid.fileSizeInBytes
+            )
+            .map(async (cid: any) => {
+                totalUsage += parseInt(cid.fileSizeInBytes, 10)
+                await updateMigrationCIDRecord(cid.id, true)
+            })
+
+        await Promise.all(requests)
+        const dataUsed = parseInt(record.dataUsed, 10) + totalUsage
+        await updateUserData(record.publicKey, dataUsed)
+        return 'Success'
+    }
+    // TODO handle data usage update for other entreprise
+    return 'Success'
+}
