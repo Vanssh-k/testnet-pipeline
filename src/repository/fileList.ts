@@ -12,8 +12,7 @@ export default async (publicKey: any) => {
         }
 
         const record = await dbbClient.scan(params)
-        import {Items } = record
-        return Items
+        return record.Items ?? []
     } catch (error) {
         return null
     }

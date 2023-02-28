@@ -12,6 +12,7 @@ const freeDataLimitInBytes = 1073741824
 const filecoinDealRecords = 'filecoin-deal-records'
 const carBundleRecords = 'car-bundle-records'
 const fileBundleRecords = 'file-bundle-records'
+const fileTableEncryption = 'file-table-encryption'
 const subscriptionPlanDetails = [
     {
         index: 0,
@@ -66,4 +67,5 @@ export {
     filecoinDealRecords,
     carBundleRecords,
     fileBundleRecords,
+    fileTableEncryption,
 }

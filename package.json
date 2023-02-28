@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "nodemon ./src/index.ts",
-        "start-prod": "npm run build && node ./dist/index.js",
+        "start-prod": "npx tsc && npx babel-node ./dist/index.js",
         "build": "npx tsc",
         "lint": "trunk check",
         "test": "jest",
@@ -17,6 +17,7 @@
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.279.0",
         "@aws-sdk/lib-dynamodb": "^3.279.0",
+        "@babel/node": "^7.20.7",
         "@solana/web3.js": "^1.66.1",
         "aws-sdk": "^2.1324.0",
         "axios": "^0.24.0",
