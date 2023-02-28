@@ -14,6 +14,8 @@ import getNetwork from './getNetwork'
 import checkApiKey from '../repository/checkApiKey'
 import { getCache } from '../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export default (rules: string[] = [], clauses: string[] = []) => {
     return async (req: any, res: Response, next: NextFunction) => {

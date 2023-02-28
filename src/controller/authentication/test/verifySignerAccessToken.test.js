@@ -1,6 +1,8 @@
 import ethers  from 'ethers'
 import supertest  from 'supertest'
 import app  from '../../../app'
+import dotenv from 'dotenv'
+dotenv.config()
 
 test('Verify Signer and Access Token: POST /verify_signer', async () => {
     await supertest(app)

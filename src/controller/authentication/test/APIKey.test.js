@@ -1,6 +1,8 @@
 import supertest from 'supertest'
-import ethers  from 'ethers'
-import app  from '../../../app'
+import ethers from 'ethers'
+import app from '../../../app'
+import dotenv from 'dotenv'
+dotenv.config()
 
 test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () => {
     await supertest(app)

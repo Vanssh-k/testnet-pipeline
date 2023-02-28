@@ -1,6 +1,8 @@
 import { ethers } from 'ethers'
 import supertest from 'supertest'
 import app from '../../../app'
+import dotenv from 'dotenv'
+dotenv.config()
 
 test('List Migration Request: GET /list_migration_requests', async () => {
     await supertest(app)

@@ -1,20 +1,20 @@
-import supertest  from 'supertest'
-import ethers  from 'ethers'
-import app  from '../../../app'
+import supertest from 'supertest'
+import ethers from 'ethers'
+import app from '../../../app'
+import dotenv from 'dotenv'
+dotenv.config()
 
 // Record Transaction
 test('Get Transaction Details Main Case: GET /record_transaction', async () => {
     const data = {
-        txHash: "0x485e21cbc8a5c76c83e6e062d2e175face12bafc6c6ae49a4f4fd8837db91a7d",
-        depositor: "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588",
-        tokenAddress: "0x21C561e551638401b937b03fE5a0a0652B99B7DD",
-        subscriptionID: "0",
-        chain: "mumbai"
+        txHash: '0x485e21cbc8a5c76c83e6e062d2e175face12bafc6c6ae49a4f4fd8837db91a7d',
+        depositor: '0xa3c960b3ba29367ecbcaf1430452c6cd7516f588',
+        tokenAddress: '0x21C561e551638401b937b03fE5a0a0652B99B7DD',
+        subscriptionID: '0',
+        chain: 'mumbai',
     }
     await supertest(app)
-        .post(
-            '/api/topup/record_transaction'
-        )
+        .post('/api/topup/record_transaction')
         .send(data)
         .set('Authorization', `Bearer ${process.env.TRANSACTION_ROUTE_TOKEN}`)
         .expect(200)

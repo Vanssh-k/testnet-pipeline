@@ -1,6 +1,8 @@
-import supertest  from 'supertest'
-import ethers  from 'ethers'
-import app  from '../../../app'
+import supertest from 'supertest'
+import ethers from 'ethers'
+import dotenv from 'dotenv'
+dotenv.config()
+import app from '../../../app'
 
 // create_subdomain
 test('Add SubDomain Main Case: POST /create_subdomain', async () => {
@@ -73,8 +75,8 @@ test('Check Sub Domain Not Exist: GET /check_subdomain', async () => {
         .get('/api/topup/check_subdomain?subDomain=gatey')
         .expect(200)
         .then((response) => {
-          const exists = JSON.parse(response.text)
-          expect(exists).toBe('not-exist')
+            const exists = JSON.parse(response.text)
+            expect(exists).toBe('not-exist')
         })
 }, 30000)
 
@@ -87,7 +89,7 @@ test('Get Sub Domain Main Case: GET /get_subdomain', async () => {
         .expect(200)
         .then((response) => {
             const subDomain = JSON.parse(response.text)
-            expect(typeof subDomain[0]["subDomainName"]).toBe('string')
+            expect(typeof subDomain[0]['subDomainName']).toBe('string')
         })
 }, 30000)
 
@@ -98,7 +100,7 @@ test('Get Sub Domain Not Found: GET /get_subdomain', async () => {
         )
         .expect(200)
         .then((response) => {
-          const subDomain = JSON.parse(response.text)
-          expect(subDomain.length).toBe(0)
-      })
+            const subDomain = JSON.parse(response.text)
+            expect(subDomain.length).toBe(0)
+        })
 }, 30000)

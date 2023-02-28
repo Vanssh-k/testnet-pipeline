@@ -8,6 +8,8 @@ import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import { freeDataLimitInBytes, messageString } from '../../libs/constants'
 import { generateToken } from '../../../utils/randomToken'
 import { setCache } from '../../../repository/cacheClient'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const getMessage = async (
     publicKey: string,

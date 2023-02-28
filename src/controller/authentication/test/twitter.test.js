@@ -1,6 +1,8 @@
 import supertest  from 'supertest'
 import ethers  from 'ethers'
 import app  from '../../../app'
+import dotenv from 'dotenv'
+dotenv.config()
 
 test('Twitter, User Not Found: GET /tweet_recharge', async () => {
     await supertest(app)

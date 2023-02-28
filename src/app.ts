@@ -3,12 +3,12 @@ import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import errorHandler from './middlewares/error-handler'
-import dotenv from 'dotenv'
 import AuthRouter from './routes/auth'
 import UserRouter from './routes/user'
 import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
+import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()

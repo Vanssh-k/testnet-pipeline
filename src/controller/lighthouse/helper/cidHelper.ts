@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
+import dotenv from 'dotenv'
+dotenv.config()
 
 import updateUserData from '../../../repository/user/updateUserData'
 import saveFileMetaData from '../../../repository/file/saveFileMetaData'
