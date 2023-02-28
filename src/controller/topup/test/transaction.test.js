@@ -1,6 +1,6 @@
-const supertest  from 'supertest')
-const ethers  from 'ethers')
-const app  from '../../../app')
+import supertest  from 'supertest'
+import ethers  from 'ethers'
+import app  from '../../../app'
 
 // Record Transaction
 test('Get Transaction Details Main Case: GET /record_transaction', async () => {

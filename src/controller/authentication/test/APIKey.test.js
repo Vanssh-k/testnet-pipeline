@@ -1,6 +1,6 @@
-const supertest  from 'supertest')
-const ethers  from 'ethers')
-const app  from '../../../app')
+import supertest from 'supertest'
+import ethers  from 'ethers'
+import app  from '../../../app'
 
 test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () => {
     await supertest(app)

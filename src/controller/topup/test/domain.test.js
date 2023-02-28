@@ -1,6 +1,6 @@
-const supertest  from 'supertest')
-const ethers  from 'ethers')
-const app  from '../../../app')
+import supertest  from 'supertest'
+import ethers  from 'ethers'
+import app  from '../../../app'
 
 // create_subdomain
 test('Add SubDomain Main Case: POST /create_subdomain', async () => {

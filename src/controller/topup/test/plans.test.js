@@ -1,6 +1,6 @@
-const supertest  from 'supertest')
-const ethers  from 'ethers')
-const app  from '../../../app')
+import supertest  from 'supertest'
+import ethers  from 'ethers'
+import app  from '../../../app'
 
 // get_active_plan_list
 test('Get Transaction Details Main Case: GET /get_active_plan_list', async () => {

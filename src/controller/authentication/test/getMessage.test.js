@@ -1,5 +1,5 @@
-const supertest  from 'supertest')
-const app  from '../../../app')
+import supertest  from 'supertest'
+import app  from '../../../app'
 
 test('EVM Message: GET /get_message', async () => {
     await supertest(app)

@@ -1,6 +1,6 @@
-const ethers  from 'ethers')
-const supertest  from 'supertest')
-const app  from '../../../app')
+import ethers  from 'ethers'
+import supertest  from 'supertest'
+import app  from '../../../app'
 
 test('Verify Signer and Access Token: POST /verify_signer', async () => {
     await supertest(app)

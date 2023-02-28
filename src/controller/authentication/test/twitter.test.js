@@ -1,6 +1,6 @@
-const supertest  from 'supertest')
-const ethers  from 'ethers')
-const app  from '../../../app')
+import supertest  from 'supertest'
+import ethers  from 'ethers'
+import app  from '../../../app'
 
 test('Twitter, User Not Found: GET /tweet_recharge', async () => {
     await supertest(app)
