@@ -1,7 +1,6 @@
 const userTable = 'Users'
 const fileTable = 'files'
 const gatewayTable = 'dedicatedGatewayRecords'
-const fileTableEncryption = 'fileTableTest'
 const migrationCIDs = 'migrationCIDs'
 const migrationRequestTable = 'migrationRequestTable'
 const ProposalTable = 'ProposalTable'
@@ -57,7 +56,6 @@ export {
     fileTable,
     freeDataLimitInBytes,
     gatewayTable,
-    fileTableEncryption,
     migrationCIDs,
     migrationRequestTable,
     userTransactions,
