@@ -2,6 +2,15 @@ import redis from 'ioredis'
 
 const client = redis.createClient()
 
+client.on('error', (err) => {
+    if (err.code === 'ECONNREFUSED') {
+        // console.error('Redis connection refused')
+        // handle the error as needed
+    } else {
+        console.error('Redis error:', err)
+    }
+})
+
 export const setCache = async (key: string, value: any) => {
     return client.set(key, JSON.stringify(value))
 }

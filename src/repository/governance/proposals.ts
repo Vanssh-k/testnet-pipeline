@@ -9,7 +9,7 @@ const addProposal = async (proposalDetail: any) => {
             Item: proposalDetail,
         }
 
-        await dbbClient.put(params).promise()
+        await dbbClient.put(params)
         return 'Put Successful'
     } catch (error) {
         throw new DatabaseError({})
@@ -22,7 +22,7 @@ const allProposals = async () => {
             TableName: ProposalTable,
         }
 
-        const record = await dbbClient.scan(params).promise()
+        const record = await dbbClient.scan(params)
         const { Items } = record
         return Items
     } catch (error: any) {

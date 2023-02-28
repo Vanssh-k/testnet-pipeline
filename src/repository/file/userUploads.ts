@@ -23,7 +23,7 @@ export default async (usersPublicKey: string, pageNo: number) => {
                 ExclusiveStartKey: exclusiveStartKey,
             }
 
-            records = await dbbClient.query(params).promise()
+            records = await dbbClient.query(params)
             count += 1
             exclusiveStartKey = records.LastEvaluatedKey
             if (!exclusiveStartKey && pageNo > count) {

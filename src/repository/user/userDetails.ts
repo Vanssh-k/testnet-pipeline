@@ -14,7 +14,7 @@ export default async (usersPublicKey: string, network: string) => {
             },
         }
 
-        const record = await dbbClient.get(params).promise()
+        const record = await dbbClient.get(params)
         return record.Item ?? { message: '', network: '', refreshToken: '' }
     } catch (error: any) {
         console.log(

@@ -17,7 +17,7 @@ export default async (publicKey: string, dataLimit: number, faucet: any) => {
             },
         }
 
-        await dbbClient.update(params).promise()
+        await dbbClient.update(params)
         return 'Update Successful'
     } catch (error) {
         throw new DatabaseError()

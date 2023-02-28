@@ -11,7 +11,7 @@ export const getUserTransactions = async (publicKey: string) => {
             },
         }
 
-        const record = await dbbClient.scan(params).promise()
+        const record = await dbbClient.scan(params)
         const Items = record.Items ?? []
         return Items
     } catch (error) {
@@ -26,7 +26,7 @@ export const recordTransactions = async (record: any) => {
             Item: record,
         }
 
-        return await dbbClient.put(params).promise()
+        return await dbbClient.put(params)
     } catch (error) {
         return null
     }

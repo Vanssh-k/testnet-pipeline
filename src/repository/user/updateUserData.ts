@@ -16,7 +16,7 @@ export default async (publicKey: string, dataUsed: number) => {
             },
         }
 
-        await dbbClient.update(params).promise()
+        await dbbClient.update(params)
         return 'Update Successful'
     } catch (error) {
         throw new DatabaseError({})

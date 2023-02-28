@@ -12,7 +12,7 @@ const checkSubdomain = async (name: string) => {
             },
         }
 
-        const record = await dbbClient.query(params).promise()
+        const record = await dbbClient.query(params)
         const items = record.Items ?? []
         return items[0]
     } catch (error) {
@@ -31,7 +31,7 @@ const getRecord = async (publicKey: string) => {
             },
         }
 
-        const record = await dbbClient.query(params).promise()
+        const record = await dbbClient.query(params)
         return record.Items ?? []
     } catch (error) {
         return []
@@ -45,7 +45,7 @@ const updateSubDomain = async (transactionDetails: any) => {
             Item: transactionDetails,
         }
 
-        await dbbClient.put(params).promise()
+        await dbbClient.put(params)
         return 'Put Successful'
     } catch (error) {
         return null

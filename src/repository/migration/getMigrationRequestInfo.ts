@@ -12,7 +12,7 @@ export default async (requestId: string) => {
             },
         }
 
-        const record = await dbbClient.get(params).promise()
+        const record = await dbbClient.get(params)
         return record.Item
     } catch (error: any) {
         console.log(

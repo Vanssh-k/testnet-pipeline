@@ -12,7 +12,7 @@ export default async (accessToken: string) => {
             },
         }
 
-        const record = await dbbClient.scan(params).promise()
+        const record = await dbbClient.scan(params)
         const Items = record.Items ?? []
 
         if (Items.length === 0) {

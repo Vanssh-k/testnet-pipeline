@@ -10,7 +10,7 @@ export default async (record: any) => {
             Item: record,
         }
 
-        const save = await dbbClient.put(params).promise()
+        const save = await dbbClient.put(params)
         return save
     } catch (error: any) {
         console.log(chalk.yellow('CID save error: ') + chalk.red(error.message))

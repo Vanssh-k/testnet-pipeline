@@ -11,7 +11,7 @@ export default async (id: string) => {
             },
         }
 
-        const record = await dbbClient.get(params).promise()
+        const record = await dbbClient.get(params)
         return record.Item
     } catch (error) {
         throw new DatabaseError()

@@ -9,7 +9,7 @@ export default async (record: any) => {
             Item: record,
         }
 
-        await dbbClient.put(params).promise()
+        await dbbClient.put(params)
         return 'Put Successful'
     } catch (error) {
         throw new DatabaseError()

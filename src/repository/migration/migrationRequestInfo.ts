@@ -13,7 +13,7 @@ export default async (requestID: string) => {
             },
         }
 
-        const record = await dbbClient.query(params).promise()
+        const record = await dbbClient.query(params)
         const Items = record.Items ?? []
         return Items
     } catch (error) {

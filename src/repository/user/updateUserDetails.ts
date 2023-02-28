@@ -26,7 +26,7 @@ export default async (updatedDetails: IUserDetails, network: string) => {
             Item: { updatedDetails },
         }
 
-        await dbbClient.put(params).promise()
+        await dbbClient.put(params)
         return 'Put Successful'
     } catch (error) {
         throw new DatabaseError({})
