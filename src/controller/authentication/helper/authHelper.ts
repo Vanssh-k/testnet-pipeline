@@ -30,7 +30,7 @@ export const getMessage = async (
                 : record.apiKey
             : generateToken(),
         refreshToken: record ? record.refreshToken : generateToken(),
-        faucet: record ? record.faucet : {},
+        faucet: record.faucet ? record.faucet : {},
         network: record ? record.network : network,
         createdAt: record ? record.createdAt : timestamp,
         updatedAt: timestamp,

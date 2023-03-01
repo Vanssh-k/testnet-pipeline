@@ -5,7 +5,15 @@ import { generateToken } from '../../utils/randomToken'
 
 interface IUserDetails {
     publicKey: string
+    message: number
+    dataLimit: number
+    dataUsed: number
     apiKey: string
+    refreshToken: string
+    faucet: any
+    network: string
+    createdAt: number
+    updatedAt: number
 }
 
 export default async (updatedDetails: IUserDetails, network: string) => {
@@ -23,12 +31,13 @@ export default async (updatedDetails: IUserDetails, network: string) => {
 
         const params = {
             TableName: userTable,
-            Item: { updatedDetails },
+            Item: updatedDetails,
         }
 
         await dbbClient.put(params)
         return 'Put Successful'
     } catch (error) {
+        console.log(error)
         throw new DatabaseError({})
     }
 }
