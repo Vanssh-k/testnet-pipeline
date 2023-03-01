@@ -1,9 +1,7 @@
 import supertest from 'supertest'
 import ethers from 'ethers'
 import app from '../../../app'
-import dotenv from 'dotenv'
-dotenv.config()
-
+import config from '../../../config'
 // Record Transaction
 test('Get Transaction Details Main Case: GET /record_transaction', async () => {
     const data = {
@@ -16,7 +14,7 @@ test('Get Transaction Details Main Case: GET /record_transaction', async () => {
     await supertest(app)
         .post('/api/topup/record_transaction')
         .send(data)
-        .set('Authorization', `Bearer ${process.env.TRANSACTION_ROUTE_TOKEN}`)
+        .set('Authorization', `Bearer ${config.transaction_route_token}`)
         .expect(200)
         .then((response) => {
             const txDetails = JSON.parse(response.text)

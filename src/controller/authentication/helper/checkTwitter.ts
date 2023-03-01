@@ -1,16 +1,12 @@
 import axios from 'axios'
-import dotenv from 'dotenv'
-dotenv.config()
-
+import config from '../../../config'
 export default async (publicKey: string, twitterID: string) => {
     try {
         const response = await axios.get(
             `https://api.twitter.com/2/tweets/${twitterID}`,
             {
                 headers: {
-                    Authorization: `Bearer ${
-                        process.env.TWITTER_API_KEY ?? ''
-                    }`,
+                    Authorization: `Bearer ${config.twitter_api_key ?? ''}`,
                 },
             }
         )

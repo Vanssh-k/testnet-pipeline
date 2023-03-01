@@ -14,8 +14,7 @@ import getNetwork from './getNetwork'
 import checkApiKey from '../repository/checkApiKey'
 import { getCache } from '../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../config'
 
 export default (rules: string[] = [], clauses: string[] = []) => {
     return async (req: any, res: Response, next: NextFunction) => {
@@ -75,8 +74,8 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                     const accessData: any = verifyJWT(
                         accessToken,
                         clauses.includes('useRefreshSecret')
-                            ? process.env.JWT_REFRESH_SECRET ?? ''
-                            : process.env.JWT_SECRET ?? ''
+                            ? config.jwt_refresh_secret ?? ''
+                            : config.jwt_secret ?? ''
                     )
                     if (!accessData) {
                         return next(new AuthenticationError())
@@ -121,9 +120,7 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                     if (clauses.includes('protectedRoute')) {
                         const routeAccessToken =
                             req.headers['authorization']?.split(' ')[1]
-                        if (
-                            routeAccessToken !== process.env.ROUTE_ACCESS_TOKEN
-                        ) {
+                        if (routeAccessToken !== config.route_access_token) {
                             return next(new ForbiddenError())
                         }
                     }
@@ -154,12 +151,10 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                         req.headers['authorization']?.split(' ')[1]
                     let verificationToken = null
                     if (req.body.enterprise === 'ocean_protocol') {
-                        verificationToken =
-                            process.env.MIGRATION_OCEAN_ACCESS_TOKEN
+                        verificationToken = config.migration_ocean_access_token
                     }
                     if (req.body.enterprise === 'test_org') {
-                        verificationToken =
-                            process.env.MIGRATION_TEST_ACCESS_TOKEN
+                        verificationToken = config.migration_test_access_token
                     }
                     if (
                         routeAccessToken !== verificationToken ||
@@ -175,7 +170,7 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                         req.headers['authorization']?.split(' ')[1]
                     if (
                         transactionRouteAccessToken !==
-                            process.env.TRANSACTION_ROUTE_TOKEN ||
+                            config.route_access_token ||
                         !transactionRouteAccessToken
                     ) {
                         return next(new NotFoundError())

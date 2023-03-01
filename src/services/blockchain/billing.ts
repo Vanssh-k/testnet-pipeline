@@ -1,11 +1,10 @@
 import billingABI from '../../abi/billing'
 import config from '../../lighthouse.config'
 import { ethers } from 'ethers'
-import dotenv from 'dotenv'
-dotenv.config()
+import envConfig from '../../config'
 
 const mumbaiProvider = new ethers.providers.JsonRpcProvider(
-    process.env.POLYGON_RPC
+    envConfig.polygon_rpc
 )
 
 const mumbaiBillingContract = new ethers.Contract(

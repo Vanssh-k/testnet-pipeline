@@ -1,6 +1,5 @@
 import axios from 'axios'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../../../config'
 
 const addDNSRecord = async (name: string) => {
     try {
@@ -17,7 +16,7 @@ const addDNSRecord = async (name: string) => {
                 headers: {
                     'Content-type': 'application/json',
                     'X-Auth-Email': 'ravish@lighthouse.storage',
-                    Authorization: `Bearer ${process.env.CLOUDFLARE_KEY}`,
+                    Authorization: `Bearer ${config.cloudflare_key ?? ''}`,
                 },
             }
         )

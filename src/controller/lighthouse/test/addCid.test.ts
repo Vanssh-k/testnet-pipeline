@@ -1,5 +1,6 @@
 import supertest from 'supertest'
 import app from '../../../app'
+import config from '../../../config'
 
 // add_cid
 test('Add CID Main Case: GET /add_cid', async () => {
@@ -33,7 +34,7 @@ test('Add CID To Queue: GET /add_cid_to_queue', async () => {
 
     await supertest(app)
         .post('/api/lighthouse/add_cid_to_queue')
-        .set('Authorization', `Bearer ${process.env.ROUTE_ACCESS_TOKEN}`)
+        .set('Authorization', `Bearer ${config.route_access_token ?? ''}`)
         .send(data)
         .expect(200)
 }, 30000)

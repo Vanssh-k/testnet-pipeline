@@ -1,8 +1,7 @@
-import ethers  from 'ethers'
-import supertest  from 'supertest'
-import app  from '../../../app'
-import dotenv from 'dotenv'
-dotenv.config()
+import ethers from 'ethers'
+import supertest from 'supertest'
+import app from '../../../app'
+import config from '../../../config'
 
 test('Verify Signer and Access Token: POST /verify_signer', async () => {
     await supertest(app)
@@ -14,7 +13,7 @@ test('Verify Signer and Access Token: POST /verify_signer', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET2_PRIVATE_KEY,
+                config.test_wallet2_private_key,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)

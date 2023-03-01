@@ -8,8 +8,7 @@ import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import { freeDataLimitInBytes, messageString } from '../../libs/constants'
 import { generateToken } from '../../../utils/randomToken'
 import { setCache } from '../../../repository/cacheClient'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../../../config'
 
 export const getMessage = async (
     publicKey: string,
@@ -30,7 +29,7 @@ export const getMessage = async (
                 : record.apiKey
             : generateToken(),
         refreshToken: record ? record.refreshToken : generateToken(),
-        faucet: record.faucet ? record.faucet : {},
+        faucet: record?.faucet ? record.faucet : {},
         network: record ? record.network : network,
         createdAt: record ? record.createdAt : timestamp,
         updatedAt: timestamp,
@@ -43,17 +42,13 @@ export const getMessage = async (
 export const verifySigner = async (record: any) => {
     // Change the message and return access token
     const payLoad = { publicKey: record.publicKey }
-    const accessToken = jwt.sign(
-        payLoad,
-        process.env.JWT_SECRET ?? 'FALLBACK',
-        {
-            algorithm: 'HS256',
-            expiresIn: '12h',
-        }
-    )
+    const accessToken = jwt.sign(payLoad, config.jwt_secret ?? 'FALLBACK', {
+        algorithm: 'HS256',
+        expiresIn: '12h',
+    })
     const refreshToken = jwt.sign(
         payLoad,
-        process.env.JWT_REFRESH_SECRET ?? 'FALLBACK',
+        config.jwt_refresh_secret ?? 'FALLBACK',
         {
             algorithm: 'HS256',
         }
@@ -69,14 +64,10 @@ export const verifySigner = async (record: any) => {
 
 export const refreshAccessToken = (record: any) => {
     const payLoad = { publicKey: record.publicKey }
-    const accessToken = jwt.sign(
-        payLoad,
-        process.env.JWT_SECRET ?? 'FALLBACK',
-        {
-            algorithm: 'HS256',
-            expiresIn: '12h',
-        }
-    )
+    const accessToken = jwt.sign(payLoad, config.jwt_secret ?? 'FALLBACK', {
+        algorithm: 'HS256',
+        expiresIn: '12h',
+    })
 
     return { accessToken }
 }

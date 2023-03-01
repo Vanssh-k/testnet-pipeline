@@ -8,31 +8,13 @@ import saveFileMetaData from '../../../repository/file/saveFileMetaData'
 import DatabaseError from '../../../errors/database-error'
 import { ForbiddenError, BadRequestError } from '../../../errors'
 import { clearCacheStartsWith } from '../../../repository/cacheClient'
-
+import config from '../../../config'
 import getCIDRecord from '../../../repository/filecoin/getCIDRecord'
 import getBundleRecord from '../../../repository/filecoin/getBundleRecord'
 import filecoinDeal from '../../../repository/filecoin/filecoinDeal'
 
 export const cidDealStatus = async (cid: string) => {
-    // const headers = {
-    //   Authorization: `Bearer ${process.env.EST_API_KEY}`,
-    //   Accept: "application/json",
-    // };
 
-    // import {data } = await axios.get(
-    //   `https://api.estuary.tech/content/by-cid/${cid}`,
-    //   { headers }
-    // );
-
-    // let deals = [];
-    // for (let i = data.length - 1; i >= 0; i--) {
-    //   if (data[i].deals.length > 0) {
-    //     deals = data[i].deals;
-    //     break;
-    //   }
-    // }
-    // return deals;
-    // Get CID record
     const cidRecord = await getCIDRecord(cid)
 
     // Get bundle record
@@ -58,7 +40,7 @@ export const cidDealStatus = async (cid: string) => {
 const addCid = async (name: string, cid: string) => {
     try {
         const headers = {
-            Authorization: `Bearer ${process.env.EST_API_KEY ?? ''}`,
+            Authorization: `Bearer ${config.est_api_key ?? ''}`,
             Accept: 'application/json',
         }
 

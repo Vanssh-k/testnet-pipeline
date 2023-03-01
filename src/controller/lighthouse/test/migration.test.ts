@@ -1,8 +1,7 @@
 import { ethers } from 'ethers'
 import supertest from 'supertest'
 import app from '../../../app'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../../../config'
 
 test('List Migration Request: GET /list_migration_requests', async () => {
     await supertest(app)
@@ -38,7 +37,7 @@ test('Migration Request: POST /migration_request', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET6_PRIVATE_KEY ?? '',
+                config.test_wallet6_private_key ?? '',
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
@@ -69,7 +68,7 @@ test('Migration Request No CID: POST /migration_request', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET6_PRIVATE_KEY ?? '',
+                config.test_wallet6_private_key ?? '',
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
@@ -96,7 +95,7 @@ test('Migration Request Wrong CID: POST /migration_request', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET6_PRIVATE_KEY ?? '',
+                config.test_wallet6_private_key ?? '',
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
@@ -125,7 +124,7 @@ test('Migration Request: POST /migration_request_ent', async () => {
         .post('/api/lighthouse/migration_request_ent')
         .set(
             'Authorization',
-            `Bearer ${process.env.MIGRATION_TEST_ACCESS_TOKEN}`
+            `Bearer ${config.migration_test_access_token ?? ''}`
         )
         .send(data)
         .expect(200)
@@ -146,7 +145,7 @@ test('Migration Request No CID: POST /migration_request', async () => {
         .post('/api/lighthouse/migration_request')
         .set(
             'Authorization',
-            `Bearer ${process.env.MIGRATION_TEST_ACCESS_TOKEN}`
+            `Bearer ${config.migration_test_access_token ?? ''}`
         )
         .send(data)
         .expect(400)
@@ -163,7 +162,7 @@ test('Migration Request Wrong CID: POST /migration_request', async () => {
         .post('/api/lighthouse/migration_request')
         .set(
             'Authorization',
-            `Bearer ${process.env.MIGRATION_TEST_ACCESS_TOKEN}`
+            `Bearer ${config.migration_test_access_token ?? ''}`
         )
         .send(data)
         .expect(400)

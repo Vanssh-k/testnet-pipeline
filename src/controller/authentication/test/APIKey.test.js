@@ -1,8 +1,7 @@
 import supertest from 'supertest'
 import ethers from 'ethers'
 import app from '../../../app'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../../../config'
 
 test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () => {
     await supertest(app)
@@ -14,7 +13,7 @@ test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () 
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET1_PRIVATE_KEY,
+                config.test_wallet1_private_key,
                 provider
             )
 

@@ -1,8 +1,7 @@
 import ethers from 'ethers'
 import supertest from 'supertest'
 import app from '../../app'
-import dotenv from 'dotenv'
-dotenv.config()
+import config from '../../config'
 
 // get_uploads
 
@@ -73,7 +72,7 @@ describe('userHelper', () => {
                 const verificationMessage = JSON.parse(response.text)
                 const provider = ethers.getDefaultProvider()
                 const signer = new ethers.Wallet(
-                    process.env.TEST_WALLET3_PRIVATE_KEY ??
+                    config.test_wallet3_private_key ??
                         '46944ea6def572bcd1d7973ed4fd33ec7a5ec2ac55148d5f191779f9c23ff6e4',
                     provider
                 )
@@ -106,7 +105,7 @@ describe('userHelper', () => {
             .get(
                 '/api/user/update_data_usage?requestId=706da465-c11d-49c1-af80-5f2e74bc6821'
             )
-            .set('Authorization', `Bearer ${process.env.ROUTE_ACCESS_TOKEN}`)
+            .set('Authorization', `Bearer ${config.route_access_token}`)
             .expect(200)
             .then(async (response) => {
                 const res = JSON.parse(response.text)

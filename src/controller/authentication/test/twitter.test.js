@@ -1,8 +1,7 @@
-import supertest  from 'supertest'
-import ethers  from 'ethers'
-import app  from '../../../app'
-import dotenv from 'dotenv'
-dotenv.config()
+import supertest from 'supertest'
+import ethers from 'ethers'
+import app from '../../../app'
+import config from '../../../config'
 
 test('Twitter, User Not Found: GET /tweet_recharge', async () => {
     await supertest(app)
@@ -32,7 +31,7 @@ test('Twitter, Invalid Tweet & Success: GET /tweet_recharge', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET5_PRIVATE_KEY,
+                config.test_wallet5_private_key,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)

@@ -8,8 +8,6 @@ import UserRouter from './routes/user'
 import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
-import dotenv from 'dotenv'
-dotenv.config()
 
 const app = express()
 

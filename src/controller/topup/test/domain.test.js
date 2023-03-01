@@ -1,8 +1,7 @@
 import supertest from 'supertest'
 import ethers from 'ethers'
-import dotenv from 'dotenv'
-dotenv.config()
 import app from '../../../app'
+import config from '../../../config'
 
 // create_subdomain
 test('Add SubDomain Main Case: POST /create_subdomain', async () => {
@@ -15,7 +14,7 @@ test('Add SubDomain Main Case: POST /create_subdomain', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET4_PRIVATE_KEY,
+                config.test_wallet4_private_key,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
@@ -42,7 +41,7 @@ test('Add SubDomain Forbidden: POST /create_subdomain', async () => {
             const verificationMessage = JSON.parse(response.text)
             const provider = new ethers.getDefaultProvider()
             const signer = new ethers.Wallet(
-                process.env.TEST_WALLET4_PRIVATE_KEY,
+                config.test_wallet4_private_key,
                 provider
             )
             const signedMessage = await signer.signMessage(verificationMessage)
