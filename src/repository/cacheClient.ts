@@ -4,7 +4,8 @@ const client = redis.createClient()
 
 client.on('error', (err) => {
     if (err.code === 'ECONNREFUSED') {
-        // console.error('Redis connection refused')
+        console.error('Redis connection refused')
+        client.quit()
         // handle the error as needed
     } else {
         console.error('Redis error:', err)
