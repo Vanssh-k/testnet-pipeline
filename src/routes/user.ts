@@ -13,7 +13,7 @@ const router = express.Router()
 
 router.get(
     '/get_uploads',
-    validate(validator.userUploadsSchema, { query: true }),
+    validate(validator.getUploadsSchema, { query: true }),
     get_uploads
 )
 

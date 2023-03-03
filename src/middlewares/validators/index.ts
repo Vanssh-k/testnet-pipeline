@@ -1,4 +1,4 @@
-import { publicKeySchema, userUploadsSchema } from './user'
+import { publicKeySchema, getUploadsSchema } from './user'
 import {
     symbolSchema,
     cidSchema,
@@ -37,7 +37,7 @@ export default {
     getFileEncryptionKeySchema,
     saveFileEncryptionKeySchema,
     publicKeySchema,
-    userUploadsSchema,
+    getUploadsSchema,
     symbolSchema,
     cidSchema,
     addCIDToQueueSchema,

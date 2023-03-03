@@ -6,7 +6,7 @@ export const publicKeySchema = joi.object({
     }),
 })
 
-export const userUploadsSchema = joi.object({
+export const getUploadsSchema = joi.object({
     publicKey: joi.string().required().messages({
         'any.required': `publicKey not found`,
     }),
