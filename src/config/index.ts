@@ -17,7 +17,6 @@ const baseConfig = {
     polygon_rpc: process.env.POLYGON_RPC ?? '',
     migration_test_access_token: process.env.MIGRATION_TEST_ACCESS_TOKEN ?? '',
     route_access_token: process.env.ROUTE_ACCESS_TOKEN ?? '',
-    message_auth_token: process.env.MESSAGE_AUTH_TOKEN ?? '',
     jwt_refresh_secret: process.env.JWT_REFRESH_SECRET ?? '',
     jwt_secret: process.env.JWT_SECRET ?? '',
     twitter_api_key: process.env.TWITTER_API_KEY ?? '',
@@ -54,9 +53,6 @@ const envVarsSchema = Joi.object({
     }),
     route_access_token: Joi.string().required().messages({
         'any.required': `'ROUTE_ACCESS_TOKEN IS MISSING'`,
-    }),
-    message_auth_token: Joi.string().required().messages({
-        'any.required': `'MESSAGE_AUTH_TOKEN IS MISSING'`,
     }),
     jwt_refresh_secret: Joi.string().required().messages({
         'any.required': `'JWT_REFRESH_SECRET IS MISSING'`,
