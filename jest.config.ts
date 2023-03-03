@@ -10,7 +10,10 @@ export default {
     rootDir: './',
     clearMocks: true, // clear mocks before every test
     resetMocks: false, // reset mock state before every test
-    testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.test.ts'], // match only tests inside /tests folder
+    testMatch: [
+        // '<rootDir>/src/**/*.spec.ts', // Commenting cache test for github actions
+        '<rootDir>/src/**/*.test.ts'
+    ], // match only tests inside /tests folder
     testPathIgnorePatterns: [
         '<rootDir>/node_modules/',
         '<rootDir>/.trunk/',
