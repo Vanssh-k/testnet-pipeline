@@ -1,5 +1,4 @@
 import { getUploads, updateDataUsage } from './helper/userHelper'
-import { cacheFunction } from '../../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
 
 export const get_uploads = async (
@@ -8,16 +7,12 @@ export const get_uploads = async (
     next: NextFunction
 ) => {
     try {
-        const fileList = await cacheFunction(
-            async () =>
-                getUploads(
-                    (req?.query?.publicKey as string).trim(),
-                    parseInt(req?.query?.pageNo as string, 10)
-                ),
-            `getUpload-${(req.query.publicKey as string).trim()}-page-${
-                req.query.pageNo
-            }`
+        // Only cache first page
+        const fileList = await getUploads(
+            (req?.query?.publicKey as string).trim(),
+            parseInt(req?.query?.pageNo as string, 10)
         )
+        
         res.status(200).send(fileList)
     } catch (error) {
         next(error)

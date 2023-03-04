@@ -4,14 +4,36 @@ import migrationRequestInfo from '../../../repository/migration/migrationRequest
 import updateUserData from '../../../repository/user/updateUserData'
 import updateMigrationCIDRecord from '../../../repository/migration/updateMigrationCIDRecord'
 import NotFoundError from '../../../errors/not-found-error'
+import { cacheFunction } from '../../../repository/cacheClient'
+import { cacheClearTime } from '../../libs/constants'
 
 export const getUploads = async (publicKey: string, pageNo: number) => {
     const network = getNetwork(publicKey)
     if (network === 'evm') {
         publicKey = publicKey.toLowerCase()
     }
-    const files = await userUploads(publicKey, pageNo)
-    return files
+    // Only cache first page
+    let fileList = [];
+    if(pageNo === 1){
+        fileList = await cacheFunction(
+            async () =>
+                userUploads(
+                    publicKey,
+                    pageNo
+                ),
+                `getUpload-${publicKey}-page-${
+                    pageNo
+                }`,
+                cacheClearTime.day
+        )
+    } else{
+        fileList = await userUploads(
+            publicKey,
+            pageNo
+        )
+    }
+
+    return fileList
 }
 
 // Scope for optimization here
