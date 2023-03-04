@@ -51,6 +51,11 @@ const subscriptionPlanDetails = [
         filecoinDeals: 'yes',
     },
 ]
+const cacheClearTime = {
+    'day': 86400,
+    'week': 604800,
+    'month': 2628000
+}
 
 export {
     userTable,
@@ -68,4 +73,5 @@ export {
     carBundleRecords,
     fileBundleRecords,
     fileTableEncryption,
+    cacheClearTime
 }

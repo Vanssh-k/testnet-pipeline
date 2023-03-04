@@ -16,6 +16,10 @@ export const setCache = async (key: string, value: any) => {
     return client.set(key, JSON.stringify(value))
 }
 
+export const setExCache = async (key: string, seconds: number, value: any) => {
+    return client.setex(key, seconds, JSON.stringify(value))
+}
+
 export const getCache = async (key: string) => {
     if (client.status === 'ready') {
         return client
@@ -45,7 +49,7 @@ export const removeCache = async (key: any) => {
     return null
 }
 
-export const cacheFunction = async (fn: any, key: string) => {
+export const cacheFunction = async (fn: any, key: string, seconds: number) => {
     if (client.status === 'ready') {
         const data = await getCache(key)
         if (data) {
@@ -54,7 +58,7 @@ export const cacheFunction = async (fn: any, key: string) => {
     }
     const data = await fn()
     if (client.status === 'ready') {
-        await setCache(key, data)
+        await setExCache(key, seconds, data)
     }
     return data
 }

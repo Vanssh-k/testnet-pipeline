@@ -8,6 +8,7 @@ import NotFoundError from '../../errors/not-found-error'
 import { cidDealStatus, addCidEstuary, addCidToQueue } from './helper/cidHelper'
 import { migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
 import { NextFunction, Response } from 'express'
+import { cacheClearTime } from '../libs/constants'
 
 // get ticker of a token by its symbol as input
 export const get_ticker = async (
@@ -124,7 +125,8 @@ export const file_info = async (
     try {
         const record = await cacheFunction(
             async () => fileDetailsByCid(req.query.cid),
-            `cid-${req.query.cid}`
+            `cid-${req.query.cid}`,
+            cacheClearTime.day
         )
         if (!record) {
             throw new NotFoundError()
