@@ -120,6 +120,7 @@ export const addCidToQueue = async (record: any, bodyData: any) => {
         `http://34.131.213.156/api/deal/add_cid?cid=${bodyData.cid}`
     )
 
-    await clearCacheStartsWith(`getUpload-${record.publicKey}`)
+    // clear cache of first page - Note only first page is cached
+    await clearCacheStartsWith(`getUpload-${record.publicKey}-page-1`)
     return 'Success'
 }
