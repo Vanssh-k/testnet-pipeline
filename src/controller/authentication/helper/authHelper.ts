@@ -7,7 +7,6 @@ import updateRefreshToken from '../../../repository/user/updateRefreshToken'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import { freeDataLimitInBytes, messageString } from '../../libs/constants'
 import { generateToken } from '../../../utils/randomToken'
-import { setCache } from '../../../repository/cacheClient'
 import config from '../../../config'
 
 export const getMessage = async (
