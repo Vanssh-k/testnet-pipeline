@@ -1,5 +1,6 @@
 const userTable = 'Users'
 const fileTable = 'files'
+const userAuthTable = 'user-auth'
 const gatewayTable = 'dedicatedGatewayRecords'
 const migrationCIDs = 'migrationCIDs'
 const migrationRequestTable = 'migrationRequestTable'
@@ -12,6 +13,7 @@ const freeDataLimitInBytes = 1073741824
 const filecoinDealRecords = 'filecoin-deal-records'
 const carBundleRecords = 'car-bundle-records'
 const fileBundleRecords = 'file-bundle-records'
+const ipnsTable = 'user-ipns-records'
 const fileTableEncryption = 'file-table-encryption'
 const subscriptionPlanDetails = [
     {
@@ -59,6 +61,7 @@ const cacheClearTime = {
 
 export {
     userTable,
+    userAuthTable,
     fileTable,
     freeDataLimitInBytes,
     gatewayTable,
@@ -73,5 +76,6 @@ export {
     carBundleRecords,
     fileBundleRecords,
     fileTableEncryption,
+    ipnsTable,
     cacheClearTime
 }
