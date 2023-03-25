@@ -1,5 +1,4 @@
 import billingABI from '../../abi/billing'
-import config from '../../lighthouse.config'
 import { ethers } from 'ethers'
 import envConfig from '../../config'
 
@@ -8,7 +7,7 @@ const mumbaiProvider = new ethers.providers.JsonRpcProvider(
 )
 
 const mumbaiBillingContract = new ethers.Contract(
-    config.lighthouse_billing_address,
+    envConfig.lighthouse_billing_address,
     billingABI,
     mumbaiProvider
 )
