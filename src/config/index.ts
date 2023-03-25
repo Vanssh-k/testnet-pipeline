@@ -8,6 +8,7 @@ const baseConfig = {
     env,
     isDev: env === 'development',
     isTest: env === 'testing',
+    lighthouse_ipfs_node: 'https://node.lighthouse.storage',
     est_api_key: process.env.EST_API_KEY ?? '',
     covalent_api_key: process.env.COVALENT_API_KEY ?? '',
     aws_access_key_id: process.env.AWS_ACCESS_KEY_ID ?? '',
@@ -26,6 +27,7 @@ const baseConfig = {
     test_wallet4_private_key: process.env.TEST_WALLET4_PRIVATE_KEY ?? '',
     test_wallet5_private_key: process.env.TEST_WALLET5_PRIVATE_KEY ?? '',
     test_wallet6_private_key: process.env.TEST_WALLET6_PRIVATE_KEY ?? '',
+    lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '',
     migration_ocean_access_token:
         process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '',
     port: process.env.PORT ?? 8000,
@@ -64,6 +66,7 @@ const envVarsSchema = Joi.object({
         'any.required': `'TWITTER_API_KEY IS MISSING'`,
     }),
     migration_ocean_access_token: Joi.string(),
+    lighthouse_billing_address: Joi.string(),
     test_wallet1_private_key: Joi.string(),
     test_wallet2_private_key: Joi.string(),
     test_wallet3_private_key: Joi.string(),
