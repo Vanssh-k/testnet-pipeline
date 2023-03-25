@@ -1,5 +1,4 @@
 import app from './app'
-import dotenv from 'dotenv'
 import config from './config'
 
 app.listen(config.port, () => {
