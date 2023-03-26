@@ -22,13 +22,13 @@ import {
 import {
     verifySignerSchema,
     tweetRechargeSchema,
-    saveEncryptionPublicKeySchema,
+    apiKeyIdSchema
 } from './auth'
 
 export default {
     verifySignerSchema,
     tweetRechargeSchema,
-    saveEncryptionPublicKeySchema,
+    apiKeyIdSchema,
     addSubdomainSchema,
     subdomainSchema,
     subscriptionIdSchema,

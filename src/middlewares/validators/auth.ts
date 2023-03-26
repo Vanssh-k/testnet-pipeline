@@ -7,6 +7,7 @@ export const verifySignerSchema = joi.object({
     publicKey: joi.string().required().messages({
         'any.required': `publicKey not found`,
     }),
+    keyName: joi.string().min(1).max(100),
 })
 
 export const tweetRechargeSchema = joi.object({
@@ -18,11 +19,8 @@ export const tweetRechargeSchema = joi.object({
     }),
 })
 
-export const saveEncryptionPublicKeySchema = joi.object({
-    encryptionPublicKey: joi.string().required().messages({
-        'any.required': `encryptionPublicKey not found`,
-    }),
-    publicKey: joi.string().required().messages({
-        'any.required': `publicKey not found`,
+export const apiKeyIdSchema = joi.object({
+    keyId: joi.string().max(100).required().messages({
+        'any.required': `keyId not found`,
     }),
 })
