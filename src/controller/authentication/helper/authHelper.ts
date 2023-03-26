@@ -1,13 +1,17 @@
-import jwt from 'jsonwebtoken'
 import { v4 } from 'uuid'
+import jwt from 'jsonwebtoken'
+import config from '../../../config'
 import SHA256 from 'crypto-js/sha256'
-import updateAPIKey from '../../../repository/user/updateAPIKey'
+import { generateToken } from '../../../utils/randomToken'
+import removeApiKey from '../../../repository/user/auth/removeApiKey'
+import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
+import { freeDataLimitInBytes, messageString } from '../../libs/constants'
 import updateUserDetails from '../../../repository/user/updateUserDetails'
 import updateRefreshToken from '../../../repository/user/updateRefreshToken'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
-import { freeDataLimitInBytes, messageString } from '../../libs/constants'
-import { generateToken } from '../../../utils/randomToken'
-import config from '../../../config'
+import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
+import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
+import { ForbiddenError } from '../../../errors'
 
 export const getMessage = async (
     publicKey: string,
@@ -76,12 +80,32 @@ export const removeRefreshToken = async (record: any) => {
     return 'Refresh token removed'
 }
 
-export const getApiKey = async (record: any) => {
-    const apiKey = generateToken()
-    await updateAPIKey(
-        record.publicKey,
-        SHA256(v4()).toString(),
-        SHA256(apiKey).toString()
-    )
+export const createApiKey = async (record: any, keyName: string) => {
+    const prefix = v4().split('-')[0]
+    const apiKey = prefix + '.' + v4().split('-').join('')
+    const authDetails = {
+        id: v4(),
+        keyName: keyName,
+        publicKey: record.publicKey,
+        apiKey: SHA256(apiKey).toString(),
+        keyPrefix: prefix,
+        scope: 'admin',
+        lastUpdate: Date.now()
+    }
+    const createRecord = await createApiKeyRecord(authDetails)
     return apiKey
+}
+
+export const revokeApiKey = async (id: string, publicKey: string) => {
+    const apiRecord: any = await getApiRecordById(id)
+    if(apiRecord.publicKey!==publicKey){
+        throw new ForbiddenError()
+    }
+    const status = await removeApiKey(id)
+    return status
+}
+
+export const getUserKeys = async (publicKey: string) => {
+    const data = await userKeysRecord(publicKey)
+    return data
 }

@@ -4,7 +4,9 @@ import {
     verifySigner,
     refreshAccessToken,
     removeRefreshToken,
-    getApiKey,
+    createApiKey,
+    revokeApiKey,
+    getUserKeys
 } from './helper/authHelper'
 import { NextFunction, Response, Request } from 'express'
 
@@ -86,14 +88,28 @@ export const remove_refresh_token = async (
     }
 }
 
-export const get_api_key = async (
+export const create_api_key = async (
     req: any,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const apiKey = await getApiKey(req.user)
+        const keyName = req.body.keyName? req.body.keyName : 'key'
+        const apiKey = await createApiKey(req.user, keyName)
         res.status(200).json(apiKey)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const get_user_keys = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const data = await getUserKeys(req.user.publicKey)
+        res.status(200).json(data)
     } catch (error) {
         next(error)
     }
@@ -111,6 +127,19 @@ export const verify_api_key = async (
             dataLimit: record.dataLimit,
             dataUsed: record.dataUsed,
         })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const remove_api_key = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const status = await revokeApiKey(req.query.keyId, req.user.publicKey)
+        res.status(200).send('Success')
     } catch (error) {
         next(error)
     }
