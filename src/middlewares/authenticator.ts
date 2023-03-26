@@ -11,7 +11,7 @@ import {
 } from '../errors'
 import { verifyJWT } from '../helpers'
 import getNetwork from './getNetwork'
-import checkApiKey from '../repository/checkApiKey'
+import checkApiKey from '../repository/user/auth/checkApiKey'
 import { getCache } from '../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
 import config from '../config'
@@ -50,39 +50,38 @@ export default (rules: string[] = [], clauses: string[] = []) => {
                     req.user = record
                     break
 
-                case 'verifyjwt':
-                    if (clauses.includes('useSHA256WithApiKey')) {
-                        const apiKey =
-                            req.headers['authorization']?.split(' ')[1]
-                        if (!apiKey) {
-                            return next(new AuthenticationError())
-                        }
-                        const record = await checkApiKey(
-                            SHA256(apiKey).toString()
-                        )
-                        if (!record) {
-                            return next(new AuthenticationError())
-                        }
-                        req.user = record
-                        break
-                    }
+                case 'verifyToken':
                     const accessToken =
                         req.headers['authorization']?.split(' ')[1]
                     if (!accessToken) {
                         return next(new AuthenticationError())
                     }
-                    const accessData: any = verifyJWT(
-                        accessToken,
-                        clauses.includes('useRefreshSecret')
-                            ? config.jwt_refresh_secret ?? ''
-                            : config.jwt_secret ?? ''
-                    )
-                    if (!accessData) {
+
+                    let keyRecord: any = null
+                    if (accessToken.length<45) {
+                        keyRecord = await checkApiKey(
+                            SHA256(accessToken).toString()
+                        )
+                    } else{
+                        keyRecord = verifyJWT(
+                            accessToken,
+                            clauses.includes('useRefreshSecret')
+                                ? config.jwt_refresh_secret ?? ''
+                                : config.jwt_secret ?? ''
+                        )
+                    }
+
+                    if (!keyRecord) {
                         return next(new AuthenticationError())
                     }
-                    network = getNetwork(accessData.publicKey)
+                    if(clauses.includes('publicKeyOnly')){
+                        req.user = keyRecord
+                        break
+                    }
+                    
+                    network = getNetwork(keyRecord.publicKey)
                     record = (await userDetails(
-                        accessData.publicKey,
+                        keyRecord.publicKey,
                         network
                     )) as any
                     if (!record) {
