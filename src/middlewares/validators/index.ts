@@ -24,6 +24,9 @@ import {
     tweetRechargeSchema,
     apiKeyIdSchema
 } from './auth'
+import {
+    verifyPublishSchema
+} from './ipns'
 
 export default {
     verifySignerSchema,
@@ -45,4 +48,5 @@ export default {
     migrationRequestEntSchema,
     migrationRequestIdSchema,
     migrationRequestSchema,
+    verifyPublishSchema
 }
