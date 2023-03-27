@@ -2,7 +2,8 @@ import express from 'express'
 import {
   generate_key,
   publish_record,
-  get_ipns_records
+  get_ipns_records,
+  remove_key
 } from '../controller/ipns'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -27,6 +28,13 @@ router.get(
     validate(validator.verifyPublishSchema, { query: true }),
     authenticator(['verifyToken'], ['publicKeyOnly']),
     publish_record
+)
+
+router.delete(
+  '/remove_key',
+  validate(validator.verifyRemoveSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  remove_key
 )
 
 export default router

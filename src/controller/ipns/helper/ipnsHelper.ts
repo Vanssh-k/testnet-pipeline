@@ -5,6 +5,7 @@ import { ForbiddenError } from '../../../errors'
 import addIPNSRecord from '../../../repository/ipns/addIPNSRecord'
 import getIPNSRecord from '../../../repository/ipns/getIPNSRecord'
 import updateIPNSRecord from '../../../repository/ipns/updateIPNSRecord'
+import removeIPNSRecord from '../../../repository/ipns/removeIPNSRecord'
 import getIPNSRecordById from '../../../repository/ipns/getIPNSRecordById'
 
 export const generateKey = async(publicKey: string) => {
@@ -67,4 +68,27 @@ export const publishRecord = async(cid: string, id: string, publicKey: string) =
   }
   const updateCid = await updateIPNSRecord(id, cid)
   return 'Published' 
+}
+
+export const removeKey = async(keyName: string, publicKey: string) =>{
+  const keyRecord:any = await getIPNSRecordById(keyName)
+  if(keyRecord.publicKey!==publicKey){
+    throw new ForbiddenError()
+  }
+
+  const removeResponse = await axios.post(
+    `${config.lighthouse_ipfs_node}/api/v0/key/rm?arg=${keyName}`, {},
+    {
+      headers: {
+        'Authorization': `Bearer ${config.route_access_token}`
+      }
+    }
+  )
+  
+  // remove record
+  if(!removeResponse.data.Keys[0]['Id']){
+    throw new Error()
+  }
+  const removeRecord = await removeIPNSRecord(keyName)
+  return 'Removed' 
 }

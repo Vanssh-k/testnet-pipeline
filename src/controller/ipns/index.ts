@@ -1,9 +1,8 @@
-import axios from 'axios'
-import config from '../../config'
 import {
   generateKey,
   getUserIPNSRecords,
-  publishRecord
+  publishRecord,
+  removeKey
 } from './helper/ipnsHelper'
 import { NextFunction, Request, Response } from 'express'
 
@@ -44,4 +43,17 @@ export const publish_record = async (
     } catch (error) {
         next(error)
     }
+}
+
+export const remove_key = async (
+  req: any,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const status = await removeKey(req.query.keyName, req.user.publicKey)
+    res.status(200).json('Key Removed')
+  } catch (error) {
+      next(error)
+  }
 }

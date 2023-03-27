@@ -25,7 +25,8 @@ import {
     apiKeyIdSchema
 } from './auth'
 import {
-    verifyPublishSchema
+    verifyPublishSchema,
+    verifyRemoveSchema
 } from './ipns'
 
 export default {
@@ -48,5 +49,6 @@ export default {
     migrationRequestEntSchema,
     migrationRequestIdSchema,
     migrationRequestSchema,
-    verifyPublishSchema
+    verifyPublishSchema,
+    verifyRemoveSchema
 }
