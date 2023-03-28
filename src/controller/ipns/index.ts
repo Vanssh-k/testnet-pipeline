@@ -55,7 +55,10 @@ export const remove_key = async (
   next: NextFunction
 ) => {
   try {
-    const removeStatus = await removeKey(req.query.keyName as string, req.body.user.publicKey)
+    const removeStatus = await removeKey(
+      req.query.keyName as string,
+      req.body.user.publicKey
+    )
     res.status(200).json(removeStatus)
   } catch (error) {
     next(error)

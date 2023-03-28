@@ -72,7 +72,11 @@ export const publishRecord = async (
   // Update cid
   /* istanbul ignore next */
   if (!publishResponse.data.Value) {
-    throw new CustomError('Internal Server Error', 500, 'Unable to process request')
+    throw new CustomError(
+      'Internal Server Error',
+      500,
+      'Unable to process request'
+    )
   }
   const updateCid = await updateIPNSRecord(id, cid)
   return publishResponse.data
@@ -97,7 +101,11 @@ export const removeKey = async (keyName: string, publicKey: string) => {
   // remove record
   /* istanbul ignore next */
   if (!removeResponse.data.Keys[0]['Id']) {
-    throw new CustomError('Internal Server Error', 500, 'Unable to process request')
+    throw new CustomError(
+      'Internal Server Error',
+      500,
+      'Unable to process request'
+    )
   }
   const removeRecord = await removeIPNSRecord(keyName)
   return removeResponse.data
