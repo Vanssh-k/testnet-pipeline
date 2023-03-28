@@ -2,58 +2,62 @@ import {
   generateKey,
   getUserIPNSRecords,
   publishRecord,
-  removeKey
+  removeKey,
 } from './helper/ipnsHelper'
 import { NextFunction, Request, Response } from 'express'
 
 export const generate_key = async (
-  req: any,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-      const ipnsKeyName = await generateKey(req.user.publicKey)      
-      res.status(200).json(ipnsKeyName)
+    const ipnsKeyName = await generateKey(req.body.user.publicKey)
+    res.status(200).json(ipnsKeyName)
   } catch (error) {
-      next(error)
+    next(error)
   }
 }
 
 export const get_ipns_records = async (
-  req: any,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-      const ipnsRecords = await getUserIPNSRecords(req.user.publicKey)      
-      res.status(200).json(ipnsRecords)
+    const ipnsRecords = await getUserIPNSRecords(req.body.user.publicKey)
+    res.status(200).json(ipnsRecords)
   } catch (error) {
-      next(error)
+    next(error)
   }
 }
 
 export const publish_record = async (
-    req: any,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-      const status = await publishRecord(req.query.cid, req.query.keyName, req.user.publicKey)
-      res.status(200).json('Published')
-    } catch (error) {
-        next(error)
-    }
-}
-
-export const remove_key = async (
-  req: any,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const status = await removeKey(req.query.keyName, req.user.publicKey)
-    res.status(200).json('Key Removed')
+    const publishStatus = await publishRecord(
+      req.query.cid as string,
+      req.query.keyName as string,
+      req.body.user.publicKey
+    )
+    res.status(200).json(publishStatus)
   } catch (error) {
-      next(error)
+    next(error)
+  }
+}
+
+export const remove_key = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const removeStatus = await removeKey(req.query.keyName as string, req.body.user.publicKey)
+    res.status(200).json(removeStatus)
+  } catch (error) {
+    next(error)
   }
 }
