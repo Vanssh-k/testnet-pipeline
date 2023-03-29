@@ -12,18 +12,17 @@ export default {
     resetMocks: false, // reset mock state before every test
     testMatch: [
         // '<rootDir>/src/**/*.spec.ts', // Commenting cache test for github actions
-        '<rootDir>/src/**/*.test.ts'
+        '<rootDir>/src/**/*.test.ts',
+        '<rootDir>/src/**/*.test.js'
     ], // match only tests inside /tests folder
     testPathIgnorePatterns: [
         '<rootDir>/node_modules/',
-        '<rootDir>/.trunk/',
-        '<rootDir>/Commands/',
     ], // exclude unnecessary folders
 
     // following lines are about coverage
-    collectCoverage: true, //[true|false]
-    collectCoverageFrom: ['<rootDir>/src/Lighthouse/**/*.ts'],
-    coverageDirectory: '<rootDir>/src/coverage',
+    collectCoverage: true,
+    collectCoverageFrom: ['<rootDir>/src/**/*.ts', '<rootDir>/src/**/*.js'],
+    coverageDirectory: '<rootDir>/coverage',
     coverageReporters: ['lcov'],
     coverageThreshold: {
         global: {
