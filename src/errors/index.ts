@@ -7,11 +7,11 @@ import ForbiddenError from './forbidden'
 import AuthenticationError from './authentication-error'
 
 export {
-    NotFoundError,
-    RequestValidationError,
-    AuthenticationError,
-    BadRequestError,
-    CustomError,
-    DatabaseError,
-    ForbiddenError,
+  NotFoundError,
+  RequestValidationError,
+  AuthenticationError,
+  BadRequestError,
+  CustomError,
+  DatabaseError,
+  ForbiddenError,
 }

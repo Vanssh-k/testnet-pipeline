@@ -1,19 +1,19 @@
 class CustomError extends Error {
-    statusCode: number
-    errors?: any
+  statusCode: number
+  errors?: any
 
-    constructor(name: string, statusCode: number, errors: any) {
-        super(`${name}`)
-        this.name = name
-        this.statusCode = statusCode
-        this.errors = errors
+  constructor(name: string, statusCode: number, errors: any) {
+    super(`${name}`)
+    this.name = name
+    this.statusCode = statusCode
+    this.errors = errors
 
-        Error.captureStackTrace(this, this.constructor)
-    }
+    Error.captureStackTrace(this, this.constructor)
+  }
 
-    serializeErrors() {
-        return [{ message: this.errors }]
-    }
+  serializeErrors() {
+    return [{ message: this.errors }]
+  }
 }
 
 export default CustomError
