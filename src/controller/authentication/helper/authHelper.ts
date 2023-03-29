@@ -24,6 +24,7 @@ export const getMessage = async (
     message: timestamp,
     dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
     dataUsed: record ? record.dataUsed : 0,
+    fileCount: record ? record.fileCount : 0,
     faucet: record?.faucet ? record.faucet : {},
     network: record ? record.network : network,
     createdAt: record ? record.createdAt : timestamp,
