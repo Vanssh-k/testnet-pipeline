@@ -62,7 +62,7 @@ test('Api Key test on old key: GET /verify_api_key', async () => {
     (
       await supertest(app)
         .get('/api/auth/verify_api_key')
-        .set('Authorization', `Bearer c9b321bd-7220-47a6-a866-0ca0f4584e28`)
+        .set('Authorization', `Bearer c62d0fde-fedd-4efa-bf58-3ad87907a3b3`)
     ).text
   )
   expect(typeof data.publicKey).toBe('string')
