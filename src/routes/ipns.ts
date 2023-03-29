@@ -3,7 +3,7 @@ import {
   generate_key,
   publish_record,
   get_ipns_records,
-  remove_key
+  remove_key,
 } from '../controller/ipns'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -24,10 +24,10 @@ router.get(
 )
 
 router.get(
-    '/publish_record',
-    validate(validator.verifyPublishSchema, { query: true }),
-    authenticator(['verifyToken'], ['publicKeyOnly']),
-    publish_record
+  '/publish_record',
+  validate(validator.verifyPublishSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  publish_record
 )
 
 router.delete(
