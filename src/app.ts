@@ -1,14 +1,14 @@
-import express, { Request, Response } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
-import errorHandler from './middlewares/error-handler'
 import AuthRouter from './routes/auth'
 import UserRouter from './routes/user'
-import TopUpRouter from './routes/topup'
 import IPNSRouter from './routes/ipns'
+import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
+import express, { Request, Response } from 'express'
+import errorHandler from './middlewares/error-handler'
 
 const app = express()
 
@@ -18,13 +18,13 @@ app.use(morgan('dev'))
 app.use(cors())
 
 app.get('/api/health', (req: Request, res: Response) => {
-    res.status(200).send('OK')
+  res.status(200).send('OK')
 })
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/user', UserRouter)
-app.use('/api/topup', TopUpRouter)
 app.use('/api/ipns', IPNSRouter)
+app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
 
