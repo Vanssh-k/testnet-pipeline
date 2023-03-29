@@ -1,11 +1,10 @@
 import dbbClient from '../ddbClient'
-import DatabaseError from '../../errors/database-error'
-import { fileBundleRecords } from '../../controller/libs/constants'
+import { fileTable } from '../../controller/libs/constants'
 
 export default async (cid: string) => {
   try {
     const params = {
-      TableName: fileBundleRecords,
+      TableName: fileTable,
       IndexName: 'cid-index',
       KeyConditionExpression: 'cid = :c',
       ExpressionAttributeValues: {
@@ -14,9 +13,9 @@ export default async (cid: string) => {
     }
 
     const record = await dbbClient.query(params)
-    return record.Items ?? []
+    const Items = record.Items ?? []
+    return Items[0]
   } catch (error) {
-    /* istanbul ignore next */
-    throw new DatabaseError()
+    return null
   }
 }
