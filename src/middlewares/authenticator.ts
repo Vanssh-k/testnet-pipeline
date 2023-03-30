@@ -9,7 +9,7 @@ import {
   RequestValidationError,
   ForbiddenError,
 } from '../errors'
-import { verifyJWT } from '../helpers'
+import { verifyJWT } from '../utils/verifyJWT'
 import getNetwork from './getNetwork'
 import checkApiKey from '../repository/user/auth/checkApiKey'
 import { getCache } from '../repository/cacheClient'
