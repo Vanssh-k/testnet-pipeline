@@ -2,24 +2,20 @@ import updateUserDataLimit from '../../../repository/user/updateUserDataLimit'
 import {
   getSubscriptionStatus,
   getPurchasablePlans,
-} from '../../../services/blockchain/billing'
-import { subscriptionPlanDetails } from '../../libs/constants'
-
-import NotFoundError from '../../../errors/not-found-error'
+} from './billing'
+import { paymentPlans } from '../../libs/paymentPlans'
 
 const getActivePlanList = async () => {
   const filterPlans = []
-  for (let i = 0; i < subscriptionPlanDetails.length; i++) {
+  for (let i = 0; i < paymentPlans.length; i++) {
     filterPlans.push({
-      subscriptionId: subscriptionPlanDetails[i]['index'],
-      totalNumOfDeduction: subscriptionPlanDetails[i]['totalNumOfDeduction'],
-      nextDeductionInNumOfBlocks:
-        subscriptionPlanDetails[i]['nextDeductionInNumOfBlocks'],
-      amount: subscriptionPlanDetails[i]['amount'],
-      planName: subscriptionPlanDetails[i]['planName'],
-      dataCap: subscriptionPlanDetails[i]['ipfsGBStorage'],
-      bandwidth: subscriptionPlanDetails[i]['bandwidthInGB'],
-      dedicatedGateway: subscriptionPlanDetails[i]['dedicatedGateway'],
+      subscriptionId: paymentPlans[i]['index'],
+      totalNumOfDeduction: paymentPlans[i]['totalNumOfDeduction'],
+      amount: paymentPlans[i]['amount'],
+      planName: paymentPlans[i]['planName'],
+      dataCap: paymentPlans[i]['storageInGB'],
+      bandwidth: paymentPlans[i]['bandwidthInGB'],
+      dedicatedGateway: paymentPlans[i]['dedicatedGateway'],
     })
   }
   return filterPlans
