@@ -1,5 +1,6 @@
-import verifySignature from './verifySignature'
+import verifyCID from './verifyCID'
 import { generateToken } from './randomToken'
+import verifySignature from './verifySignature'
 
 describe('utils', () => {
   test('generateRandomToken', () => {
@@ -36,6 +37,16 @@ describe('utils', () => {
       'evm'
     )
 
+    expect(verify).toBe(false)
+  }, 10000)
+
+  test('Verify CID true case', () => {
+    const verify = verifyCID('QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc')
+    expect(verify).toBe(true)
+  }, 10000)
+
+  test('Verify CID false case', () => {
+    const verify = verifyCID('QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJff')
     expect(verify).toBe(false)
   }, 10000)
 })

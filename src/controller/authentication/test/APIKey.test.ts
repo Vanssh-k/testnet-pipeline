@@ -46,6 +46,12 @@ test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () 
   )
   expect(typeof allKeys[0]['id']).toBe('string')
 
+  // Revoke API Key Forbidden
+  await supertest(app)
+    .delete(`/api/auth/remove_api_key?keyId=${allKeys[0]['id']}`)
+    .set('Authorization', `Bearer ${config.test_wallet7_api_key}`)
+    .expect(403)
+  
   // Revoke API Key
   const revokeResponse = JSON.parse(
     (
