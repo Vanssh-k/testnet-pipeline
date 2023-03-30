@@ -38,13 +38,13 @@ export const getMessage = async (
 export const verifySigner = async (record: any) => {
   // Change the message and return access token
   const payLoad = { publicKey: record.publicKey }
-  const accessToken = jwt.sign(payLoad, config.jwt_secret ?? 'FALLBACK', {
+  const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',
     expiresIn: '12h',
   })
   const refreshToken = jwt.sign(
     payLoad,
-    config.jwt_refresh_secret ?? 'FALLBACK',
+    config.jwt_refresh_secret,
     {
       algorithm: 'HS256',
       expiresIn: '7d',
@@ -56,13 +56,13 @@ export const verifySigner = async (record: any) => {
 
 export const refreshAccessToken = (record: any) => {
   const payLoad = { publicKey: record.publicKey }
-  const accessToken = jwt.sign(payLoad, config.jwt_secret ?? 'FALLBACK', {
+  const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',
     expiresIn: '12h',
   })
   const refreshToken = jwt.sign(
     payLoad,
-    config.jwt_refresh_secret ?? 'FALLBACK',
+    config.jwt_refresh_secret,
     {
       algorithm: 'HS256',
       expiresIn: '7d',
