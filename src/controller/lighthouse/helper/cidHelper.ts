@@ -72,24 +72,6 @@ export const addCidEstuary = async (name: string, cid: string) => {
 
 export const addCidToQueue = async (bodyData: any) => {
   const timestamp = Date.now()
-  if (bodyData.size > bodyData.user.dataLimit - bodyData.user.dataUsed) {
-    // Create record of file
-    await saveFileMetaData({
-      id: v4(),
-      publicKey: bodyData.user.publicKey,
-      cid: bodyData.cid,
-      fileName: bodyData.name,
-      fileSizeInBytes: bodyData.size,
-      encryption: bodyData.encryption.toString() === 'true',
-      mimeType: bodyData.mimeType,
-      status: 'payment pending',
-      txHash: '',
-      createdAt: timestamp,
-      lastUpdate: timestamp,
-    })
-
-    throw new ForbiddenError()
-  }
 
   // Create record of file
   const saveFileResponse = await saveFileMetaData({
@@ -122,5 +104,6 @@ export const addCidToQueue = async (bodyData: any) => {
 
   // clear cache of first page - Note only first page is cached
   await clearCacheStartsWith(`getUpload-${bodyData.user.publicKey}-page-1`)
+  await clearCacheStartsWith(`user-${bodyData.user.publicKey}`)
   return 'Success'
 }

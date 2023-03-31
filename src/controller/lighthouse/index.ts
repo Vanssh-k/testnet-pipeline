@@ -31,7 +31,13 @@ export const deal_status = async (
   next: NextFunction
 ) => {
   try {
-    const status = await cidDealStatus(req.query.cid as string)
+    // Check cache
+    const status = await cacheFunction(
+      async () => cidDealStatus(req.query.cid as string),
+      `dealStatus-${req.query.cid}`,
+      cacheClearTime.day
+    )
+    // const status = await cidDealStatus(req.query.cid as string)
     res.status(200).json(status)
   } catch (error) {
     next(error)

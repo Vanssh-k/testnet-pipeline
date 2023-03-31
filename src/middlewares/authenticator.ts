@@ -25,28 +25,30 @@ export default (rules: string[] = [], clauses: string[] = []) => {
     for (const rule of rules) {
       let record
       let network = null
+      let cacheData = null
       switch (rule) {
         case 'verifysignature':
           const usersPublicKey = req.body.publicKey || req.query.publicKey
           network = getNetwork(usersPublicKey)
-          record = (await userDetails(usersPublicKey, network)) as any
+          cacheData = await getCache(`user-${usersPublicKey}`)
+          record = cacheData?cacheData:(await userDetails(usersPublicKey, network)) as any
           if (!record) {
             return next(new NotFoundError())
           }
+
           const authentic = verifySignature(
             usersPublicKey,
             messageString + record.message ?? '',
             req.body.signedMessage,
             record?.network
           )
-
           if (!authentic) {
             return next(new AuthenticationError())
           }
-          record = (await userDetails(usersPublicKey, network)) as any
-          if (!record) {
-            return next(new NotFoundError())
-          }
+          // record = (await userDetails(usersPublicKey, network)) as any
+          // if (!record) {
+          //   return next(new NotFoundError())
+          // }
           req.body.user = record
           break
 
@@ -77,7 +79,8 @@ export default (rules: string[] = [], clauses: string[] = []) => {
           }
 
           network = getNetwork(keyRecord.publicKey)
-          record = (await userDetails(keyRecord.publicKey, network)) as any
+          cacheData = await getCache(`user-${keyRecord.publicKey}`)
+          record = cacheData?cacheData:(await userDetails(keyRecord.publicKey, network)) as any
           if (!record) {
             return next(new NotFoundError())
           }

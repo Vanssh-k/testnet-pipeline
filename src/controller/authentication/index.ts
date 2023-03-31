@@ -8,6 +8,7 @@ import {
 } from './helper/authHelper'
 import { tweetRecharge } from './helper/tweetHelper'
 import { NextFunction, Response, Request } from 'express'
+import { clearCacheStartsWith } from '../../repository/cacheClient'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (
@@ -140,6 +141,7 @@ export const tweet_recharge = async (
 ) => {
   try {
     await tweetRecharge(req.body.user, req.query.twitterID as string)
+    await clearCacheStartsWith(`user-${req.body.user.publicKey}`)
     res.status(200).json('Data Limit Upgraded')
   } catch (error) {
     next(error)

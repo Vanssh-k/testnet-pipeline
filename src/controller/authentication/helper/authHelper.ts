@@ -3,9 +3,10 @@ import jwt from 'jsonwebtoken'
 import config from '../../../config'
 import SHA256 from 'crypto-js/sha256'
 import { ForbiddenError } from '../../../errors'
+import { setExCache } from '../../../repository/cacheClient'
 import removeApiKey from '../../../repository/user/auth/removeApiKey'
 import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
-import { freeDataLimitInBytes, messageString } from '../../libs/constants'
+import { freeDataLimitInBytes, messageString, cacheClearTime } from '../../libs/constants'
 import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
@@ -31,6 +32,7 @@ export const getMessage = async (
     updatedAt: timestamp,
   }
 
+  await setExCache(`user-${publicKey}`, cacheClearTime.week, updatedDetails)
   const _ = await updateUserDetails(updatedDetails, network)
   return message
 }
