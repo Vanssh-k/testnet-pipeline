@@ -55,11 +55,11 @@ export const get_subdomain = async (
 }
 
 export const record_transaction = async (
-  req: Request | (Request & { user: any }),
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { user } = req as any
+  const { user } = req.body
   try {
     const data = await recordUserTransaction(req.body, user)
     res.status(data.status).json({ data: data.data })
