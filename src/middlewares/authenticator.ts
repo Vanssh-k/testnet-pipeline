@@ -147,8 +147,7 @@ export default (rules: string[] = [], clauses: string[] = []) => {
           const transactionRouteAccessToken =
             req.headers['authorization']?.split(' ')[1]
           if (
-            transactionRouteAccessToken !== config.route_access_token ||
-            !transactionRouteAccessToken
+            transactionRouteAccessToken !== config.transaction_route_token
           ) {
             return next(new NotFoundError())
           }
