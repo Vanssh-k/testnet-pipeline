@@ -2,16 +2,16 @@ import dbbClient from '../ddbClient'
 import { userTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 
-export default async (publicKey: string, dataLimit: number) => {
+export default async (publicKey: string, dataToAdd: number) => {
   try {
     const params = {
       TableName: userTable,
       Key: {
         publicKey,
       },
-      UpdateExpression: 'set dataLimit = :d, updatedAt = :u',
+      UpdateExpression: 'set dataLimit = dataLimit + :d, updatedAt = :u',
       ExpressionAttributeValues: {
-        ':d': dataLimit,
+        ':d': dataToAdd,
         ':u': Date.now(),
       },
     }
