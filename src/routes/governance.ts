@@ -6,9 +6,9 @@ import validator from '../middlewares/validators'
 const router = express.Router()
 
 router.post(
-    '/create_proposal',
-    validate(validator.addProposalSchema, { body: true }),
-    create_proposal
+  '/create_proposal',
+  validate(validator.addProposalSchema, { body: true }),
+  create_proposal
 )
 
 router.get('/list_proposals', list_proposals)

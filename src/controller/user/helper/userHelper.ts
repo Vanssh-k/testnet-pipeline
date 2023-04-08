@@ -6,70 +6,78 @@ import updateMigrationCIDRecord from '../../../repository/migration/updateMigrat
 import NotFoundError from '../../../errors/not-found-error'
 import { cacheFunction } from '../../../repository/cacheClient'
 import { cacheClearTime } from '../../libs/constants'
+import userDetails from '../../../repository/user/userDetails'
+
+export const getUserFiles = async (publicKey: string, pageNo: number) => {
+  const network = getNetwork(publicKey)
+  if (network === 'evm') {
+    publicKey = publicKey.toLowerCase()
+  }
+  const userInfo = await userDetails(publicKey, network)
+
+  // Only cache first page
+  let fileList = []
+  if (pageNo === 1) {
+    fileList = await cacheFunction(
+      async () => userUploads(publicKey, pageNo),
+      `getUpload-${publicKey}-page-${pageNo}`,
+      cacheClearTime.day
+    )
+  } else {
+    fileList = await userUploads(publicKey, pageNo)
+  }
+
+  return {
+    fileList: fileList,
+    totalFiles: userInfo?userInfo.fileCount:0
+  }
+}
 
 export const getUploads = async (publicKey: string, pageNo: number) => {
-    const network = getNetwork(publicKey)
-    if (network === 'evm') {
-        publicKey = publicKey.toLowerCase()
-    }
-    // Only cache first page
-    let fileList = [];
-    if(pageNo === 1){
-        fileList = await cacheFunction(
-            async () =>
-                userUploads(
-                    publicKey,
-                    pageNo
-                ),
-                `getUpload-${publicKey}-page-${
-                    pageNo
-                }`,
-                cacheClearTime.day
-        )
-    } else{
-        fileList = await userUploads(
-            publicKey,
-            pageNo
-        )
-    }
+  const network = getNetwork(publicKey)
+  if (network === 'evm') {
+    publicKey = publicKey.toLowerCase()
+  }
 
-    return fileList
+  const fileList = await userUploads(publicKey, pageNo)
+
+  return fileList
 }
 
 // Scope for optimization here
 export const updateDataUsage = async (
-    record: any,
-    requestId: string,
-    enterprise: string
+  record: any,
+  requestId: string,
+  enterprise: string
 ) => {
-    if (enterprise === 'lighthouse') {
-        // Get all CID
-        const cidList = await migrationRequestInfo(requestId)
-        if (!cidList) {
-            /* istanbul ignore next */
-            throw new NotFoundError()
-        }
-
-        // Sum usage for CID pinned but userDataUpdated is false
-        let totalUsage = 0
-
-        const requests = cidList
-            .filter(
-                (cid: any) =>
-                    !cid.userDataUpdated &&
-                    cid.cidStatus === 'pinned' &&
-                    cid.fileSizeInBytes
-            )
-            .map(async (cid: any) => {
-                totalUsage += parseInt(cid.fileSizeInBytes, 10)
-                await updateMigrationCIDRecord(cid.id, true)
-            })
-
-        await Promise.all(requests)
-        const dataUsed = parseInt(record.dataUsed, 10) + totalUsage
-        await updateUserData(record.publicKey, dataUsed)
-        return 'Success'
+  if (enterprise === 'lighthouse') {
+    // Get all CID
+    const cidList = await migrationRequestInfo(requestId)
+    if (!cidList) {
+      /* istanbul ignore next */
+      throw new NotFoundError()
     }
-    // TODO handle data usage update for other entreprise
+
+    // Sum usage for CID pinned but userDataUpdated is false
+    let totalUsage = 0
+
+    const requests = cidList
+      .filter(
+        (cid: any) =>
+          !cid.userDataUpdated &&
+          cid.cidStatus === 'pinned' &&
+          cid.fileSizeInBytes
+      )
+      .map(async (cid: any) => {
+        totalUsage += parseInt(cid.fileSizeInBytes, 10)
+        await updateMigrationCIDRecord(cid.id, true)
+      })
+
+    await Promise.all(requests)
+    const dataUsed = parseInt(record.dataUsed, 10) + totalUsage
+    await updateUserData(record.publicKey, dataUsed)
     return 'Success'
+  }
+  // TODO handle data usage update for other entreprise
+  return 'Success'
 }
