@@ -92,10 +92,10 @@ export const addCidToQueue = async (bodyData: any) => {
   const _ = await updateUserData(bodyData.user.publicKey, parseInt(bodyData.size))
 
   // Send CID to Estuary
-  const addCidResponse = await addCid(bodyData.name, bodyData.cid)
-  if (!addCidResponse) {
-    throw new DatabaseError('Add CID Failed')
-  }
+  // const addCidResponse = await addCid(bodyData.name, bodyData.cid)
+  // if (!addCidResponse) {
+  //   throw new DatabaseError('Add CID Failed')
+  // }
 
   // Send CID to Lighthouse Deal Maker
   const __ = await axios.get(
