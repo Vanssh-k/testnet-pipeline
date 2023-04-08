@@ -8,7 +8,7 @@ import { cacheFunction } from '../../../repository/cacheClient'
 import { cacheClearTime } from '../../libs/constants'
 import userDetails from '../../../repository/user/userDetails'
 
-export const getUploads = async (publicKey: string, pageNo: number) => {
+export const getUserFiles = async (publicKey: string, pageNo: number) => {
   const network = getNetwork(publicKey)
   if (network === 'evm') {
     publicKey = publicKey.toLowerCase()
@@ -31,6 +31,17 @@ export const getUploads = async (publicKey: string, pageNo: number) => {
     fileList: fileList,
     totalFiles: userInfo?userInfo.fileCount:0
   }
+}
+
+export const getUploads = async (publicKey: string, pageNo: number) => {
+  const network = getNetwork(publicKey)
+  if (network === 'evm') {
+    publicKey = publicKey.toLowerCase()
+  }
+
+  const fileList = await userUploads(publicKey, pageNo)
+
+  return fileList
 }
 
 // Scope for optimization here

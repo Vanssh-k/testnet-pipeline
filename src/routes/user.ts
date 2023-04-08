@@ -4,6 +4,7 @@ import {
   faucet_status,
   user_data_usage,
   update_data_usage,
+  files_uploaded
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -15,6 +16,12 @@ router.get(
   '/get_uploads',
   validate(validator.getUploadsSchema, { query: true }),
   get_uploads
+)
+
+router.get(
+  '/files_uploaded',
+  validate(validator.getUploadsSchema, { query: true }),
+  files_uploaded
 )
 
 router.get(

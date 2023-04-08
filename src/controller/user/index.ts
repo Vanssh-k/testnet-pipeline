@@ -1,4 +1,4 @@
-import { getUploads, updateDataUsage } from './helper/userHelper'
+import { getUploads, updateDataUsage, getUserFiles } from './helper/userHelper'
 import { NextFunction, Request, Response } from 'express'
 
 export const get_uploads = async (
@@ -7,8 +7,25 @@ export const get_uploads = async (
   next: NextFunction
 ) => {
   try {
-    // Only cache first page
     const fileList = await getUploads(
+      (req?.query?.publicKey as string).trim(),
+      parseInt(req?.query?.pageNo as string, 10)
+    )
+
+    res.status(200).send(fileList)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const files_uploaded = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Only cache first page
+    const fileList = await getUserFiles(
       (req?.query?.publicKey as string).trim(),
       parseInt(req?.query?.pageNo as string, 10)
     )
