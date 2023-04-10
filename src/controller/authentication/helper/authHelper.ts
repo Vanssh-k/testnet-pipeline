@@ -35,11 +35,12 @@ export const getMessage = async (
     updatedDetails.publicKey = updatedDetails.publicKey.trim().toLowerCase()
   }
 
-  await cacheFunction(
-    async () => updateUserDetails(updatedDetails, network),
-    `user-${updatedDetails.publicKey}`,
-    cacheClearTime.day
-  )
+  // await cacheFunction(
+  //   async () => updateUserDetails(updatedDetails, network),
+  //   `user-${updatedDetails.publicKey}`,
+  //   cacheClearTime.day
+  // )
+  const _ = await updateUserDetails(updatedDetails, network);
   return message
 }
 

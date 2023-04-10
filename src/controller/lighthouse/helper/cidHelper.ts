@@ -103,7 +103,7 @@ export const addCidToQueue = async (bodyData: any) => {
   )
 
   // clear cache of first page - Note only first page is cached
-  await clearCacheStartsWith(`getUpload-${bodyData.user.publicKey}-page-1`)
-  await clearCacheStartsWith(`user-${bodyData.user.publicKey}`)
+  // await clearCacheStartsWith(`getUpload-${bodyData.user.publicKey}-page-1`)
+  // await clearCacheStartsWith(`user-${bodyData.user.publicKey}`)
   return 'Success'
 }

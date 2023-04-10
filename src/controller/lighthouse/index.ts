@@ -32,12 +32,12 @@ export const deal_status = async (
 ) => {
   try {
     // Check cache
-    const status = await cacheFunction(
-      async () => cidDealStatus(req.query.cid as string),
-      `dealStatus-${req.query.cid}`,
-      cacheClearTime.day
-    )
-    // const status = await cidDealStatus(req.query.cid as string)
+    // const status = await cacheFunction(
+    //   async () => cidDealStatus(req.query.cid as string),
+    //   `dealStatus-${req.query.cid}`,
+    //   cacheClearTime.day
+    // )
+    const status = await cidDealStatus(req.query.cid as string)
     res.status(200).json(status)
   } catch (error) {
     next(error)
@@ -119,11 +119,12 @@ export const file_info = async (
   next: NextFunction
 ) => {
   try {
-    const record = await cacheFunction(
-      async () => fileDetailsByCid(req.query.cid as string),
-      `cid-${req.query.cid}`,
-      cacheClearTime.day
-    )
+    // const record = await cacheFunction(
+    //   async () => fileDetailsByCid(req.query.cid as string),
+    //   `cid-${req.query.cid}`,
+    //   cacheClearTime.day
+    // )
+    const record = await fileDetailsByCid(req.query.cid as string)
     if (!record) {
       throw new NotFoundError()
     }

@@ -16,16 +16,17 @@ export const getUserFiles = async (publicKey: string, pageNo: number) => {
   const userInfo = await userDetails(publicKey, network)
 
   // Only cache first page
-  let fileList = []
-  if (pageNo === 1) {
-    fileList = await cacheFunction(
-      async () => userUploads(publicKey, pageNo),
-      `getUpload-${publicKey}-page-${pageNo}`,
-      cacheClearTime.day
-    )
-  } else {
-    fileList = await userUploads(publicKey, pageNo)
-  }
+  // let fileList = []
+  // if (pageNo === 1) {
+  //   fileList = await cacheFunction(
+  //     async () => userUploads(publicKey, pageNo),
+  //     `getUpload-${publicKey}-page-${pageNo}`,
+  //     cacheClearTime.day
+  //   )
+  // } else {
+    // fileList = await userUploads(publicKey, pageNo)
+  // }
+  const fileList = await userUploads(publicKey, pageNo)
 
   return {
     fileList: fileList,

@@ -13,7 +13,7 @@ import {
 import { verifyJWT } from '../utils/verifyJWT'
 import getNetwork from './getNetwork'
 import checkApiKey from '../repository/user/auth/checkApiKey'
-import { getCache } from '../repository/cacheClient'
+// import { getCache } from '../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
 
 export default (rules: string[] = [], clauses: string[] = []) => {
@@ -31,8 +31,8 @@ export default (rules: string[] = [], clauses: string[] = []) => {
           let usersPublicKey = req.body.publicKey || req.query.publicKey
           network = getNetwork(usersPublicKey)
           network==='evm'?usersPublicKey=usersPublicKey.toLowerCase():null
-          cacheData = await getCache(`user-${usersPublicKey}`)
-          record = cacheData?cacheData:(await userDetails(usersPublicKey, network)) as any
+          // cacheData = await getCache(`user-${usersPublicKey}`)
+          record = await userDetails(usersPublicKey, network) as any
           if (!record) {
             return next(new NotFoundError())
           }
@@ -77,8 +77,8 @@ export default (rules: string[] = [], clauses: string[] = []) => {
           }
 
           network = getNetwork(keyRecord.publicKey)
-          cacheData = await getCache(`user-${keyRecord.publicKey}`)
-          record = cacheData?cacheData:(await userDetails(keyRecord.publicKey, network)) as any
+          // cacheData = await getCache(`user-${keyRecord.publicKey}`)
+          record = await userDetails(keyRecord.publicKey, network) as any
           if (!record) {
             return next(new NotFoundError())
           }
