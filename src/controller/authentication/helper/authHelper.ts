@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import config from '../../../config'
 import SHA256 from 'crypto-js/sha256'
 import { ForbiddenError } from '../../../errors'
-import { setExCache } from '../../../repository/cacheClient'
+import { cacheFunction } from '../../../repository/cacheClient'
 import removeApiKey from '../../../repository/user/auth/removeApiKey'
 import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
 import { freeDataLimitInBytes, messageString, cacheClearTime } from '../../libs/constants'
@@ -23,17 +23,23 @@ export const getMessage = async (
   const updatedDetails = {
     publicKey,
     message: timestamp,
-    dataLimit: record ? record.dataLimit : freeDataLimitInBytes,
-    dataUsed: record ? record.dataUsed : 0,
-    fileCount: record ? record.fileCount : 0,
+    dataLimit: record.dataLimit ? record.dataLimit : freeDataLimitInBytes,
+    dataUsed: record.dataUsed ? record.dataUsed : 0,
+    fileCount: record.fileCount ? record.fileCount : 0,
     faucet: record?.faucet ? record.faucet : {},
-    network: record ? record.network : network,
-    createdAt: record ? record.createdAt : timestamp,
+    network: record.network ? record.network : network,
+    createdAt: record.createdAt ? record.createdAt : timestamp,
     updatedAt: timestamp,
   }
+  if (network === 'evm') {
+    updatedDetails.publicKey = updatedDetails.publicKey.trim().toLowerCase()
+  }
 
-  await setExCache(`user-${publicKey}`, cacheClearTime.week, updatedDetails)
-  const _ = await updateUserDetails(updatedDetails, network)
+  await cacheFunction(
+    async () => updateUserDetails(updatedDetails, network),
+    `user-${updatedDetails.publicKey}`,
+    cacheClearTime.day
+  )
   return message
 }
 

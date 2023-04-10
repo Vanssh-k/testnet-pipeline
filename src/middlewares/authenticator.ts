@@ -1,3 +1,4 @@
+import config from '../config'
 import SHA256 from 'crypto-js/sha256'
 import userDetails from '../repository/user/userDetails'
 import getMigrationRequestInfo from '../repository/migration/getMigrationRequestInfo'
@@ -14,7 +15,6 @@ import getNetwork from './getNetwork'
 import checkApiKey from '../repository/user/auth/checkApiKey'
 import { getCache } from '../repository/cacheClient'
 import { NextFunction, Request, Response } from 'express'
-import config from '../config'
 
 export default (rules: string[] = [], clauses: string[] = []) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -28,8 +28,9 @@ export default (rules: string[] = [], clauses: string[] = []) => {
       let cacheData = null
       switch (rule) {
         case 'verifysignature':
-          const usersPublicKey = req.body.publicKey || req.query.publicKey
+          let usersPublicKey = req.body.publicKey || req.query.publicKey
           network = getNetwork(usersPublicKey)
+          network==='evm'?usersPublicKey=usersPublicKey.toLowerCase():null
           cacheData = await getCache(`user-${usersPublicKey}`)
           record = cacheData?cacheData:(await userDetails(usersPublicKey, network)) as any
           if (!record) {
@@ -45,10 +46,7 @@ export default (rules: string[] = [], clauses: string[] = []) => {
           if (!authentic) {
             return next(new AuthenticationError())
           }
-          // record = (await userDetails(usersPublicKey, network)) as any
-          // if (!record) {
-          //   return next(new NotFoundError())
-          // }
+
           req.body.user = record
           break
 
