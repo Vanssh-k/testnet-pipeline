@@ -96,8 +96,8 @@ export default (rules: string[] = [], clauses: string[] = []) => {
             }
           }
           record = (await userDetails(publicKey, network)) as any // Check if user already exist
-          if (!clauses.includes('useNewUserBypass')) {
-            if (!record) {
+          if (!clauses.includes('useNewUserBypass')) { 
+            if (!record.publicKey) {
               return next(new NotFoundError())
             }
           }
