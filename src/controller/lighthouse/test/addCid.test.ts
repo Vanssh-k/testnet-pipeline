@@ -7,7 +7,7 @@ test('Add CID To Queue: GET /add_cid_to_queue', async () => {
   const data = {
     name: 'adiyogi.jpg',
     cid: 'bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34',
-    publicKey: '0x487fc2fE07c593EAb555729c3DD6dF85020B5160',
+    publicKey: '0x487fc2fe07c593eab555729c3dd6df85020b5160',
     encryption: false,
     mimeType: 'image/jpeg',
     size: '239214',
@@ -24,7 +24,7 @@ test('Add CID To Queue Record Not Found: GET /add_cid_to_queue', async () => {
   const data = {
     name: 'adiyogi.jpg',
     cid: 'bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34',
-    publicKey: '0x487fc2fE07c593EAb555729c3DD6dF85020B5179',
+    publicKey: '0x487fc2fe07c593eab555729c3dd6df85020b5161',
     encryption: false,
     mimeType: 'image/jpeg',
     size: '239214',
@@ -32,6 +32,7 @@ test('Add CID To Queue Record Not Found: GET /add_cid_to_queue', async () => {
 
   await supertest(app)
     .post('/api/lighthouse/add_cid_to_queue')
+    .set('Authorization', `Bearer ${config.route_access_token ?? ''}`)
     .send(data)
     .expect(404)
 }, 30000)

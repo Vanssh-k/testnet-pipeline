@@ -4,10 +4,10 @@ import config from '../../config'
 
 // get_uploads
 describe('userHelper', () => {
-  test('Get Uploads: GET /get_uploads', async () => {
+  test('Get Uploads: GET /files_uploaded', async () => {
     await supertest(app)
       .get(
-        '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=1'
+        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=1'
       )
       .expect(200)
       .then((response) => {
@@ -17,18 +17,18 @@ describe('userHelper', () => {
       })
   }, 30000)
 
-  test('Get Uploads Page no 0: GET /get_uploads', async () => {
+  test('Get Uploads Page no 0: GET /files_uploaded', async () => {
     await supertest(app)
       .get(
-        '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=0'
+        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=0'
       )
       .expect(502)
   }, 30000)
 
-  test('Get Uploads Page no>count: GET /get_uploads', async () => {
+  test('Get Uploads Page no>count: GET /files_uploaded', async () => {
     await supertest(app)
       .get(
-        '/api/user/get_uploads?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=10'
+        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=10'
       )
       .expect(200)
       .then((response) => {
