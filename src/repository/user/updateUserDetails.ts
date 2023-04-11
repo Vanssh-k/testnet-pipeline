@@ -28,6 +28,7 @@ export default async (updatedDetails: IUserDetails, network: string) => {
     await dbbClient.put(params)
     return 'Put Successful'
   } catch (error) {
+    console.log(error)
     throw new DatabaseError({})
   }
 }
