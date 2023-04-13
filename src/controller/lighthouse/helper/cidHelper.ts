@@ -14,7 +14,7 @@ export const cidDealStatus = async (cid: string) => {
   const cidRecord = await getCIDRecord(cid)
 
   // Get bundle record
-  let bundleRecord = null
+  let bundleRecord: any
   /* istanbul ignore next */
   if (cidRecord[0]['bundledIn'] !== 'none') {
     bundleRecord = await getBundleRecord(cidRecord[0]['bundledIn'])
