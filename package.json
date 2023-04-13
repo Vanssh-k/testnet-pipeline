@@ -4,7 +4,8 @@
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "start": "nodemon ./src/index.ts",
+        "dev": "nodemon ./src/index.ts",
+        "start": "npx babel-node ./dist/index.js",
         "start-prod": "npx tsc && npx babel-node ./dist/index.js",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "build": "npx tsc",
