@@ -97,19 +97,6 @@ export const get_active_plan_list = async (
   }
 }
 
-export const users_active_plan = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const data = await usersActivePlan(req.query.publicKey as string)
-    res.status(data.status).json({ data: data.data })
-  } catch (error) {
-    next(error)
-  }
-}
-
 export const plan_details_by_id = async (
   req: Request,
   res: Response,

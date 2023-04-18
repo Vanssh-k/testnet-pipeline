@@ -6,7 +6,6 @@ import {
   get_active_plan_list,
   get_subdomain,
   get_user_transactions,
-  users_active_plan,
   plan_details_by_id,
 } from '../controller/topup'
 import validate from '../middlewares/validate'
@@ -54,11 +53,5 @@ router.get(
 )
 
 router.get('/get_active_plan_list', get_active_plan_list)
-
-router.get(
-  '/users_active_plan',
-  validate(validator.publicKeySchema, { query: true }),
-  users_active_plan
-)
 
 export default router
