@@ -29,8 +29,8 @@ const getPlanDetails = async (planId: string) => {
   return { status: 200, data: planList[i] }
 }
 
-const usersActivePlan = async (publicKey: string) => {
-  const { status, subscriptionId } = await getSubscriptionStatus(publicKey)
+const usersActivePlan = async (publicKey: string, subId: number) => {
+  const { status, subscriptionId } = await getSubscriptionStatus(publicKey, subId)
   if (!status) {
     if (subscriptionId > Number.MAX_SAFE_INTEGER) {
       return {
@@ -58,8 +58,8 @@ const usersActivePlan = async (publicKey: string) => {
   }
 }
 
-const activatePlan = async (userRecord: any) => {
-  const activePlan = await usersActivePlan(userRecord.publicKey)
+const activatePlan = async (userRecord: any, subId: number) => {
+  const activePlan = await usersActivePlan(userRecord.publicKey, subId)
   if (activePlan.status !== 200) {
     return {
       status: 403,

@@ -9,8 +9,8 @@ const LighthouseBillingContract = new ethers.Contract(
   polygonProvider
 )
 
-const getSubscriptionStatus = async (publicKey: string) => {
-  const data = await LighthouseBillingContract.getSubscriptionStatus(publicKey)
+const getSubscriptionStatus = async (publicKey: string, subId: number) => {
+  const data = await LighthouseBillingContract.getSubscriptionStatus(publicKey, subId)
   return { status: data[0], subscriptionId: data[1] }
 }
 
