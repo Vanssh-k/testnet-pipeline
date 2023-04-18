@@ -15,7 +15,7 @@ const recordUserTransaction = async (bodyData: any, userRecord: any) => {
     network: bodyData.chain,
     createdAt: Date.now(),
   }
-  // const saveRecord = await recordTransactions(record)
+  const saveRecord = await recordTransactions(record)
   const activate = await activatePlan(userRecord, record.subscriptionID)
   return { status: 200, data: 'Success!!!' }
 }
