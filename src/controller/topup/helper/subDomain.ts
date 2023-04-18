@@ -50,7 +50,10 @@ const createSubDomain = async (publicKey: string, subDomain: string) => {
     }
 
     // has user subscribed to plan
-    const data = await usersActivePlan(publicKey)
+    // Temporary fix till its plan is live
+    const data = {
+      data: {planDetails: {dedicatedGateway: 1}, subscriptionId: 0}, status: 200
+    }//await usersActivePlan(publicKey)
 
     if (data.status !== 200) {
       throw new ForbiddenError()
