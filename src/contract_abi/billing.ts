@@ -1,114 +1,37 @@
 export default [
 	{
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint8",
-				"name": "subscriptionId",
-				"type": "uint8"
+				"indexed": false,
+				"internalType": "uint16",
+				"name": "planID",
+				"type": "uint16"
 			},
 			{
-				"internalType": "uint32",
-				"name": "increase",
-				"type": "uint32"
-			}
-		],
-		"name": "Billing__DEDUCTION_BLOCK_CANT_BE_ZERO",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			}
-		],
-		"name": "Billing__INVALID_ADDRESS",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "asset",
-				"type": "address"
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isActive",
+				"type": "bool"
 			},
 			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
+				"indexed": false,
+				"internalType": "bytes7",
+				"name": "code",
+				"type": "bytes7"
 			}
 		],
-		"name": "Billing__NOT_ENOUGH_BALANCE",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint64",
-				"name": "subscriptionId",
-				"type": "uint64"
-			},
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			}
-		],
-		"name": "Billing__OCCURANCE_STILL_LEFT",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			}
-		],
-		"name": "Billing__STABLECOIN_NOT_ACTIVE",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint64",
-				"name": "subID",
-				"type": "uint64"
-			}
-		],
-		"name": "Billing__SUB_ALREADY_CANCELED",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "subscriptionId",
-				"type": "uint8"
-			},
-			{
-				"internalType": "uint32",
-				"name": "increase",
-				"type": "uint32"
-			}
-		],
-		"name": "Billing__VALUE_CANT_BE_ZERO",
-		"type": "error"
+		"name": "ActivatePlanEvent",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint64",
+				"internalType": "uint16",
 				"name": "planID",
-				"type": "uint64"
+				"type": "uint16"
 			},
 			{
 				"indexed": false,
@@ -175,6 +98,31 @@ export default [
 			{
 				"indexed": true,
 				"internalType": "address",
+				"name": "billingContract",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "ApproveContract",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
 				"name": "beacon",
 				"type": "address"
 			}
@@ -194,11 +142,36 @@ export default [
 			{
 				"indexed": true,
 				"internalType": "uint256",
-				"name": "subscriptionID",
+				"name": "subscriptionId",
 				"type": "uint256"
 			}
 		],
 		"name": "CancelSubscription",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint16",
+				"name": "planID",
+				"type": "uint16"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isActive",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes7",
+				"name": "code",
+				"type": "bytes7"
+			}
+		],
+		"name": "DeactivatePlanEvent",
 		"type": "event"
 	},
 	{
@@ -212,9 +185,9 @@ export default [
 			},
 			{
 				"indexed": true,
-				"internalType": "uint8",
-				"name": "subscriptionID",
-				"type": "uint8"
+				"internalType": "uint16",
+				"name": "subscriptionId",
+				"type": "uint16"
 			},
 			{
 				"indexed": true,
@@ -270,7 +243,7 @@ export default [
 			{
 				"indexed": true,
 				"internalType": "uint256",
-				"name": "subscriptionID",
+				"name": "subscriptionId",
 				"type": "uint256"
 			},
 			{
@@ -281,31 +254,6 @@ export default [
 			}
 		],
 		"name": "PlanPurchased",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint64",
-				"name": "planID",
-				"type": "uint64"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "isActive",
-				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"internalType": "bytes7",
-				"name": "code",
-				"type": "bytes7"
-			}
-		],
-		"name": "RemovePlanEvent",
 		"type": "event"
 	},
 	{
@@ -356,9 +304,9 @@ export default [
 			},
 			{
 				"indexed": true,
-				"internalType": "uint64",
-				"name": "subscriptionID",
-				"type": "uint64"
+				"internalType": "uint16",
+				"name": "subscriptionId",
+				"type": "uint16"
 			}
 		],
 		"name": "SubscriptionStatusEvent",
@@ -402,7 +350,7 @@ export default [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "account",
+				"name": "receiver",
 				"type": "address"
 			},
 			{
@@ -418,8 +366,25 @@ export default [
 				"type": "uint256"
 			}
 		],
-		"name": "WithdrawApproval",
+		"name": "WithdrawMoney",
 		"type": "event"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
+			}
+		],
+		"name": "activatePlan",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -464,9 +429,9 @@ export default [
 		"name": "addSubscriptionPlan",
 		"outputs": [
 			{
-				"internalType": "uint8",
+				"internalType": "uint16",
 				"name": "",
-				"type": "uint8"
+				"type": "uint16"
 			}
 		],
 		"stateMutability": "nonpayable",
@@ -475,22 +440,12 @@ export default [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
 			}
 		],
-		"name": "approveAmount",
+		"name": "deactivatePlan",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -548,9 +503,9 @@ export default [
 				"type": "address"
 			},
 			{
-				"internalType": "uint64",
-				"name": "_subscriptionID",
-				"type": "uint64"
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
 			}
 		],
 		"name": "getPayableAmount",
@@ -575,6 +530,11 @@ export default [
 				"internalType": "address",
 				"name": "_user",
 				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
 			}
 		],
 		"name": "getSubscriptionStatus",
@@ -585,9 +545,9 @@ export default [
 				"type": "bool"
 			},
 			{
-				"internalType": "uint64",
+				"internalType": "uint16",
 				"name": "",
-				"type": "uint64"
+				"type": "uint16"
 			},
 			{
 				"internalType": "string",
@@ -601,9 +561,76 @@ export default [
 	{
 		"inputs": [
 			{
-				"internalType": "uint8",
+				"internalType": "address",
+				"name": "_tokenAddress",
+				"type": "address"
+			}
+		],
+		"name": "getTokenbalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
 				"name": "_subscriptionId",
-				"type": "uint8"
+				"type": "uint16"
+			}
+		],
+		"name": "getUserDeductionLeft",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
+			}
+		],
+		"name": "getUserPurchaseCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
 			},
 			{
 				"internalType": "uint32",
@@ -624,19 +651,6 @@ export default [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			}
-		],
-		"name": "isSubscriptionActive",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -644,6 +658,25 @@ export default [
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"name": "planDetails",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -665,9 +698,9 @@ export default [
 	{
 		"inputs": [
 			{
-				"internalType": "uint8",
+				"internalType": "uint16",
 				"name": "_subscriptionId",
-				"type": "uint8"
+				"type": "uint16"
 			},
 			{
 				"internalType": "address",
@@ -676,25 +709,24 @@ export default [
 			}
 		],
 		"name": "purchasePlan",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
-				"internalType": "uint64",
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
 				"name": "_subscriptionId",
-				"type": "uint64"
+				"type": "uint16"
 			}
 		],
-		"name": "removePlan",
+		"name": "renewSubscription",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -783,7 +815,13 @@ export default [
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "_subscriptionId",
+				"type": "uint16"
+			}
+		],
 		"name": "unsubscribe",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -849,5 +887,86 @@ export default [
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "",
+				"type": "uint16"
+			}
+		],
+		"name": "userPlanDetails",
+		"outputs": [
+			{
+				"internalType": "uint32",
+				"name": "deductionLeft",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint96",
+				"name": "lastDebit",
+				"type": "uint96"
+			},
+			{
+				"internalType": "uint16",
+				"name": "subscriptionId",
+				"type": "uint16"
+			},
+			{
+				"internalType": "uint96",
+				"name": "createdAt",
+				"type": "uint96"
+			},
+			{
+				"internalType": "bool",
+				"name": "isCancelled",
+				"type": "bool"
+			},
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint16",
+				"name": "purchasedCount",
+				"type": "uint16"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver",
+				"type": "address"
+			}
+		],
+		"name": "withdrawTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]
