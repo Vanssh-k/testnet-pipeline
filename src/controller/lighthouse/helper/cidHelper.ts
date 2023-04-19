@@ -70,6 +70,21 @@ export const addCidEstuary = async (name: string, cid: string) => {
   return addCidResponse
 }
 
+const sendForDHTPublish = async(cid: string) =>{
+  try{
+    const temp = await axios.get(
+      `http://3.109.185.101:8001/api/add_cid_record?cid=${cid}`,
+      {
+        headers: {
+          Authorization: `Bearer ${config.lighthouse_public_node_token}`
+        }
+      }
+    )
+  } catch {
+    console.log(`Failed to send CID for DHT publish ${cid}`)
+  }
+}
+
 export const addCidToQueue = async (bodyData: any) => {
   const timestamp = Date.now()
 
@@ -101,6 +116,9 @@ export const addCidToQueue = async (bodyData: any) => {
   const __ = await axios.get(
     `http://34.131.213.156/api/deal/add_cid?cid=${bodyData.cid}`
   )
+
+  // Send CID for DHT publish
+  sendForDHTPublish(bodyData.cid)
 
   // clear cache of first page - Note only first page is cached
   // await clearCacheStartsWith(`getUpload-${bodyData.user.publicKey}-page-1`)
