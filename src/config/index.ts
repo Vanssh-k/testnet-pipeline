@@ -18,6 +18,7 @@ const baseConfig = {
   polygon_rpc: process.env.POLYGON_RPC ?? '',
   migration_test_access_token: process.env.MIGRATION_TEST_ACCESS_TOKEN ?? '',
   route_access_token: process.env.ROUTE_ACCESS_TOKEN ?? '',
+  lighthouse_public_node_token: process.env.LIGHTHOUSE_PUBLIC_NODE_TOKEN ?? '',
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET ?? '',
   jwt_secret: process.env.JWT_SECRET ?? '',
   twitter_api_key: process.env.TWITTER_API_KEY ?? '',
@@ -65,6 +66,7 @@ const envVarsSchema = Joi.object({
   twitter_api_key: Joi.string().required().messages({
     'any.required': `'TWITTER_API_KEY IS MISSING'`,
   }),
+  lighthouse_public_node_token: Joi.string(),
   migration_ocean_access_token: Joi.string(),
   lighthouse_billing_address: Joi.string(),
   test_wallet1_private_key: Joi.string(),
