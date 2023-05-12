@@ -5,7 +5,7 @@ import config from '../../../config'
 import updateUserData from '../../../repository/user/updateUserData'
 import filecoinDeal from '../../../repository/filecoin/filecoinDeal'
 import getCIDRecord from '../../../repository/filecoin/getCIDRecord'
-import { clearCacheStartsWith } from '../../../repository/cacheClient'
+import { clearCacheStartsWith } from '../../../repository/db/cacheClient'
 import saveFileMetaData from '../../../repository/file/saveFileMetaData'
 import getBundleRecord from '../../../repository/filecoin/getBundleRecord'
 import { ForbiddenError, BadRequestError, DatabaseError } from '../../../errors'
@@ -70,14 +70,14 @@ export const addCidEstuary = async (name: string, cid: string) => {
   return addCidResponse
 }
 
-const sendForDHTPublish = async(cid: string) =>{
-  try{
+const sendForDHTPublish = async (cid: string) => {
+  try {
     const temp = await axios.get(
       `http://3.109.185.101:8001/api/add_cid_record?cid=${cid}`,
       {
         headers: {
-          Authorization: `Bearer ${config.lighthouse_public_node_token}`
-        }
+          Authorization: `Bearer ${config.lighthouse_public_node_token}`,
+        },
       }
     )
   } catch {
@@ -104,7 +104,10 @@ export const addCidToQueue = async (bodyData: any) => {
   })
 
   // Update data usage
-  const _ = await updateUserData(bodyData.user.publicKey, parseInt(bodyData.size))
+  const _ = await updateUserData(
+    bodyData.user.publicKey,
+    parseInt(bodyData.size)
+  )
 
   // Send CID to Estuary
   // const addCidResponse = await addCid(bodyData.name, bodyData.cid)

@@ -4,7 +4,7 @@ import migrationRequestInfo from '../../../repository/migration/migrationRequest
 import updateUserData from '../../../repository/user/updateUserData'
 import updateMigrationCIDRecord from '../../../repository/migration/updateMigrationCIDRecord'
 import NotFoundError from '../../../errors/not-found-error'
-import { cacheFunction } from '../../../repository/cacheClient'
+import { cacheFunction } from '../../../repository/db/cacheClient'
 import { cacheClearTime } from '../../libs/constants'
 import userDetails from '../../../repository/user/userDetails'
 
@@ -24,13 +24,13 @@ export const getUserFiles = async (publicKey: string, pageNo: number) => {
   //     cacheClearTime.day
   //   )
   // } else {
-    // fileList = await userUploads(publicKey, pageNo)
+  // fileList = await userUploads(publicKey, pageNo)
   // }
   const fileList = await userUploads(publicKey, pageNo)
 
   return {
     fileList: fileList,
-    totalFiles: userInfo?userInfo.fileCount:0
+    totalFiles: userInfo ? userInfo.fileCount : 0,
   }
 }
 

@@ -14,3 +14,12 @@ export const getUploadsSchema = joi.object({
     'any.required': `pageNo not found`,
   }),
 })
+
+export const pinFileSchema = joi.object({
+  cid: joi.string().required().messages({
+    'any.required': `File cid not found`,
+  }),
+  tag: joi.string().required().messages({
+    'any.required': `File tag not found`,
+  }),
+})

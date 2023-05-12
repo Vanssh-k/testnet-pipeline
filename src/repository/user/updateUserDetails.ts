@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { userTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 

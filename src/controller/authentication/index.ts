@@ -8,7 +8,7 @@ import {
 } from './helper/authHelper'
 import { tweetRecharge } from './helper/tweetHelper'
 import { NextFunction, Response, Request } from 'express'
-import { clearCacheStartsWith } from '../../repository/cacheClient'
+import { clearCacheStartsWith } from '../../repository/db/cacheClient'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (

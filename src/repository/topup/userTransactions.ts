@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { userTransactions } from '../../controller/libs/constants'
 
 export const getUserTransactions = async (publicKey: string) => {

@@ -1,7 +1,7 @@
 import { RequestValidationError } from '../errors'
 import { NextFunction, Request, Response } from 'express'
 
-export default (schema: any, intercept: any) => {
+export default (schema: any, intercept: any, allowUnknown = false) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const payload =
       intercept.query && intercept.body
@@ -9,7 +9,7 @@ export default (schema: any, intercept: any) => {
         : intercept.body
         ? { ...req.body }
         : { ...req.query }
-    const validated = schema.validate(payload, { allowUnknown: false })
+    const validated = schema.validate(payload, { allowUnknown })
     if (validated.error) {
       const errors = validated.error.details.map((err: any) => {
         return {

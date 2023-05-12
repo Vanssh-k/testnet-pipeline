@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { fileTable } from '../../controller/libs/constants'
 
 export default async (cid: string) => {

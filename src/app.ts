@@ -10,7 +10,7 @@ import UserRouter from './routes/user'
 import IPNSRouter from './routes/ipns'
 import TopUpRouter from './routes/topup'
 import expressWinston from 'express-winston'
-import {exportAndClearLogs} from './controller/log'
+import { exportAndClearLogs } from './controller/log'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
 import express, { Request, Response } from 'express'
@@ -22,12 +22,14 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.use(expressWinston.logger({
-  winstonInstance: logger,
-  requestFilter: requestFilter,
-  responseFilter: responseFilter,
-  statusLevels: true
-}))
+app.use(
+  expressWinston.logger({
+    winstonInstance: logger,
+    requestFilter: requestFilter,
+    responseFilter: responseFilter,
+    statusLevels: true,
+  })
+)
 
 app.use(morgan('dev'))
 app.use(cors())
@@ -50,8 +52,8 @@ if (!fs.existsSync(config.logPath)) {
 }
 
 cron.schedule('0 0 * * *', () => {
-  console.log('Log CRON Started');
+  console.log('Log CRON Started')
   exportAndClearLogs()
-});
+})
 
 export default app

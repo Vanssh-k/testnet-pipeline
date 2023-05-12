@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import dbbClient from '../../ddbClient'
+import dbbClient from '../../db/ddbClient'
 import { userAuthTable } from '../../../controller/libs/constants'
 
 export default async (id: string) => {

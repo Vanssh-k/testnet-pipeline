@@ -4,7 +4,9 @@ import {
   faucet_status,
   user_data_usage,
   update_data_usage,
-  files_uploaded
+  files_uploaded,
+  getFile,
+  updateTag,
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -31,11 +33,7 @@ router.get(
   user_data_usage
 )
 
-router.get(
-  '/faucet_status',
-  authenticator(['verifyToken']),
-  faucet_status
-)
+router.get('/faucet_status', authenticator(['verifyToken']), faucet_status)
 
 router.get(
   '/update_data_usage',
@@ -43,5 +41,16 @@ router.get(
   authenticator(['verifyMigrationRequest'], ['protectedRoute']),
   update_data_usage
 )
+
+router
+  .route('/pin')
+  .all([
+    // authenticator(['verifyToken']),
+  ])
+  .get(
+    validate(validator.pinFileSchema, { query: true, body: true }, true),
+    getFile
+  )
+  .post(validate(validator.pinFileSchema, { body: true }, true), updateTag)
 
 export default router

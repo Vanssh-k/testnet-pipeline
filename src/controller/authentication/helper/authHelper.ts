@@ -3,10 +3,14 @@ import jwt from 'jsonwebtoken'
 import config from '../../../config'
 import SHA256 from 'crypto-js/sha256'
 import { ForbiddenError } from '../../../errors'
-import { cacheFunction } from '../../../repository/cacheClient'
+import { cacheFunction } from '../../../repository/db/cacheClient'
 import removeApiKey from '../../../repository/user/auth/removeApiKey'
 import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
-import { freeDataLimitInBytes, messageString, cacheClearTime } from '../../libs/constants'
+import {
+  freeDataLimitInBytes,
+  messageString,
+  cacheClearTime,
+} from '../../libs/constants'
 import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
@@ -40,7 +44,7 @@ export const getMessage = async (
   //   `user-${updatedDetails.publicKey}`,
   //   cacheClearTime.day
   // )
-  const _ = await updateUserDetails(updatedDetails, network);
+  const _ = await updateUserDetails(updatedDetails, network)
   return message
 }
 
@@ -51,14 +55,10 @@ export const verifySigner = async (record: any) => {
     algorithm: 'HS256',
     expiresIn: '12h',
   })
-  const refreshToken = jwt.sign(
-    payLoad,
-    config.jwt_refresh_secret,
-    {
-      algorithm: 'HS256',
-      expiresIn: '7d',
-    }
-  )
+  const refreshToken = jwt.sign(payLoad, config.jwt_refresh_secret, {
+    algorithm: 'HS256',
+    expiresIn: '7d',
+  })
 
   return { accessToken, refreshToken }
 }
@@ -69,14 +69,10 @@ export const refreshAccessToken = (record: any) => {
     algorithm: 'HS256',
     expiresIn: '12h',
   })
-  const refreshToken = jwt.sign(
-    payLoad,
-    config.jwt_refresh_secret,
-    {
-      algorithm: 'HS256',
-      expiresIn: '7d',
-    }
-  )
+  const refreshToken = jwt.sign(payLoad, config.jwt_refresh_secret, {
+    algorithm: 'HS256',
+    expiresIn: '7d',
+  })
 
   return { accessToken, refreshToken }
 }

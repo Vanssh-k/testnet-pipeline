@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { gatewayTable } from '../../controller/libs/constants'
 
 const checkSubdomain = async (name: string) => {

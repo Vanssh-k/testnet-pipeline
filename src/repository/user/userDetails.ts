@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { userTable } from '../../controller/libs/constants'
 
 export default async (usersPublicKey: string, network: string) => {
@@ -15,7 +15,14 @@ export default async (usersPublicKey: string, network: string) => {
     }
 
     const record = await dbbClient.get(params)
-    return record.Item ?? { fileCount: 0, message: '', network: '', refreshToken: '' }
+    return (
+      record.Item ?? {
+        fileCount: 0,
+        message: '',
+        network: '',
+        refreshToken: '',
+      }
+    )
   } catch (error: any) {
     console.log(
       chalk.yellow('User Detail Fetch Error: ') + chalk.red(error.message)

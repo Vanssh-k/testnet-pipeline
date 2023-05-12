@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import DatabaseError from '../../errors/database-error'
 import { fileBundleRecords } from '../../controller/libs/constants'
 

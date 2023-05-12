@@ -1,5 +1,6 @@
 import { getUploads, updateDataUsage, getUserFiles } from './helper/userHelper'
 import { NextFunction, Request, Response } from 'express'
+import models from '../../repository/db'
 
 export const get_uploads = async (
   req: Request,
@@ -79,6 +80,44 @@ export const update_data_usage = async (
     )
     res.status(200).json(update)
   } catch (error) {
+    next(error)
+  }
+}
+
+export const getFile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const temp: any = await models.filesModel.getOne({
+      tag: req.body?.tag ?? req.query?.tag,
+      address:
+        req?.body?.user?.publicKey ?? req.body?.address ?? req.query?.address,
+    })
+    return res.status(200).json({ cid: temp?.cid })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await models.filesModel.updateOrCreate(
+      {
+        cid: req.body.cid,
+        address: req?.body?.user?.publicKey ?? req.body.address,
+      },
+      req.body
+    )
+
+    return res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
     next(error)
   }
 }

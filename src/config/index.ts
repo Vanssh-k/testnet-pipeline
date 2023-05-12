@@ -20,20 +20,22 @@ const baseConfig = {
   polygon_rpc: process.env.POLYGON_RPC ?? '',
   migration_test_access_token: process.env.MIGRATION_TEST_ACCESS_TOKEN ?? '',
   route_access_token: process.env.ROUTE_ACCESS_TOKEN ?? '',
-  lighthouse_public_node_token: process.env.LIGHTHOUSE_PUBLIC_NODE_TOKEN ?? '',
+  lighthouse_public_node_token:
+    process.env.LIGHTHOUSE_PUBLIC_NODE_TOKEN ?? 'vsvsvsvs',
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET ?? '',
   jwt_secret: process.env.JWT_SECRET ?? '',
   twitter_api_key: process.env.TWITTER_API_KEY ?? '',
-  test_wallet1_private_key: process.env.TEST_WALLET1_PRIVATE_KEY ?? '',
-  test_wallet2_private_key: process.env.TEST_WALLET2_PRIVATE_KEY ?? '',
-  test_wallet3_private_key: process.env.TEST_WALLET3_PRIVATE_KEY ?? '',
-  test_wallet4_private_key: process.env.TEST_WALLET4_PRIVATE_KEY ?? '',
-  test_wallet5_private_key: process.env.TEST_WALLET5_PRIVATE_KEY ?? '',
-  test_wallet6_private_key: process.env.TEST_WALLET6_PRIVATE_KEY ?? '',
-  test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '',
-  lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '',
-  migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '',
-  port: process.env.PORT ?? 8000,
+  test_wallet1_private_key: process.env.TEST_WALLET1_PRIVATE_KEY ?? '0x02',
+  test_wallet2_private_key: process.env.TEST_WALLET2_PRIVATE_KEY ?? '0x02',
+  test_wallet3_private_key: process.env.TEST_WALLET3_PRIVATE_KEY ?? '0x02',
+  test_wallet4_private_key: process.env.TEST_WALLET4_PRIVATE_KEY ?? '0x02',
+  test_wallet5_private_key: process.env.TEST_WALLET5_PRIVATE_KEY ?? '0x02',
+  test_wallet6_private_key: process.env.TEST_WALLET6_PRIVATE_KEY ?? '0x02',
+  test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02',
+  lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
+  migration_ocean_access_token:
+    process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
+  port: process.env.PORT ?? 9000,
 }
 
 const envVarsSchema = Joi.object({

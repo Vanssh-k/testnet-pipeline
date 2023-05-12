@@ -1,4 +1,4 @@
-import dbbClient from '../ddbClient'
+import dbbClient from '../db/ddbClient'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 import { QueryCommand } from '@aws-sdk/client-dynamodb'
 import { fileTable } from '../../controller/libs/constants'
