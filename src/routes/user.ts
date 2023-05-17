@@ -5,8 +5,9 @@ import {
   user_data_usage,
   update_data_usage,
   files_uploaded,
-  getFile,
-  updateTag,
+  get_tag_details,
+  create_tag,
+  get_all_tags
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -42,15 +43,23 @@ router.get(
   update_data_usage
 )
 
-router
-  .route('/pin')
-  .all([
-    // authenticator(['verifyToken']),
-  ])
-  .get(
-    validate(validator.pinFileSchema, { query: true, body: true }, true),
-    getFile
-  )
-  .post(validate(validator.pinFileSchema, { body: true }, true), updateTag)
+router.post(
+  '/create_tag',
+  validate(validator.createTagSchema, { body: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  create_tag
+)
+
+router.get(
+  '/get_tag_details',
+  validate(validator.getTagSchema, { query: true }),
+  get_tag_details
+)
+
+router.get(
+  '/get_all_tags',
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  get_all_tags
+)
 
 export default router
