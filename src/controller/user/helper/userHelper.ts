@@ -1,4 +1,3 @@
-import { v4 } from 'uuid'
 import getNetwork from '../../../middlewares/getNetwork'
 import userUploads from '../../../repository/file/userUploads'
 import migrationRequestInfo from '../../../repository/migration/migrationRequestInfo'
@@ -8,10 +7,10 @@ import NotFoundError from '../../../errors/not-found-error'
 import { cacheFunction } from '../../../repository/db/cacheClient'
 import { cacheClearTime } from '../../libs/constants'
 import userDetails from '../../../repository/user/userDetails'
-import createTag from '../../../repository/user/createTag'
-import getTagData from '../../../repository/user/getTagData'
-import getAllTags from '../../../repository/user/getAllTags'
-import removeTag from '../../../repository/user/removeTag'
+import createTag from '../../../repository/user/tag/createTag'
+import getTagData from '../../../repository/user/tag/getTagData'
+import getAllTags from '../../../repository/user/tag/getAllTags'
+import removeTag from '../../../repository/user/tag/removeTag'
 
 export const getUserFiles = async (publicKey: string, pageNo: number) => {
   const network = getNetwork(publicKey)
