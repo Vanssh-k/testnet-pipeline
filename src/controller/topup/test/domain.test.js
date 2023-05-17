@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-import ethers from 'ethers'
+import { ethers } from 'ethers'
 import app from '../../../app'
 import config from '../../../config'
 
@@ -12,11 +12,7 @@ test('Add SubDomain Main Case: POST /create_subdomain', async () => {
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text)
-      const provider = new ethers.getDefaultProvider()
-      const signer = new ethers.Wallet(
-        config.test_wallet4_private_key,
-        provider
-      )
+      const signer = new ethers.Wallet(config.test_wallet4_private_key)
       const signedMessage = await signer.signMessage(verificationMessage)
       const data = {
         publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
@@ -39,11 +35,7 @@ test('Add SubDomain Forbidden: POST /create_subdomain', async () => {
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text)
-      const provider = new ethers.getDefaultProvider()
-      const signer = new ethers.Wallet(
-        config.test_wallet4_private_key,
-        provider
-      )
+      const signer = new ethers.Wallet(config.test_wallet4_private_key)
       const signedMessage = await signer.signMessage(verificationMessage)
       const data = {
         publicKey: '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588',
