@@ -1,6 +1,5 @@
-import { getUploads, updateDataUsage, getUserFiles } from './helper/userHelper'
+import { getUploads, updateDataUsage, getUserFiles, createTagHelper, getTagDetailsHelper, getAllTagsHelper } from './helper/userHelper'
 import { NextFunction, Request, Response } from 'express'
-import models from '../../repository/db'
 
 export const get_uploads = async (
   req: Request,
@@ -84,38 +83,44 @@ export const update_data_usage = async (
   }
 }
 
-export const getFile = async (
+export const get_tag_details = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const temp: any = await models.filesModel.getOne({
-      tag: req.body?.tag ?? req.query?.tag,
-      address:
-        req?.body?.user?.publicKey ?? req.body?.address ?? req.query?.address,
-    })
-    return res.status(200).json({ cid: temp?.cid })
+    const tagDetails = await getTagDetailsHelper(req.query.tag as string)
+    return res.status(200).json({ data: tagDetails })
   } catch (error) {
     next(error)
   }
 }
 
-export const updateTag = async (
+export const get_all_tags = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const data = await models.filesModel.updateOrCreate(
-      {
-        cid: req.body.cid,
-        address: req?.body?.user?.publicKey ?? req.body.address,
-      },
-      req.body
-    )
+    const tagDetails = await getAllTagsHelper(req.body.user.publicKey)
+    return res.status(200).json({ data: tagDetails })
+  } catch (error) {
+    next(error)
+  }
+}
 
-    return res.status(200).json({ ...data })
+export const create_tag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await createTagHelper(
+      req.body.tag,
+      req.body.cid,
+      req.body.user.publicKey
+    )
+    return res.status(200).json(response)
   } catch (error) {
     console.log(error)
     next(error)

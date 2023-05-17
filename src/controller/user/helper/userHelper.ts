@@ -7,6 +7,9 @@ import NotFoundError from '../../../errors/not-found-error'
 import { cacheFunction } from '../../../repository/db/cacheClient'
 import { cacheClearTime } from '../../libs/constants'
 import userDetails from '../../../repository/user/userDetails'
+import createTag from '../../../repository/user/createTag'
+import getTagData from '../../../repository/user/getTagData'
+import getAllTags from '../../../repository/user/getAllTags'
 
 export const getUserFiles = async (publicKey: string, pageNo: number) => {
   const network = getNetwork(publicKey)
@@ -81,4 +84,24 @@ export const updateDataUsage = async (
   }
   // TODO handle data usage update for other entreprise
   return 'Success'
+}
+
+export const createTagHelper = async (tag: string, cid: string, publicKey: string) => {
+  const saveResponse = await createTag({
+    tag: tag,
+    cid: cid,
+    publicKey: publicKey,
+    lastUpdate: Date.now()
+  })
+  return saveResponse
+}
+
+export const getTagDetailsHelper = async (tag: string) => {
+  const tagDetails = await getTagData(tag)
+  return tagDetails
+}
+
+export const getAllTagsHelper = async (publicKey: string) => {
+  const tags = await getAllTags(publicKey)
+  return tags
 }
