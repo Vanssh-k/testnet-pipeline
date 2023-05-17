@@ -2,20 +2,17 @@ import dbbClient from '../db/ddbClient'
 import { cidTagTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 
-export default async (tag: string) => {
+export default async (id: string) => {
   try {
     const params = {
       TableName: cidTagTable,
-      IndexName: 'tag-index',
-      KeyConditionExpression: 'tag = :p',
-      ExpressionAttributeValues: {
-        ':p': tag,
+      Key: {
+        id: id,
       },
     }
 
-    const record = await dbbClient.query(params)
-    const Items = record.Items?record.Items:[]
-    return Items
+    const record = await dbbClient.get(params)
+    return record.Item
   } catch (error) {
     console.log(error)
     throw new DatabaseError({})
