@@ -125,7 +125,7 @@ export const get_all_tags = async (
   try {
     const tagDetails = await getAllTagsHelper(req.body.user.publicKey)
     return res.status(200).json({ data: tagDetails })
-  } catch (error) {
+  } catch (error: any) {
     next(error)
   }
 }
@@ -142,8 +142,10 @@ export const create_tag = async (
       req.body.user.publicKey
     )
     return res.status(200).json(response)
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    if(error?.$metadata) {
+      return res.status(502).json('Inappropriate Inputs')
+    }
     next(error)
   }
 }
