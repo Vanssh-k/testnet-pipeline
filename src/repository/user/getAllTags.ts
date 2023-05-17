@@ -14,7 +14,7 @@ export default async (publicKey: string) => {
     }
 
     const record = await dbbClient.query(params)
-    const Items = record.Items
+    const Items = record.Items?record.Items:[]
     return Items
   } catch (error: any) {
     throw new DatabaseError()
