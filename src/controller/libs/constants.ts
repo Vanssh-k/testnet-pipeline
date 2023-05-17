@@ -1,6 +1,7 @@
 const userTable = 'user-record'
 const fileTable = 'files'
 const userAuthTable = 'user-auth'
+const cidTagTable = 'cid-tag-table'
 const gatewayTable = 'dedicatedGatewayRecords'
 const migrationCIDs = 'migrationCIDs'
 const migrationRequestTable = 'migrationRequestTable'
@@ -25,6 +26,7 @@ export {
   userTable,
   userAuthTable,
   fileTable,
+  cidTagTable,
   freeDataLimitInBytes,
   gatewayTable,
   migrationCIDs,
