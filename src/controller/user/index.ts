@@ -1,4 +1,12 @@
-import { getUploads, updateDataUsage, getUserFiles, createTagHelper, getTagDetailsHelper, getAllTagsHelper } from './helper/userHelper'
+import {
+  getUploads,
+  updateDataUsage,
+  getUserFiles,
+  createTagHelper,
+  getTagDetailsHelper,
+  getAllTagsHelper,
+  removeTagHelper
+} from './helper/userHelper'
 import { NextFunction, Request, Response } from 'express'
 
 export const get_uploads = async (
@@ -91,6 +99,19 @@ export const get_tag_details = async (
   try {
     const tagDetails = await getTagDetailsHelper(req.query.tag as string, req.body.user.publicKey)
     return res.status(200).json({ data: tagDetails })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const remove_tag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await removeTagHelper(req.query.tag as string, req.body.user.publicKey)
+    return res.status(200).json('Success')
   } catch (error) {
     next(error)
   }

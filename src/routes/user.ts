@@ -7,7 +7,8 @@ import {
   files_uploaded,
   get_tag_details,
   create_tag,
-  get_all_tags
+  get_all_tags,
+  remove_tag
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -61,6 +62,13 @@ router.get(
   '/get_all_tags',
   authenticator(['verifyToken'], ['publicKeyOnly']),
   get_all_tags
+)
+
+router.delete(
+  '/remove_tag',
+  validate(validator.getTagSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  remove_tag
 )
 
 export default router

@@ -11,6 +11,7 @@ import userDetails from '../../../repository/user/userDetails'
 import createTag from '../../../repository/user/createTag'
 import getTagData from '../../../repository/user/getTagData'
 import getAllTags from '../../../repository/user/getAllTags'
+import removeTag from '../../../repository/user/removeTag'
 
 export const getUserFiles = async (publicKey: string, pageNo: number) => {
   const network = getNetwork(publicKey)
@@ -89,7 +90,7 @@ export const updateDataUsage = async (
 
 export const createTagHelper = async (tag: string, cid: string, publicKey: string) => {
   const saveResponse = await createTag({
-    id: v4(),
+    id: publicKey+'-'+tag,
     tag: tag,
     cid: cid,
     publicKey: publicKey,
@@ -99,17 +100,16 @@ export const createTagHelper = async (tag: string, cid: string, publicKey: strin
 }
 
 export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
-  const tagDetails = await getTagData(tag)
-  let toReturn = null
-  for(let i=0; i< tagDetails.length; i++) {
-    if(tagDetails[i]['publicKey']===publicKey){
-      toReturn = tagDetails[i]
-    }
-  }
-  return toReturn
+  const tagDetails = await getTagData(publicKey+'-'+tag)
+  return tagDetails
 }
 
 export const getAllTagsHelper = async (publicKey: string) => {
   const tags = await getAllTags(publicKey)
   return tags
+}
+
+export const removeTagHelper = async (tag: string, publicKey: string) => {
+  const tagDetails = await removeTag(publicKey+'-'+tag)
+  return 'Success'
 }
