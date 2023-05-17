@@ -1,4 +1,4 @@
-import { publicKeySchema, getUploadsSchema, pinFileSchema } from './user'
+import { publicKeySchema, getUploadsSchema, createTagSchema, getTagSchema } from './user'
 import {
   symbolSchema,
   cidSchema,
@@ -23,7 +23,8 @@ import { verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth'
 import { verifyPublishSchema, verifyRemoveSchema } from './ipns'
 
 export default {
-  pinFileSchema,
+  getTagSchema,
+  createTagSchema,
   verifySignerSchema,
   tweetRechargeSchema,
   apiKeyIdSchema,

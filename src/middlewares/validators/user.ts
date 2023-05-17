@@ -15,11 +15,17 @@ export const getUploadsSchema = joi.object({
   }),
 })
 
-export const pinFileSchema = joi.object({
+export const createTagSchema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `File cid not found`,
   }),
   tag: joi.string().required().messages({
     'any.required': `File tag not found`,
+  }),
+})
+
+export const getTagSchema = joi.object({
+  tag: joi.string().required().messages({
+    'any.required': `tag not found`,
   }),
 })
