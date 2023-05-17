@@ -4,7 +4,7 @@ import getNetwork from '../../middlewares/getNetwork'
 import NotFoundError from '../../errors/not-found-error'
 import { NextFunction, Response, Request } from 'express'
 import { cacheFunction } from '../../repository/db/cacheClient'
-import { cidDealStatus, addCidToQueue } from './helper/cidHelper'
+import { cidDealStatus } from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
 import { migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
@@ -138,20 +138,6 @@ export const file_info = async (
       txHash: record.txHash,
       cidStatus: record.cidStatus,
     })
-  } catch (error) {
-    next(error)
-  }
-}
-
-// Add file to queue for bundled transaction
-export const add_cid_to_queue = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const response = await addCidToQueue(req.body)
-    res.status(200).json(response)
   } catch (error) {
     next(error)
   }

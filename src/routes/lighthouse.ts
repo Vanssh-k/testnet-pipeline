@@ -7,7 +7,6 @@ import {
   migration_request_ent,
   list_migration_requests,
   migration_request_info,
-  add_cid_to_queue,
 } from '../controller/lighthouse'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -57,13 +56,6 @@ router.get(
   '/migration_request_info',
   validate(validator.migrationRequestIdSchema, { query: true }),
   migration_request_info
-)
-
-router.post(
-  '/add_cid_to_queue',
-  validate(validator.addCIDToQueueSchema, { body: true }),
-  authenticator(['verifypublickey'], ['protectedRoute']),
-  add_cid_to_queue
 )
 
 export default router
