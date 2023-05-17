@@ -3,6 +3,7 @@ import { cidTagTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 
 interface ITagDetails {
+  id: string,
   tag: string
   cid: string
   publicKey: string

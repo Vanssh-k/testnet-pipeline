@@ -1,3 +1,4 @@
+import { v4 } from 'uuid'
 import getNetwork from '../../../middlewares/getNetwork'
 import userUploads from '../../../repository/file/userUploads'
 import migrationRequestInfo from '../../../repository/migration/migrationRequestInfo'
@@ -88,6 +89,7 @@ export const updateDataUsage = async (
 
 export const createTagHelper = async (tag: string, cid: string, publicKey: string) => {
   const saveResponse = await createTag({
+    id: v4(),
     tag: tag,
     cid: cid,
     publicKey: publicKey,
@@ -96,9 +98,15 @@ export const createTagHelper = async (tag: string, cid: string, publicKey: strin
   return saveResponse
 }
 
-export const getTagDetailsHelper = async (tag: string) => {
+export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
   const tagDetails = await getTagData(tag)
-  return tagDetails
+  let toReturn = null
+  for(let i=0; i< tagDetails.length; i++) {
+    if(tagDetails[i]['publicKey']===publicKey){
+      toReturn = tagDetails[i]
+    }
+  }
+  return toReturn
 }
 
 export const getAllTagsHelper = async (publicKey: string) => {

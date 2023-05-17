@@ -6,13 +6,16 @@ export default async (tag: string) => {
   try {
     const params = {
       TableName: cidTagTable,
-      Key: {
-        tag: tag
+      IndexName: 'tag-index',
+      KeyConditionExpression: 'tag = :p',
+      ExpressionAttributeValues: {
+        ':p': tag,
       },
     }
 
-    const record = await dbbClient.get(params)
-    return record.Item
+    const record = await dbbClient.query(params)
+    const Items = record.Items?record.Items:[]
+    return Items
   } catch (error) {
     console.log(error)
     throw new DatabaseError({})

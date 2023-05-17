@@ -53,6 +53,7 @@ router.post(
 router.get(
   '/get_tag_details',
   validate(validator.getTagSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   get_tag_details
 )
 

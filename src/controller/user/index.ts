@@ -89,7 +89,7 @@ export const get_tag_details = async (
   next: NextFunction
 ) => {
   try {
-    const tagDetails = await getTagDetailsHelper(req.query.tag as string)
+    const tagDetails = await getTagDetailsHelper(req.query.tag as string, req.body.user.publicKey)
     return res.status(200).json({ data: tagDetails })
   } catch (error) {
     next(error)
