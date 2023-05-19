@@ -1,0 +1,89 @@
+import updateUserDataLimit from '../../../repository/user/updateUserDataLimit'
+import { getSubscriptionStatus } from './billing'
+import { paymentPlans } from '../../libs/paymentPlans'
+
+const getActivePlanList = async () => {
+  const filterPlans = []
+  for (let i = 0; i < paymentPlans.length; i++) {
+    filterPlans.push({
+      subscriptionId: paymentPlans[i]['index'],
+      totalNumOfDeduction: paymentPlans[i]['totalNumOfDeduction'],
+      amount: paymentPlans[i]['amount'],
+      planName: paymentPlans[i]['planName'],
+      dataCap: paymentPlans[i]['storageInGB'],
+      bandwidth: paymentPlans[i]['bandwidthInGB'],
+      dedicatedGateway: paymentPlans[i]['dedicatedGateway'],
+    })
+  }
+  return filterPlans
+}
+
+const getPlanDetails = async (planId: string) => {
+  const planList = await getActivePlanList()
+  let i
+  for (i = 0; i < planList.length; i++) {
+    if (planList[i].subscriptionId === parseInt(planId)) {
+      break
+    }
+  }
+  return { status: 200, data: planList[i] }
+}
+
+const usersActivePlan = async (publicKey: string, subId: number) => {
+  const { status, subscriptionId } = await getSubscriptionStatus(publicKey, subId)
+  if (!status) {
+    if (subscriptionId > Number.MAX_SAFE_INTEGER) {
+      return {
+        status: 401,
+        data: { message: 'kindly purchase an active plan' },
+      }
+    }
+    // TODO: Replace message with plan details
+    // throw new ForbiddenError();
+    return {
+      status: 401,
+      data: {
+        message: `kindly renew or upgrade your plan subscriptionId: ${subscriptionId.toString()}`,
+      },
+    }
+  }
+
+  const planDetails = await getPlanDetails(subscriptionId.toString())
+  return {
+    status: 200,
+    data: {
+      subscriptionId: subscriptionId.toString(),
+      planDetails: planDetails.data,
+    },
+  }
+}
+
+const activatePlan = async (userRecord: any, subId: number) => {
+  const activePlan = await usersActivePlan(userRecord.publicKey, subId)
+  if (activePlan.status !== 200) {
+    return {
+      status: 403,
+      data: {
+        message: `No active plan for user ${userRecord.publicKey}`,
+      },
+    }
+  }
+  const dataCapPurchased =
+    parseInt(`${activePlan?.data?.planDetails?.dataCap ?? 0}`, 10) * 1073741824 //GB converted to bytes
+  
+  // update datacap
+  if (dataCapPurchased) {
+    const updateDataCapResponse = await updateUserDataLimit(
+      userRecord.publicKey,
+      dataCapPurchased
+    )
+    console.log('plan updated')
+  }
+
+  return {
+    status: 200,
+    data: { message: 'Plan activated!!!' },
+  }
+}
+
+export { getActivePlanList, getPlanDetails, usersActivePlan, activatePlan }
