@@ -17,7 +17,7 @@ export const generateKey = async (publicKey: string) => {
   }
 
   // Generate key
-  const keyGen = v4().split('-').join()
+  const keyGen = v4().split('-').join('')
   const ipnsCID = await axios.post(
     `${config.lighthouse_ipns_node}/api/v0/key/gen?arg=${keyGen}`,
     {},
