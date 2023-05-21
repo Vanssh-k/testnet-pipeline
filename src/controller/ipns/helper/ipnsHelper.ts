@@ -19,7 +19,7 @@ export const generateKey = async (publicKey: string) => {
   // Generate key
   const keyGen = v4().split('-').join()
   const ipnsCID = await axios.post(
-    `${config.lighthouse_ipfs_node}/api/v0/key/gen?arg=${keyGen}`,
+    `${config.lighthouse_ipns_node}/api/v0/key/gen?arg=${keyGen}`,
     {},
     {
       headers: {
@@ -60,7 +60,7 @@ export const publishRecord = async (
   }
 
   const publishResponse = await axios.post(
-    `${config.lighthouse_ipfs_node}/api/v0/name/publish?arg=${cid}&key=${id}`,
+    `${config.lighthouse_ipns_node}/api/v0/name/publish?arg=${cid}&key=${id}`,
     {},
     {
       headers: {
@@ -89,7 +89,7 @@ export const removeKey = async (keyName: string, publicKey: string) => {
   }
 
   const removeResponse = await axios.post(
-    `${config.lighthouse_ipfs_node}/api/v0/key/rm?arg=${keyName}`,
+    `${config.lighthouse_ipns_node}/api/v0/key/rm?arg=${keyName}`,
     {},
     {
       headers: {

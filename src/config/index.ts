@@ -10,6 +10,7 @@ const baseConfig = {
   isTest: env === 'testing',
   logPath: 'logs',
   lighthouse_ipfs_node: 'https://node.lighthouse.storage',
+  lighthouse_ipns_node: 'https://ip-10-0-6-68.ap-south-1.compute.internal',
   est_api_key: process.env.EST_API_KEY ?? '',
   covalent_api_key: process.env.COVALENT_API_KEY ?? '',
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID ?? '',
@@ -35,7 +36,7 @@ const baseConfig = {
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
   migration_ocean_access_token:
     process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
-  port: process.env.PORT ?? 9000,
+  port: process.env.PORT ?? 8000,
 }
 
 const envVarsSchema = Joi.object({
