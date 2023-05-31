@@ -12,6 +12,12 @@ export const cidSchema = joi.object({
   }),
 })
 
+export const bundleSchema = joi.object({
+  bundleId: joi.string().required().messages({
+    'any.required': `bundle ID not found`,
+  }),
+})
+
 export const addCidSchema = joi.object({
   name: joi.string().required().messages({
     'any.required': `file name not found`,

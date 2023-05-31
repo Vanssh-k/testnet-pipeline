@@ -2,6 +2,7 @@ import { publicKeySchema, getUploadsSchema, createTagSchema, getTagSchema } from
 import {
   symbolSchema,
   cidSchema,
+  bundleSchema,
   addCIDToQueueSchema,
   addCidSchema,
   migrationRequestEntSchema,
@@ -39,6 +40,7 @@ export default {
   getUploadsSchema,
   symbolSchema,
   cidSchema,
+  bundleSchema,
   addCIDToQueueSchema,
   addCidSchema,
   migrationRequestEntSchema,
