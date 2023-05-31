@@ -8,7 +8,8 @@ import getCIDRecord from '../../../repository/filecoin/getCIDRecord'
 import { clearCacheStartsWith } from '../../../repository/db/cacheClient'
 import saveFileMetaData from '../../../repository/file/saveFileMetaData'
 import getBundleRecord from '../../../repository/filecoin/getBundleRecord'
-import { ForbiddenError, BadRequestError, DatabaseError } from '../../../errors'
+import getCIDList from '../../../repository/filecoin/getCIDList'
+import { BadRequestError } from '../../../errors'
 
 export const cidDealStatus = async (cid: string) => {
   const cidRecord = await getCIDRecord(cid)
@@ -33,9 +34,24 @@ export const cidDealStatus = async (cid: string) => {
     deals[i].dealId = parseInt(deals[i]['chainDealID'])
     deals[i].miner = deals[i]['storageProvider']
     deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
+    deals[i].bundledIn = bundleRecord['bundleId']
   }
 
   return deals
+}
+
+export const bundleDetails = async (bundleId: string) => {
+  const bundleRecord:any = await getBundleRecord(bundleId)
+
+  if(!bundleRecord) {
+    return null
+  }
+  
+  // Get List of CIDs
+  const cidList = await getCIDList(bundleId)
+  bundleRecord['cidList'] = cidList
+
+  return bundleRecord
 }
 
 const addCid = async (name: string, cid: string) => {
