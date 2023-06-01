@@ -34,7 +34,6 @@ export const cidDealStatus = async (cid: string) => {
     deals[i].dealId = parseInt(deals[i]['chainDealID'])
     deals[i].miner = deals[i]['storageProvider']
     deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
-    deals[i].bundledIn = bundleRecord['bundleId']
   }
 
   return deals
