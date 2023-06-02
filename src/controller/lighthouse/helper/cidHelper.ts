@@ -23,14 +23,17 @@ export const cidDealStatus = async (cid: string) => {
 
   // Check bundle status
   // If initiated then get miner details
-  let deals: any[] = []
+  let deals: any = []
   /* istanbul ignore next */
   if (bundleRecord && bundleRecord['bundleStatus'] === 'deal initiated') {
     deals = await filecoinDeal(bundleRecord['bundleId'])
   }
-
+  
   /* istanbul ignore next */
   for (let i = 0; i < deals.length; i++) {
+    deals[i].pieceCID = bundleRecord.commpCID
+    deals[i].payloadCid = bundleRecord.payloadCid
+    deals[i].carFileSize = parseInt(bundleRecord.carFileSize)
     deals[i].dealId = parseInt(deals[i]['chainDealID'])
     deals[i].miner = deals[i]['storageProvider']
     deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
