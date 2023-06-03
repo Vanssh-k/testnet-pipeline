@@ -33,6 +33,7 @@ export const cidDealStatus = async (cid: string) => {
   for (let i = 0; i < deals.length; i++) {
     deals[i].pieceCID = bundleRecord.commpCID
     deals[i].payloadCid = bundleRecord.payloadCid
+    deals[i].pieceSize = parseInt(bundleRecord.pieceSize)
     deals[i].carFileSize = parseInt(bundleRecord.carFileSize)
     deals[i].dealId = parseInt(deals[i]['chainDealID'])
     deals[i].miner = deals[i]['storageProvider']
