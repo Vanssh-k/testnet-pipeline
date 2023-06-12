@@ -6,7 +6,7 @@ import { v4 } from 'uuid'
 export const exportAndClearLogs = async() =>{
   try {
     const date = new Date()
-    const key = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}_coreApi_${v4().split('-')[0]}`
+    const key = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}_coreApi_${v4().split('-')[0]}`
     await uploadS3(key, `${config.logPath}/combined.log`)
 
     // clear logs
