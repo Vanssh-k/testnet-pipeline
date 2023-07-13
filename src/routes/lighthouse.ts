@@ -3,6 +3,7 @@ import {
   get_ticker,
   deal_status,
   file_info,
+  get_proof,
   bundle_details,
   migration_request,
   migration_request_ent,
@@ -37,6 +38,12 @@ router.get(
   '/bundle_details',
   validate(validator.bundleSchema, { query: true }),
   bundle_details
+)
+
+router.get(
+  '/get_proof',
+  validate(validator.cidSchema, { query: true }),
+  get_proof
 )
 
 router.post(
