@@ -7,7 +7,7 @@ export default async (id: string) => {
     const params = {
       TableName: carBundleRecords,
       Key: {
-        bundleId: id,
+        aggregateID: id,
       },
     }
 
@@ -15,6 +15,7 @@ export default async (id: string) => {
     return record.Item ?? []
   } catch (error) {
     /* istanbul ignore next */
+    console.log(error)
     throw new DatabaseError()
   }
 }
