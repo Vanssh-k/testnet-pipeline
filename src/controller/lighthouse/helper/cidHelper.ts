@@ -59,7 +59,6 @@ export const podsi = async (cid: string) => {
 
     // Fetch info from PODSI table
     const records = await podsiRecord(cidRecord[0]['pieceCid'])
-    console.log(records)
     
     /* istanbul ignore next */
     const dealInfo = []
