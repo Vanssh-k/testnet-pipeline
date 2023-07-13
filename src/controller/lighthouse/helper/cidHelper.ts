@@ -9,38 +9,80 @@ import { clearCacheStartsWith } from '../../../repository/db/cacheClient'
 import saveFileMetaData from '../../../repository/file/saveFileMetaData'
 import getBundleRecord from '../../../repository/filecoin/getBundleRecord'
 import getCIDList from '../../../repository/filecoin/getCIDList'
+import podsiRecord from '../../../repository/filecoin/podsiRecord'
 import { BadRequestError } from '../../../errors'
 
 export const cidDealStatus = async (cid: string) => {
   const cidRecord = await getCIDRecord(cid)
 
   // Get bundle record
-  let bundleRecord: any
+  let aggregatedIn: any
   /* istanbul ignore next */
-  if (cidRecord[0]['bundledIn'] !== 'none') {
-    bundleRecord = await getBundleRecord(cidRecord[0]['bundledIn'])
+  if (cidRecord[0]['aggregateIn'] !== 'none') {
+    aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
   }
 
   // Check bundle status
   // If initiated then get miner details
   let deals: any = []
   /* istanbul ignore next */
-  if (bundleRecord && bundleRecord['bundleStatus'] === 'deal initiated') {
-    deals = await filecoinDeal(bundleRecord['bundleId'])
+  if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
+    deals = await filecoinDeal(aggregatedIn['aggregateID'])
   }
   
   /* istanbul ignore next */
   for (let i = 0; i < deals.length; i++) {
-    deals[i].pieceCID = bundleRecord.commpCID
-    deals[i].payloadCid = bundleRecord.payloadCid
-    deals[i].pieceSize = parseInt(bundleRecord.pieceSize)
-    deals[i].carFileSize = parseInt(bundleRecord.carFileSize)
+    deals[i].pieceCID = aggregatedIn.commpCID
+    deals[i].payloadCid = aggregatedIn.payloadCid
+    deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
+    deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
     deals[i].dealId = parseInt(deals[i]['chainDealID'])
     deals[i].miner = deals[i]['storageProvider']
     deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
   }
 
   return deals
+}
+
+export const podsi = async (cid: string) => {
+  const cidRecord = await getCIDRecord(cid)
+  // Get bundle record
+  let aggregatedIn: any
+  /* istanbul ignore next */
+  if (cidRecord[0]['aggregateIn'] !== 'none') {
+    aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
+  }
+
+  /* istanbul ignore next */
+  if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
+    const deals = await filecoinDeal(aggregatedIn['aggregateID'])
+
+    // Fetch info from PODSI table
+    const records = await podsiRecord(cidRecord[0]['pieceCid'])
+    console.log(records)
+    
+    /* istanbul ignore next */
+    const dealInfo = []
+    for (let i = 0; i < deals.length; i++) {
+      dealInfo.push({
+        dealId: parseInt(deals[i]['chainDealID']),
+        storageProvider: deals[i]['storageProvider']
+      })
+    }
+
+    const proofResponse = {
+      pieceCID: aggregatedIn.commpCID,
+      pieceSize: parseInt(aggregatedIn.pieceSize),
+      carFileSize: parseInt(aggregatedIn.carFileSize),
+      proof: records[0],
+      content: parseInt(cidRecord[0]['fileSize']),
+      dealInfo: dealInfo
+    }
+
+    return proofResponse
+  }
+
+  return {}
 }
 
 export const bundleDetails = async (bundleId: string) => {

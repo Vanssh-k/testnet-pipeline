@@ -4,7 +4,7 @@ import getNetwork from '../../middlewares/getNetwork'
 import NotFoundError from '../../errors/not-found-error'
 import { NextFunction, Response, Request } from 'express'
 import { cacheFunction } from '../../repository/db/cacheClient'
-import { cidDealStatus, bundleDetails } from './helper/cidHelper'
+import { cidDealStatus, bundleDetails, podsi } from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
 import { migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
@@ -52,6 +52,19 @@ export const bundle_details = async (
   try {
     const status = await bundleDetails(req.query.bundleId as string)
     res.status(200).json(status)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const get_proof = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const proof = await podsi(req.query.cid as string)
+    res.status(200).json(proof)
   } catch (error) {
     next(error)
   }
