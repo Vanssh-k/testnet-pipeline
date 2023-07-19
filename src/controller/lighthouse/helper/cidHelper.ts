@@ -74,7 +74,6 @@ export const podsi = async (cid: string) => {
       pieceSize: parseInt(aggregatedIn.pieceSize),
       carFileSize: parseInt(aggregatedIn.carFileSize),
       proof: records[0],
-      content: parseInt(cidRecord[0]['fileSize']),
       dealInfo: dealInfo
     }
 
