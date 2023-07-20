@@ -12,6 +12,12 @@ import getCIDList from '../../../repository/filecoin/getCIDList'
 import podsiRecord from '../../../repository/filecoin/podsiRecord'
 import { BadRequestError } from '../../../errors'
 
+// Testnet
+import getCIDRecordTestnet from '../../../repository/filecoin/testnet/getCIDRecordTestnet'
+import getBundleRecordTestnet from '../../../repository/filecoin/testnet/getBundleRecordTestnet'
+import filecoinDealTestnet from '../../../repository/filecoin/testnet/filecoinDealTestnet'
+import podsiRecordTestnet from '../../../repository/filecoin/testnet/podsiRecordTestnet'
+
 export const cidDealStatus = async (cid: string) => {
   const cidRecord = await getCIDRecord(cid)
 
@@ -54,20 +60,60 @@ export const podsi = async (cid: string) => {
   }
 
   /* istanbul ignore next */
-  if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
-    const deals = await filecoinDeal(aggregatedIn['aggregateID'])
+  if (aggregatedIn) {
+    const dealInfo = []
+    if(aggregatedIn['aggFileStatus'] === 'deal initiated') {
+      const deals = await filecoinDeal(aggregatedIn['aggregateID'])
+      for (let i = 0; i < deals.length; i++) {
+        dealInfo.push({
+          dealId: parseInt(deals[i]['chainDealID']),
+          storageProvider: deals[i]['storageProvider']
+        })
+      }
+    }
 
     // Fetch info from PODSI table
     const records = await podsiRecord(cidRecord[0]['pieceCid'])
-    
-    /* istanbul ignore next */
-    const dealInfo = []
-    for (let i = 0; i < deals.length; i++) {
-      dealInfo.push({
-        dealId: parseInt(deals[i]['chainDealID']),
-        storageProvider: deals[i]['storageProvider']
-      })
+
+    const proofResponse = {
+      pieceCID: aggregatedIn.commpCID,
+      pieceSize: parseInt(aggregatedIn.pieceSize),
+      carFileSize: parseInt(aggregatedIn.carFileSize),
+      proof: records[0],
+      dealInfo: dealInfo
     }
+
+    return proofResponse
+  }
+
+  return {}
+}
+
+export const podsiTestnet = async (cid: string) => {
+  const cidRecord = await getCIDRecordTestnet(cid)
+  // Get bundle record
+  let aggregatedIn: any
+  /* istanbul ignore next */
+  if (cidRecord[0]['aggregateIn'] !== 'none') {
+    aggregatedIn = await getBundleRecordTestnet(cidRecord[0]['aggregatedIn'])
+  }
+  
+  /* istanbul ignore next */
+  if (aggregatedIn) {
+    const dealInfo = []
+    if(aggregatedIn['aggFileStatus'] === 'deal initiated'){
+      const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
+      for (let i = 0; i < deals.length; i++) {
+        dealInfo.push({
+          dealId: parseInt(deals[i]['chainDealID']),
+          storageProvider: deals[i]['storageProvider']
+        })
+      }
+    }
+
+    // Fetch info from PODSI table
+    const records = await podsiRecordTestnet(cidRecord[0]['pieceCid'])
+    console.log(records)
 
     const proofResponse = {
       pieceCID: aggregatedIn.commpCID,
