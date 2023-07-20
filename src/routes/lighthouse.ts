@@ -42,7 +42,6 @@ router.get(
 
 router.get(
   '/get_proof',
-  validate(validator.cidSchema, { query: true }),
   get_proof
 )
 
