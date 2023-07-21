@@ -19,35 +19,39 @@ import filecoinDealTestnet from '../../../repository/filecoin/testnet/filecoinDe
 import podsiRecordTestnet from '../../../repository/filecoin/testnet/podsiRecordTestnet'
 
 export const cidDealStatus = async (cid: string) => {
-  const cidRecord = await getCIDRecord(cid)
+  try{
+    const cidRecord = await getCIDRecord(cid)
 
-  // Get bundle record
-  let aggregatedIn: any
-  /* istanbul ignore next */
-  if (cidRecord[0]['aggregateIn'] !== 'none') {
-    aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
-  }
+    // Get bundle record
+    let aggregatedIn: any
+    /* istanbul ignore next */
+    if (cidRecord[0]['aggregateIn'] !== 'none') {
+      aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
+    }
 
-  // Check bundle status
-  // If initiated then get miner details
-  let deals: any = []
-  /* istanbul ignore next */
-  if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
-    deals = await filecoinDeal(aggregatedIn['aggregateID'])
-  }
-  
-  /* istanbul ignore next */
-  for (let i = 0; i < deals.length; i++) {
-    deals[i].pieceCID = aggregatedIn.commpCID
-    deals[i].payloadCid = aggregatedIn.payloadCid
-    deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
-    deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
-    deals[i].dealId = parseInt(deals[i]['chainDealID'])
-    deals[i].miner = deals[i]['storageProvider']
-    deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
-  }
+    // Check bundle status
+    // If initiated then get miner details
+    let deals: any = []
+    /* istanbul ignore next */
+    if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
+      deals = await filecoinDeal(aggregatedIn['aggregateID'])
+    }
+    
+    /* istanbul ignore next */
+    for (let i = 0; i < deals.length; i++) {
+      deals[i].pieceCID = aggregatedIn.commpCID
+      deals[i].payloadCid = aggregatedIn.payloadCid
+      deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
+      deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
+      deals[i].dealId = parseInt(deals[i]['chainDealID'])
+      deals[i].miner = deals[i]['storageProvider']
+      deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
+    }
 
-  return deals
+    return deals
+  } catch(e) {
+    return []
+  }
 }
 
 export const podsi = async (cid: string) => {
