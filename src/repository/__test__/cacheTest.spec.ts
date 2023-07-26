@@ -4,7 +4,7 @@ import {
   cacheFunction,
   removeCache,
   clearCacheStartsWith,
-} from '../cacheClient'
+} from '../db/cacheClient'
 import { v4 } from 'uuid'
 
 const message = {
@@ -30,19 +30,19 @@ describe('cache', () => {
     expect(await setExCache('key', 60, message)).toBe('OK')
   })
   test('get value', async () => {
-    let data = await getCache('key')
+    const data = await getCache('key')
     expect(data).toStrictEqual(message)
   })
   test("get key that doesn't Exist", async () => {
-    let data = await getCache('invalid')
+    const data = await getCache('invalid')
     expect(data).toStrictEqual(null)
   })
   test('cache a function call', async () => {
-    let data = await cacheFunction(mockApiRequest, `test-data${random}`, 60)
+    const data = await cacheFunction(mockApiRequest, `test-data${random}`, 60)
     expect(data).toStrictEqual({ data: 12345 })
   })
   test('with cache call', async () => {
-    let data = await cacheFunction(mockApiRequest, `test-data${random}`, 60)
+    const data = await cacheFunction(mockApiRequest, `test-data${random}`, 60)
     expect(data).toStrictEqual({ data: 12345 })
   })
 })
