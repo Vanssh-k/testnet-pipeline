@@ -7,9 +7,6 @@ export const publicKeySchema = joi.object({
 })
 
 export const getUploadsSchema = joi.object({
-  publicKey: joi.string().required().messages({
-    'any.required': `publicKey not found`,
-  }),
   pageNo: joi.number().integer().messages({
     'any.required': `pageNo not found`,
   }),

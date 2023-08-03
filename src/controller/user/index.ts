@@ -16,7 +16,7 @@ export const get_uploads = async (
 ) => {
   try {
     const fileList = await getUploads(
-      (req?.query?.publicKey as string).trim(),
+      (req.body.user.publicKey as string).trim(),
       parseInt(req?.query?.pageNo as string, 10)
     )
 
@@ -34,7 +34,7 @@ export const files_uploaded = async (
   try {
     // Only cache first page
     const fileList = await getUserFiles(
-      (req?.query?.publicKey as string).trim(),
+      (req.body.user.publicKey as string).trim(),
       parseInt(req?.query?.pageNo as string, 10)
     )
 
