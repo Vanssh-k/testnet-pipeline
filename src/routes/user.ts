@@ -19,12 +19,14 @@ const router = express.Router()
 router.get(
   '/get_uploads',
   validate(validator.getUploadsSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   get_uploads
 )
 
 router.get(
   '/files_uploaded',
   validate(validator.getUploadsSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   files_uploaded
 )
 
