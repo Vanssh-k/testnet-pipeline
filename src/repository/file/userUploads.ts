@@ -16,12 +16,12 @@ export default async (usersPublicKey: string, pageNo: number) => {
       const params: any = {
         TableName: fileTable,
         IndexName: 'publicKey-createdAt-index',
-        ScanIndexForward: true,
+        ScanIndexForward: false,
         KeyConditionExpression: 'publicKey = :p',
         ExpressionAttributeValues: {
           ':p': { S: usersPublicKey },
         },
-        Limit: 2000,
+        Limit: 800,
         ExclusiveStartKey: exclusiveStartKey,
       }
 
@@ -47,7 +47,6 @@ export default async (usersPublicKey: string, pageNo: number) => {
     return Items
   } catch (error) {
     /* istanbul ignore next */
-    console.log(error)
     throw new DatabaseError()
   }
 }
