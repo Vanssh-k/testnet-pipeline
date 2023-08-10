@@ -50,8 +50,7 @@ router.post(
 
 router.post(
   '/create_api_key',
-  validate(validator.verifySignerSchema, { body: true }),
-  authenticator(['verifysignature']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   create_api_key
 )
 
