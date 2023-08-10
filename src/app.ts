@@ -34,7 +34,7 @@ app.use(
 app.use(morgan('dev'))
 app.use(cors())
 
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.status(200).send('OK')
 })
 
