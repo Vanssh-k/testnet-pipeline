@@ -21,7 +21,7 @@ export default async (usersPublicKey: string, pageNo: number) => {
         ExpressionAttributeValues: {
           ':p': { S: usersPublicKey },
         },
-        Limit: 800,
+        Limit: 1000,
         ExclusiveStartKey: exclusiveStartKey,
       }
 
