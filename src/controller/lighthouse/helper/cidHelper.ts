@@ -105,10 +105,11 @@ export const podsiTestnet = async (cid: string) => {
   /* istanbul ignore next */
   if (aggregatedIn) {
     const dealInfo = []
-    if(aggregatedIn['aggFileStatus'] === 'deal initiated'){
+    if(aggregatedIn['fileStatus'] === 'deal initiated'){
       const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
       for (let i = 0; i < deals.length; i++) {
         dealInfo.push({
+          dealUUID: deals[i]['dealUUID'],
           dealId: parseInt(deals[i]['chainDealID']),
           storageProvider: deals[i]['storageProvider']
         })
