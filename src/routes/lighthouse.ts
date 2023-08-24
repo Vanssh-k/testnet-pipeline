@@ -48,7 +48,7 @@ router.get(
 router.post(
   '/migration_request',
   validate(validator.migrationRequestSchema, { body: true }),
-  authenticator(['verifysignature']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   migration_request
 )
 
