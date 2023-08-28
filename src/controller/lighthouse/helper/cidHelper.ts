@@ -118,14 +118,18 @@ export const podsiTestnet = async (cid: string) => {
 
     // Fetch info from PODSI table
     const records = await podsiRecordTestnet(cidRecord[0]['pieceCid'])
-
+    let previousAggregates:any = []
+    if(cidRecord[0].oldAggregates){
+      previousAggregates = Array.from(cidRecord[0].oldAggregates)
+    }
+    
     const proofResponse = {
       pieceCID: aggregatedIn.commpCID,
       pieceSize: parseInt(aggregatedIn.pieceSize),
       carFileSize: parseInt(aggregatedIn.carFileSize),
       proof: records[0],
       dealInfo: dealInfo,
-      previousAggregates: Array.from(cidRecord[0].oldAggregates)
+      previousAggregates: previousAggregates
     }
 
     return proofResponse
