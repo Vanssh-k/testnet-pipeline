@@ -4,6 +4,7 @@ import {
   deal_status,
   file_info,
   get_proof,
+  aggregate_info,
   bundle_details,
   migration_request,
   migration_request_ent,
@@ -43,6 +44,11 @@ router.get(
 router.get(
   '/get_proof',
   get_proof
+)
+
+router.get(
+  '/aggregate_info',
+  aggregate_info
 )
 
 router.post(

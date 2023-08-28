@@ -118,14 +118,44 @@ export const podsiTestnet = async (cid: string) => {
 
     // Fetch info from PODSI table
     const records = await podsiRecordTestnet(cidRecord[0]['pieceCid'])
-    console.log(records)
 
     const proofResponse = {
       pieceCID: aggregatedIn.commpCID,
       pieceSize: parseInt(aggregatedIn.pieceSize),
       carFileSize: parseInt(aggregatedIn.carFileSize),
       proof: records[0],
-      dealInfo: dealInfo
+      dealInfo: dealInfo,
+      previousAggregates: Array.from(cidRecord[0].oldAggregates)
+    }
+
+    return proofResponse
+  }
+
+  return {}
+}
+
+export const aggregateInfo = async (aggregateID: string) => {
+  const  aggregatedIn: any = await getBundleRecordTestnet(aggregateID)
+  
+  /* istanbul ignore next */
+  if (aggregatedIn) {
+    const dealInfo = []
+    if(aggregatedIn['fileStatus'] === 'deal initiated'){
+      const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
+      for (let i = 0; i < deals.length; i++) {
+        dealInfo.push({
+          dealUUID: deals[i]['dealUUID'],
+          dealId: parseInt(deals[i]['chainDealID']),
+          storageProvider: deals[i]['storageProvider']
+        })
+      }
+    }
+
+    const proofResponse = {
+      pieceCID: aggregatedIn.commpCID,
+      pieceSize: parseInt(aggregatedIn.pieceSize),
+      carFileSize: parseInt(aggregatedIn.carFileSize),
+      dealInfo: dealInfo,
     }
 
     return proofResponse
