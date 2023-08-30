@@ -94,39 +94,47 @@ export const podsi = async (cid: string) => {
 }
 
 export const podsiTestnet = async (cid: string) => {
-  const cidRecord = await getCIDRecordTestnet(cid)
+  const cidRecords = await getCIDRecordTestnet(cid)
   // Get bundle record
-  let aggregatedIn: any
-  /* istanbul ignore next */
-  if (cidRecord[0]['aggregateIn'] !== 'none') {
-    aggregatedIn = await getBundleRecordTestnet(cidRecord[0]['aggregatedIn'])
+  let aggregatedIn: any = []
+  
+  for(let i=0; i<cidRecords.length; i++) {
+    if(i>=30) {
+      break
+    }
+    if (cidRecords[i]['aggregateIn'] !== 'none') {
+      const tempAgg = await getBundleRecordTestnet(cidRecords[i]['aggregatedIn'])
+      aggregatedIn.push(tempAgg)
+    }
   }
   
   /* istanbul ignore next */
-  if (aggregatedIn) {
+  if (aggregatedIn.length>0) {
     const dealInfo = []
-    if(aggregatedIn['fileStatus'] === 'deal initiated'){
-      const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
-      for (let i = 0; i < deals.length; i++) {
-        dealInfo.push({
-          dealUUID: deals[i]['dealUUID'],
-          dealId: parseInt(deals[i]['chainDealID']),
-          storageProvider: deals[i]['storageProvider']
-        })
+    for(let i=0; i<aggregatedIn.length; i++) {
+      if(aggregatedIn[i]['fileStatus'] === 'deal initiated'){
+        const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
+        for (let i = 0; i < deals.length; i++) {
+          dealInfo.push({
+            dealUUID: deals[i]['dealUUID'],
+            dealId: parseInt(deals[i]['chainDealID']),
+            storageProvider: deals[i]['storageProvider']
+          })
+        }
       }
     }
 
     // Fetch info from PODSI table
-    const records = await podsiRecordTestnet(cidRecord[0]['pieceCid'])
+    const records = await podsiRecordTestnet(cidRecords[0]['pieceCid'])
     let previousAggregates:any = []
-    if(cidRecord[0].oldAggregates){
-      previousAggregates = Array.from(cidRecord[0].oldAggregates)
+    if(cidRecords[0].oldAggregates){
+      previousAggregates = Array.from(cidRecords[0].oldAggregates)
     }
     
     const proofResponse = {
-      pieceCID: aggregatedIn.commpCID,
-      pieceSize: parseInt(aggregatedIn.pieceSize),
-      carFileSize: parseInt(aggregatedIn.carFileSize),
+      pieceCID: aggregatedIn[0].commpCID,
+      pieceSize: parseInt(aggregatedIn[0].pieceSize),
+      carFileSize: parseInt(aggregatedIn[0].carFileSize),
       proof: records[0],
       dealInfo: dealInfo,
       previousAggregates: previousAggregates
