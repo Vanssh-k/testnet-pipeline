@@ -115,6 +115,9 @@ export const podsiTestnet = async (cid: string) => {
       if(aggregatedIn[i]['fileStatus'] === 'deal initiated'){
         const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
         for (let i = 0; i < deals.length; i++) {
+          if(!parseInt(deals[i]['chainDealID'])) {
+            continue
+          }
           dealInfo.push({
             dealUUID: deals[i]['dealUUID'],
             dealId: parseInt(deals[i]['chainDealID']),
