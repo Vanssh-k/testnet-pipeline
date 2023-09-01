@@ -125,6 +125,9 @@ export const podsiTestnet = async (cid: string) => {
       }
     }
     for(let i=0; i<aggregatedIn.length; i++) {
+      if(i>20){
+        break
+      }
       if(aggregatedIn[i]['fileStatus'] === 'deal initiated'){
         const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
         for (let i = 0; i < deals.length; i++) {
