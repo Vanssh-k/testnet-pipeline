@@ -97,7 +97,11 @@ export const podsiTestnet = async (cid: string) => {
   const cidRecords = await getCIDRecordTestnet(cid)
   // Get bundle record
   let aggregatedIn: any = []
-  
+  let pieceCID = ""
+  let pieceSize = 0
+  let carFileSize = 0
+  let aggregateInfoIndex = 0
+
   for(let i=0; i<cidRecords.length; i++) {
     if(i>=30) {
       break
@@ -108,9 +112,18 @@ export const podsiTestnet = async (cid: string) => {
     }
   }
   
-  /* istanbul ignore next */
+
   if (aggregatedIn.length>0) {
     const dealInfo = []
+    for(let i=0; i<aggregatedIn.length; i++) {
+      if(aggregatedIn[i]["commpCID"]){
+        aggregateInfoIndex = i
+        pieceCID = aggregatedIn[i]["commpCID"]
+        pieceSize = parseInt(aggregatedIn[i].pieceSize)
+        carFileSize = parseInt(aggregatedIn[i].carFileSize)
+        break
+      }
+    }
     for(let i=0; i<aggregatedIn.length; i++) {
       if(aggregatedIn[i]['fileStatus'] === 'deal initiated'){
         const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
@@ -128,16 +141,16 @@ export const podsiTestnet = async (cid: string) => {
     }
 
     // Fetch info from PODSI table
-    const records = await podsiRecordTestnet(cidRecords[0]['pieceCid'])
+    const records = await podsiRecordTestnet(cidRecords[aggregateInfoIndex]['pieceCid'])
     let previousAggregates:any = []
     if(cidRecords[0].oldAggregates){
       previousAggregates = Array.from(cidRecords[0].oldAggregates)
     }
     
     const proofResponse = {
-      pieceCID: aggregatedIn[0].commpCID,
-      pieceSize: parseInt(aggregatedIn[0].pieceSize),
-      carFileSize: parseInt(aggregatedIn[0].carFileSize),
+      pieceCID: pieceCID,
+      pieceSize: pieceSize,
+      carFileSize: carFileSize,
       proof: records[0],
       dealInfo: dealInfo,
       previousAggregates: previousAggregates
