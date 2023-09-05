@@ -1,4 +1,10 @@
-import { publicKeySchema, getUploadsSchema, createTagSchema, getTagSchema } from './user'
+import {
+  publicKeySchema,
+  getUploadsSchema,
+  createTagSchema,
+  getTagSchema,
+  messageSchema
+} from './user'
 import {
   symbolSchema,
   cidSchema,
@@ -25,6 +31,7 @@ import { verifyPublishSchema, verifyRemoveSchema } from './ipns'
 
 export default {
   getTagSchema,
+  messageSchema,
   createTagSchema,
   verifySignerSchema,
   tweetRechargeSchema,

@@ -34,9 +34,10 @@ router.get(
   authenticator(['verifyToken'], ['useRefreshSecret', 'useRefreshEquality']),
   refresh_access_token
 )
+
 router.get(
   '/get_message',
-  validate(validator.publicKeySchema, { query: true }),
+  validate(validator.messageSchema, { query: true }),
   authenticator(['verifypublickey'], ['useWeb3', 'useNewUserBypass']),
   get_message
 )
