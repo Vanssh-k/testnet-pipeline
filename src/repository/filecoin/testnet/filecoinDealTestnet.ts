@@ -5,8 +5,8 @@ export default async (aggregateIn: string) => {
   try {
     const params = {
       TableName: 'testnet-filecoin-deals',
-      IndexName: 'aggregateIn-index',
-      KeyConditionExpression: 'aggregateIn = :a',
+      IndexName: 'aggregateID-index',
+      KeyConditionExpression: 'aggregateID = :a',
       ExpressionAttributeValues: {
         ':a': aggregateIn,
       },

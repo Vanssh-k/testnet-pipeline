@@ -94,37 +94,99 @@ export const podsi = async (cid: string) => {
 }
 
 export const podsiTestnet = async (cid: string) => {
-  const cidRecord = await getCIDRecordTestnet(cid)
+  const cidRecords = await getCIDRecordTestnet(cid)
   // Get bundle record
-  let aggregatedIn: any
-  /* istanbul ignore next */
-  if (cidRecord[0]['aggregateIn'] !== 'none') {
-    aggregatedIn = await getBundleRecordTestnet(cidRecord[0]['aggregatedIn'])
+  let aggregatedIn: any = []
+  let pieceCID = ""
+  let pieceSize = 0
+  let carFileSize = 0
+  let aggregateInfoIndex = 0
+
+  for(let i=0; i<cidRecords.length; i++) {
+    if(i>=30) {
+      break
+    }
+    if (cidRecords[i]['aggregateIn'] !== 'none') {
+      const tempAgg = await getBundleRecordTestnet(cidRecords[i]['aggregatedIn'])
+      aggregatedIn.push(tempAgg)
+    }
   }
+  
+
+  if (aggregatedIn.length>0) {
+    const dealInfo = []
+    for(let i=0; i<aggregatedIn.length; i++) {
+      if(aggregatedIn[i]["commpCID"]){
+        aggregateInfoIndex = i
+        pieceCID = aggregatedIn[i]["commpCID"]
+        pieceSize = parseInt(aggregatedIn[i].pieceSize)
+        carFileSize = parseInt(aggregatedIn[i].carFileSize)
+        break
+      }
+    }
+    for(let i=0; i<aggregatedIn.length; i++) {
+      if(i>20){
+        break
+      }
+      if(aggregatedIn[i]['fileStatus'] === 'deal initiated'){
+        const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
+        for (let i = 0; i < deals.length; i++) {
+          if(!parseInt(deals[i]['chainDealID'])) {
+            continue
+          }
+          dealInfo.push({
+            dealUUID: deals[i]['dealUUID'],
+            dealId: parseInt(deals[i]['chainDealID']),
+            storageProvider: deals[i]['storageProvider']
+          })
+        }
+      }
+    }
+
+    // Fetch info from PODSI table
+    const records = await podsiRecordTestnet(cidRecords[aggregateInfoIndex]['pieceCid'])
+    let previousAggregates:any = []
+    if(cidRecords[0].oldAggregates){
+      previousAggregates = Array.from(cidRecords[0].oldAggregates)
+    }
+    
+    const proofResponse = {
+      pieceCID: pieceCID,
+      pieceSize: pieceSize,
+      carFileSize: carFileSize,
+      proof: records[0],
+      dealInfo: dealInfo,
+      previousAggregates: previousAggregates
+    }
+
+    return proofResponse
+  }
+
+  return {}
+}
+
+export const aggregateInfo = async (aggregateID: string) => {
+  const  aggregatedIn: any = await getBundleRecordTestnet(aggregateID)
   
   /* istanbul ignore next */
   if (aggregatedIn) {
     const dealInfo = []
-    if(aggregatedIn['aggFileStatus'] === 'deal initiated'){
+    if(aggregatedIn['fileStatus'] === 'deal initiated'){
       const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
       for (let i = 0; i < deals.length; i++) {
         dealInfo.push({
+          dealUUID: deals[i]['dealUUID'],
           dealId: parseInt(deals[i]['chainDealID']),
           storageProvider: deals[i]['storageProvider']
         })
       }
     }
 
-    // Fetch info from PODSI table
-    const records = await podsiRecordTestnet(cidRecord[0]['pieceCid'])
-    console.log(records)
-
     const proofResponse = {
       pieceCID: aggregatedIn.commpCID,
       pieceSize: parseInt(aggregatedIn.pieceSize),
       carFileSize: parseInt(aggregatedIn.carFileSize),
-      proof: records[0],
-      dealInfo: dealInfo
+      dealInfo: dealInfo,
     }
 
     return proofResponse

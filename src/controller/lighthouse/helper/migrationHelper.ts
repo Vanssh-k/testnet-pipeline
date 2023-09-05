@@ -14,7 +14,7 @@ export const migrationRequest = async (record: any, bodyData: string) => {
 
   // Verify CID's
   for (let i = 0; i < data.length; i++) {
-    if (!verifyCID(data[i])) {
+    if (!verifyCID(data[i]["cid"])) {
       throw new BadRequestError(`Row ${i}is not a CID`)
     }
   }
@@ -36,9 +36,9 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   for (let i = 0; i < data.length; i++) {
     const saveCIDs = await addMigrationCIDs({
       id: v4().toString(),
-      cid: data[i],
+      cid: data[i]["cid"],
       requestID,
-      fileName: data[i].fileName?data[i].fileName:'',
+      fileName: data[i]["fileName"]?data[i]["fileName"]:'migrated-file',
       fileSizeInBytes: '',
       userDataUpdated: false,
       txHash: '',
@@ -51,6 +51,7 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   const startMigration = axios.get(
     `http://43.205.115.104/api?requestId=${requestID}`
   )
+  console.log(requestID)
   return requestID
 }
 

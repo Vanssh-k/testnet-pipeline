@@ -4,6 +4,7 @@ import {
   deal_status,
   file_info,
   get_proof,
+  aggregate_info,
   bundle_details,
   migration_request,
   migration_request_ent,
@@ -45,10 +46,15 @@ router.get(
   get_proof
 )
 
+router.get(
+  '/aggregate_info',
+  aggregate_info
+)
+
 router.post(
   '/migration_request',
   validate(validator.migrationRequestSchema, { body: true }),
-  authenticator(['verifysignature']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   migration_request
 )
 

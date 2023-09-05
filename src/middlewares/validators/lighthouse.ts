@@ -31,12 +31,6 @@ export const migrationRequestSchema = joi.object({
   data: joi.string().required().messages({
     'any.required': `data not found`,
   }),
-  signedMessage: joi.string().required().messages({
-    'any.required': `signedMessage not found`,
-  }),
-  publicKey: joi.string().required().messages({
-    'any.required': `publicKey not found`,
-  }),
 })
 
 export const migrationRequestEntSchema = joi.object({
