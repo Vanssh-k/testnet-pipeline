@@ -69,4 +69,3 @@ export const useEncRefreshToken = async (publicKey: string, refreshToken: string
         return null
     }
 }
->>>>>>> 098023c ([Added]: Encryption helper)
