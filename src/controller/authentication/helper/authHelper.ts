@@ -15,11 +15,13 @@ import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
 import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
+import { getEncJWT, sendMessageToEnc, useEncRefreshToken } from './encryption'
 
 export const getMessage = async (
   publicKey: string,
   network: string,
-  record: any
+  record: any,
+  encryption: string
 ) => {
   const timestamp = Date.now()
   const message = messageString + timestamp
@@ -39,12 +41,7 @@ export const getMessage = async (
     updatedDetails.publicKey = updatedDetails.publicKey.trim().toLowerCase()
   }
 
-  // await cacheFunction(
-  //   async () => updateUserDetails(updatedDetails, network),
-  //   `user-${updatedDetails.publicKey}`,
-  //   cacheClearTime.day
-  // )
-  const _ = await updateUserDetails(updatedDetails, network)
+  const _ = await Promise.all([`${encryption}`?.toLowerCase() === 'true' ? sendMessageToEnc(publicKey, message) : null, updateUserDetails(updatedDetails, network)])
   return message
 }
 
@@ -63,7 +60,7 @@ export const verifySigner = async (record: any) => {
   return { accessToken, refreshToken }
 }
 
-export const refreshAccessToken = (record: any) => {
+export const refreshAccessToken = async (record: any) => {
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',

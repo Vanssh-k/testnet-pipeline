@@ -10,6 +10,15 @@ const baseConfig = {
   isTest: env === 'testing',
   logPath: 'logs',
   lighthouse_ipfs_node: 'https://node.lighthouse.storage',
+  lighthouse_auth_enc_node: "https://encryption.lighthouse.storage",
+  lighthouse_encryption_nodes: [
+    'https://encryption.lighthouse.storage/api/auth-message/1',
+    'https://encryption.lighthouse.storage/api/auth-message/2',
+    'https://encryption.lighthouse.storage/api/auth-message/3',
+    'https://encryption.lighthouse.storage/api/auth-message/4',
+    'https://encryption.lighthouse.storage/api/auth-message/5',
+  ],
+  lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
   lighthouse_ipns_node: 'http://10.0.6.68',
   est_api_key: process.env.EST_API_KEY ?? '',
   covalent_api_key: process.env.COVALENT_API_KEY ?? '',
@@ -26,12 +35,12 @@ const baseConfig = {
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET ?? '',
   jwt_secret: process.env.JWT_SECRET ?? '',
   twitter_api_key: process.env.TWITTER_API_KEY ?? '',
-  test_wallet1_private_key: process.env.TEST_WALLET1_PRIVATE_KEY ?? '0x02',
-  test_wallet2_private_key: process.env.TEST_WALLET2_PRIVATE_KEY ?? '0x02',
-  test_wallet3_private_key: process.env.TEST_WALLET3_PRIVATE_KEY ?? '0x02',
-  test_wallet4_private_key: process.env.TEST_WALLET4_PRIVATE_KEY ?? '0x02',
-  test_wallet5_private_key: process.env.TEST_WALLET5_PRIVATE_KEY ?? '0x02',
-  test_wallet6_private_key: process.env.TEST_WALLET6_PRIVATE_KEY ?? '0x02',
+  test_wallet1_private_key: process.env.TEST_WALLET1_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de81',
+  test_wallet2_private_key: process.env.TEST_WALLET2_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de82',
+  test_wallet3_private_key: process.env.TEST_WALLET3_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de83',
+  test_wallet4_private_key: process.env.TEST_WALLET4_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de84',
+  test_wallet5_private_key: process.env.TEST_WALLET5_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de85',
+  test_wallet6_private_key: process.env.TEST_WALLET6_PRIVATE_KEY ?? '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de86',
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02',
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
   migration_ocean_access_token:
@@ -50,6 +59,11 @@ const envVarsSchema = Joi.object({
   cloudflare_key: Joi.string().required().messages({
     'any.required': `'CLOUDFLARE_KEY IS MISSING'`,
   }),
+  lighthouse_encryption_auth_keys: Joi.array()
+    .required()
+    .items(Joi.string())
+    .max(baseConfig.lighthouse_encryption_nodes.length)
+    .min(baseConfig.lighthouse_encryption_nodes.length),
   transaction_route_token: Joi.string().required().messages({
     'any.required': `'TRANSACTION_ROUTE_TOKEN IS MISSING'`,
   }),
@@ -71,6 +85,7 @@ const envVarsSchema = Joi.object({
   twitter_api_key: Joi.string().required().messages({
     'any.required': `'TWITTER_API_KEY IS MISSING'`,
   }),
+
   lighthouse_public_node_token: Joi.string(),
   migration_ocean_access_token: Joi.string(),
   lighthouse_billing_address: Joi.string(),

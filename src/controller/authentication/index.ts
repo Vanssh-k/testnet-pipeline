@@ -20,7 +20,8 @@ export const get_message = async (
     const message = await getMessage(
       req.query.publicKey as string,
       req.body.network,
-      req.body.user
+      req.body.user,
+      req.query.encryption as string
     )
     res.status(200).json(message)
   } catch (error) {
