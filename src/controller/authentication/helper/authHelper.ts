@@ -15,7 +15,7 @@ import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
 import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
-import { getEncJWT, sendMessageToEnc, useEncRefreshToken } from './encryption'
+import { sendMessageToEnc } from './encryption'
 
 export const getMessage = async (
   publicKey: string,
@@ -60,7 +60,7 @@ export const verifySigner = async (record: any) => {
   return { accessToken, refreshToken }
 }
 
-export const refreshAccessToken = async (record: any) => {
+export const refreshAccessToken = (record: any) => {
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',
