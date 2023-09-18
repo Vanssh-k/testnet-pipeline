@@ -19,7 +19,7 @@ const baseConfig = {
     'https://encryption.lighthouse.storage/api/auth-message/5',
   ],
   lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
-  lighthouse_ipns_node: 'http://10.0.6.68',
+  lighthouse_ipns_node: 'http://10.0.9.53',
   est_api_key: process.env.EST_API_KEY ?? '',
   covalent_api_key: process.env.COVALENT_API_KEY ?? '',
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID ?? '',
