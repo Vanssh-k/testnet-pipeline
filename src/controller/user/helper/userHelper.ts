@@ -103,10 +103,12 @@ export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
   return tagDetails
 }
 
+
 export const getAllTagsHelper = async (publicKey: string) => {
   const tags = await getAllTags(publicKey)
   return tags
 }
+
 
 export const removeTagHelper = async (tag: string, publicKey: string) => {
   const tagDetails = await removeTag(publicKey+'-'+tag)
