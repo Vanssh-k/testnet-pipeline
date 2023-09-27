@@ -14,6 +14,12 @@
         "test": "jest --detectOpenHandles --forceExit",
         "prepare": "husky install"
     },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "pre-push": "npm test"
+        }
+    },
     "lint-staged": {
         "src/**/*": ["prettier --single-quote --write"],
         "**/*.ts":"eslint"
