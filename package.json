@@ -16,8 +16,11 @@
     },
     "lint-staged": {
         "src/**/*": ["prettier --single-quote --write","eslint"]
-
     },
+    "eslintConfig": {
+        "extends": [
+        "prettier"
+        ]},
     "keywords": [],
     "author": "",
     "license": "ISC",
