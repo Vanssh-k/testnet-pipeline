@@ -15,7 +15,8 @@
         "prepare": "husky install"
     },
     "lint-staged": {
-        "src/**/*": "prettier --single-quote --write"
+        "src/**/*": ["prettier --single-quote --write","eslint"]
+
     },
     "keywords": [],
     "author": "",
