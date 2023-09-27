@@ -15,7 +15,8 @@
         "prepare": "husky install"
     },
     "lint-staged": {
-        "src/**/*": ["prettier --single-quote --write","eslint"]
+        "src/**/*": ["prettier --single-quote --write"],
+        "**/*.ts":"eslint"
     },
     "eslintConfig": {
         "extends": [
