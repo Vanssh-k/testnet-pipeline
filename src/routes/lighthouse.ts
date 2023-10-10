@@ -6,6 +6,7 @@ import {
   get_proof,
   aggregate_info,
   bundle_details,
+  pin_cid,
   migration_request,
   migration_request_ent,
   list_migration_requests,
@@ -56,6 +57,13 @@ router.post(
   validate(validator.migrationRequestSchema, { body: true }),
   authenticator(['verifyToken'], ['publicKeyOnly']),
   migration_request
+)
+
+router.post(
+  '/pin',
+  validate(validator.pinningSchema, { body: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  pin_cid
 )
 
 router.post(
