@@ -12,7 +12,7 @@ export const generateKey = async (publicKey: string) => {
   // Check total keys of user
   const ipnsRecords = await getIPNSRecord(publicKey)
   /* istanbul ignore next */
-  if (ipnsRecords.length > 5) {
+  if (ipnsRecords.length > 500) {
     throw new ForbiddenError('IPNS name limit reached!!!')
   }
 
