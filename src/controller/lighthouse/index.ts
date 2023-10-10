@@ -6,7 +6,7 @@ import { NextFunction, Response, Request } from 'express'
 import { cacheFunction } from '../../repository/db/cacheClient'
 import { cidDealStatus, bundleDetails, podsi, podsiTestnet, aggregateInfo } from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
-import { migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
+import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
 import listMigrationRequests from '../../repository/migration/listMigrationRequests'
 
@@ -86,6 +86,19 @@ export const aggregate_info = async (
       proof = await aggregateInfo(req.query.aggregateId as string)
     }
     res.status(200).json(proof)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const pin_cid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const requestID = await pinCID(req.body.user, req.body.cid, req.body.fileName?req.body.fileName:'pinned-file', req.body.raas)
+    res.status(200).json({ requestID })
   } catch (error) {
     next(error)
   }
