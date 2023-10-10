@@ -27,6 +27,13 @@ export const addCidSchema = joi.object({
   }),
 })
 
+export const pinningSchema = joi.object({
+  cid: joi.string().required().messages({
+    'any.required': `cid not found`,
+  }),
+  fileName: joi.string(),
+})
+
 export const migrationRequestSchema = joi.object({
   data: joi.string().required().messages({
     'any.required': `data not found`,
