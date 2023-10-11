@@ -32,6 +32,7 @@ export const pinningSchema = joi.object({
     'any.required': `cid not found`,
   }),
   fileName: joi.string(),
+  raas: joi.any(),
 })
 
 export const migrationRequestSchema = joi.object({
