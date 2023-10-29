@@ -1,14 +1,23 @@
 {
   "root": true,
   "ignorePatterns": [],
+  "parser": "@typescript-eslint/parser",
   "overrides": [
     {
-      "files": ["*.ts"],
+      "files": [
+        "*.ts"
+      ],
       "parserOptions": {
-        "project": ["tsconfig.json"],
+        "project": [
+          "tsconfig.json"
+        ],
         "createDefaultProgram": true
       },
-      "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
+      ],
       "rules": {
         "max-len": "off",
         "no-underscore-dangle": "off",
@@ -29,5 +38,8 @@
         "jsdoc/newline-after-description": "off"
       }
     }
-  ]
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
 }

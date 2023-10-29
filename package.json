@@ -21,12 +21,14 @@
         }
     },
     "lint-staged": {
-        "src/**/*": ["prettier --single-quote --write"],
-        "**/*.ts":"eslint"
+        "src/**/*": [
+            "prettier --single-quote --write"
+        ],
+        "**/*.ts": "eslint"
     },
     "eslintConfig": {
         "extends": [
-        "prettier"
+            "prettier"
         ]
     },
     "keywords": [],
