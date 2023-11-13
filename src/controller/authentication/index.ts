@@ -6,9 +6,7 @@ import {
   revokeApiKey,
   refreshAccessToken,
 } from './helper/authHelper'
-import { tweetRecharge } from './helper/tweetHelper'
 import { NextFunction, Response, Request } from 'express'
-import { clearCacheStartsWith } from '../../repository/db/cacheClient'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (
@@ -130,20 +128,6 @@ export const remove_api_key = async (
       req.body.user.publicKey
     )
     res.status(200).send({ data: 'Success' })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const tweet_recharge = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    await tweetRecharge(req.body.user, req.query.twitterID as string)
-    // await clearCacheStartsWith(`user-${req.body.user.publicKey}`)
-    res.status(200).json('Data Limit Upgraded')
   } catch (error) {
     next(error)
   }
