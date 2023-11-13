@@ -3,7 +3,6 @@ import {
   getCache,
   cacheFunction,
   removeCache,
-  clearCacheStartsWith,
 } from '../db/cacheClient'
 import { v4 } from 'uuid'
 
@@ -20,10 +19,6 @@ function mockApiRequest() {
     }, 500)
   })
 }
-beforeAll(async () => {
-  await removeCache('key')
-  await clearCacheStartsWith('test-data')
-})
 
 describe('cache', () => {
   test('set value', async () => {
