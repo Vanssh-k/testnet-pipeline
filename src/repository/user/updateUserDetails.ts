@@ -1,18 +1,7 @@
-import dbbClient from '../db/ddbClient'
-import { userTable } from '../../controller/libs/constants'
+import { IUserDetails } from '../../types/user'
 import DatabaseError from '../../errors/database-error'
-
-interface IUserDetails {
-  publicKey: string
-  message: number
-  dataLimit: number
-  dataUsed: number
-  fileCount: number
-  faucet: any
-  network: string
-  createdAt: number
-  updatedAt: number
-}
+import { userTable } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient'
 
 export default async (updatedDetails: IUserDetails, network: string) => {
   try {
