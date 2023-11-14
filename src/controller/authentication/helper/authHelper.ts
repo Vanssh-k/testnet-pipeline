@@ -68,7 +68,7 @@ export const getMessage = async (
   return message
 }
 
-export const verifySigner = async (record: any) => {
+export const verifySigner = async (record: IUserDetails) => {
   // Change the message and return access token
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
@@ -83,7 +83,7 @@ export const verifySigner = async (record: any) => {
   return { accessToken, refreshToken }
 }
 
-export const refreshAccessToken = (record: any) => {
+export const refreshAccessToken = (record: IUserDetails) => {
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',
@@ -97,7 +97,7 @@ export const refreshAccessToken = (record: any) => {
   return { accessToken, refreshToken }
 }
 
-export const createApiKey = async (record: any, keyName: string) => {
+export const createApiKey = async (record: IUserDetails, keyName: string) => {
   const prefix = v4().split('-')[0]
   const apiKey = prefix + '.' + v4().split('-').join('')
   const authDetails = {
