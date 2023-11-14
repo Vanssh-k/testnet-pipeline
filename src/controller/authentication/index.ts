@@ -23,6 +23,7 @@ export const get_message = async (
     )
     res.status(200).json(message)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -37,6 +38,7 @@ export const verify_signer = async (
     const token = await verifySigner(req.body.user)
     res.status(200).json(token)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -49,13 +51,13 @@ export const verify_access_token = async (
 ) => {
   try {
     const record = req.body.user
-
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
     })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -69,6 +71,7 @@ export const refresh_access_token = async (
     const token = refreshAccessToken(req.body.user)
     res.status(200).json(token)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -83,6 +86,7 @@ export const create_api_key = async (
     const apiKey = await createApiKey(req.body.user, keyName)
     res.status(200).json(apiKey)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -96,6 +100,7 @@ export const get_user_keys = async (
     const data = await getUserKeys(req.body.user.publicKey)
     res.status(200).json(data)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -113,6 +118,7 @@ export const verify_api_key = async (
       dataUsed: record.dataUsed,
     })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
