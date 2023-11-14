@@ -1,5 +1,6 @@
 import dbbClient from '../../db/ddbClient'
 import { userAuthTable } from '../../../controller/libs/constants'
+import logger from '../../../utils/logger'
 
 export default async (publicKey: string) => {
   try {
@@ -16,7 +17,8 @@ export default async (publicKey: string) => {
     const Items = record.Items ?? []
     return Items
   } catch (error: any) {
-    console.log('Check Api Key Error: ' + error.message)
+    const myLogger = logger('error', 'authentication')
+    myLogger.error('Error fetch user keys: ' + error.message)
     return false
   }
 }
