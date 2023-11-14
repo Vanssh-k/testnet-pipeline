@@ -1,16 +1,8 @@
 import dbbClient from '../../db/ddbClient'
+import { IUserAuthDetails } from '../../../types/user'
 import { userAuthTable } from '../../../controller/libs/constants'
 import DatabaseError from '../../../errors/database-error'
-
-interface IUserAuthDetails {
-  id: string
-  keyName: string
-  publicKey: string
-  apiKey: string
-  keyPrefix: string
-  scope: string
-  lastUpdate: number
-}
+import logger from '../../../utils/logger'
 
 export default async (authDetails: IUserAuthDetails) => {
   try {
@@ -21,8 +13,9 @@ export default async (authDetails: IUserAuthDetails) => {
 
     await dbbClient.put(params)
     return 'Put Successful'
-  } catch (error) {
-    console.log(error)
-    throw new DatabaseError({})
+  } catch (error: any) {
+    const myLogger = logger('error', 'authentication')
+    myLogger.error('In createAPIKey: ' + error.message)
+    throw new DatabaseError('Failed creating API Key')
   }
 }

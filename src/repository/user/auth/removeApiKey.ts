@@ -1,5 +1,6 @@
 import dbbClient from '../../db/ddbClient'
 import { userAuthTable } from '../../../controller/libs/constants'
+import logger from '../../../utils/logger'
 
 export default async (id: string) => {
   try {
@@ -13,7 +14,8 @@ export default async (id: string) => {
     const status = await dbbClient.delete(params)
     return status
   } catch (error: any) {
-    console.log('Delete Api Key Error: ' + error.message)
+    const myLogger = logger('error', 'authentication')
+    myLogger.error('In removeAPIKey: ' + error.message)
     return false
   }
 }
