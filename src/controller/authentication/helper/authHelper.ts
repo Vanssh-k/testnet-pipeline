@@ -1,26 +1,44 @@
-import { v4 } from 'uuid'
+// Third-party libraries
 import jwt from 'jsonwebtoken'
-import config from '../../../config'
+import { v4 } from 'uuid'
 import SHA256 from 'crypto-js/sha256'
-import { ForbiddenError } from '../../../errors'
-import { cacheFunction } from '../../../repository/db/cacheClient'
-import removeApiKey from '../../../repository/user/auth/removeApiKey'
-import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
+
+// Local constants
 import {
   freeDataLimitInBytes,
   messageString,
   cacheClearTime,
 } from '../../libs/constants'
+
+// Local errors
+import { ForbiddenError } from '../../../errors'
+
+// Local config
+import config from '../../../config'
+
+// Local DB
+import { cacheFunction } from '../../../repository/db/cacheClient'
+
+// Local user auth
+import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
+import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
+import removeApiKey from '../../../repository/user/auth/removeApiKey'
+import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
+
+// Local user
 import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
-import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
-import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
+
+// Local encryption
 import { sendMessageToEnc } from './encryption'
+
+// Types
+import { IUserDetails } from '../../../types/user'
 
 export const getMessage = async (
   publicKey: string,
   network: string,
-  record: any,
+  record: IUserDetails | null,
   encryption: string
 ) => {
   const timestamp = Date.now()
@@ -29,19 +47,24 @@ export const getMessage = async (
   const updatedDetails = {
     publicKey,
     message: timestamp,
-    dataLimit: record.dataLimit ? record.dataLimit : freeDataLimitInBytes,
-    dataUsed: record.dataUsed ? record.dataUsed : 0,
-    fileCount: record.fileCount ? record.fileCount : 0,
+    dataLimit: record?.dataLimit ? record.dataLimit : freeDataLimitInBytes,
+    dataUsed: record?.dataUsed ? record.dataUsed : 0,
+    fileCount: record?.fileCount ? record.fileCount : 0,
     faucet: record?.faucet ? record.faucet : {},
-    network: record.network ? record.network : network,
-    createdAt: record.createdAt ? record.createdAt : timestamp,
+    network: record?.network ? record.network : network,
+    createdAt: record?.createdAt ? record.createdAt : timestamp,
     updatedAt: timestamp,
   }
   if (network === 'evm') {
     updatedDetails.publicKey = updatedDetails.publicKey.trim().toLowerCase()
   }
 
-  const _ = await Promise.all([`${encryption}`?.toLowerCase() === 'true' ? sendMessageToEnc(publicKey, message) : null, updateUserDetails(updatedDetails, network)])
+  const _ = await Promise.all([
+    `${encryption}`?.toLowerCase() === 'true'
+      ? sendMessageToEnc(publicKey, message)
+      : null,
+    updateUserDetails(updatedDetails, network),
+  ])
   return message
 }
 
