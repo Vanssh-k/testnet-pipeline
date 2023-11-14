@@ -41,5 +41,5 @@
   ],
   "plugins": [
     "@typescript-eslint"
-  ],
+  ]
 }
