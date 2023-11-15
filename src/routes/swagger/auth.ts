@@ -2,6 +2,8 @@
  *  @swagger
  *  /api/auth/get_auth_message:
  *    get:
+ *      tags:
+ *        - Authentication
  *      summary: Returns authentication message, to be signed by user
  *      parameters:
  *        - in: query
@@ -18,6 +20,8 @@
  *  @swagger
  *  /api/auth/verify_signer:
  *    post:
+ *      tags:
+ *        - Authentication
  *      summary: 'Verify Signer and Access Token'
  *      description: 'This endpoint is used to verify the signer and access token.'
  *      parameters:
@@ -49,6 +53,8 @@
  *  @swagger
  *  /api/auth/verify_access_token:
  *    get:
+ *      tags:
+ *        - Authentication
  *      summary: 'Verify Access Token'
  *      description: 'This endpoint is used to verify the access token.'
  *      parameters:
@@ -65,6 +71,8 @@
  *  @swagger
  *  /api/auth/refresh_access_token:
  *    get:
+ *      tags:
+ *        - Authentication
  *      summary: 'Refresh Access Token'
  *      description: 'This endpoint is used to refresh the access token.'
  *      parameters:
@@ -81,6 +89,8 @@
  *  @swagger
  *  /api/auth/get_api_key:
  *    post:
+ *      tags:
+ *        - Authentication
  *      summary: 'Get API Key'
  *      description: 'This endpoint is used to get an API key.'
  *      parameters:
@@ -105,6 +115,8 @@
  *  @swagger
  *  /api/auth/remove_api_key:
  *    delete:
+ *      tags:
+ *        - Authentication
  *      summary: 'Remove API Key'
  *      description: 'This endpoint is used to remove an API key.'
  *      parameters:
@@ -128,6 +140,8 @@
  *  @swagger
  *  /api/auth/verify_api_key:
  *    get:
+ *      tags:
+ *        - Authentication
  *      summary: 'Verify API Key'
  *      description: 'This endpoint is used to verify an API key.'
  *      parameters:
@@ -148,6 +162,8 @@
  *  @swagger
  *  /api/auth/get_user_keys:
  *    get:
+ *      tags:
+ *        - Authentication
  *      summary: 'Get all API keys for the authenticated user'
  *      description: 'This endpoint retrieves all API keys associated with the authenticated user.'
  *      parameters:
