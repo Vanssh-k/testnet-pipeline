@@ -47,3 +47,24 @@ test('IPNS Test', async () => {
   )
   expect(typeof removeKey.Keys[0]['Id']).toBe('string')
 }, 60000)
+
+test('IPNS Test publishRecord forbidden', async () => {
+  // Publish CID
+  const apiKey = config.test_wallet7_api_key
+  const key = '4aaa95dfd6c4400bb468e94f361598d5'
+  const cid = 'QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc'
+  await supertest(app)
+    .get(`/api/ipns/publish_record?cid=${cid}&keyName=${key}`)
+    .set('Authorization', `Bearer ${apiKey}`)
+    .expect(403)
+}, 1000)
+
+test('IPNS Test removeKey forbidden', async () => {
+  // Publish CID
+  const apiKey = config.test_wallet7_api_key
+  const key = '4aaa95dfd6c4400bb468e94f361598d5'
+  await supertest(app)
+    .delete(`/api/ipns/remove_key?keyName=${key}`)
+    .set('Authorization', `Bearer ${apiKey}`)
+    .expect(403)
+}, 1000)
