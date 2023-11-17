@@ -49,3 +49,4 @@ jobs:
           POLYGON_RPC: ${{ secrets.POLYGON_RPC }}
           TRANSACTION_ROUTE_TOKEN: ${{ secrets.TRANSACTION_ROUTE_TOKEN }}
           CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
+          LIGHTHOUSE_ENC_MESSAGE_TOKENS: ${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
