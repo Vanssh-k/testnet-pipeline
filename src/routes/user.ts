@@ -3,12 +3,11 @@ import {
   get_uploads,
   faucet_status,
   user_data_usage,
-  update_data_usage,
   files_uploaded,
   get_tag_details,
   create_tag,
   get_all_tags,
-  remove_tag
+  remove_tag,
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -38,13 +37,6 @@ router.get(
 )
 
 router.get('/faucet_status', authenticator(['verifyToken']), faucet_status)
-
-router.get(
-  '/update_data_usage',
-  validate(validator.migrationRequestIdSchema, { query: true }),
-  authenticator(['verifyMigrationRequest'], ['protectedRoute']),
-  update_data_usage
-)
 
 router.post(
   '/create_tag',
