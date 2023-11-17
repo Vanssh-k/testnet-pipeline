@@ -9,3 +9,13 @@ export interface IUserDetails {
   createdAt: number
   updatedAt: number
 }
+
+export interface IUserAuthDetails {
+  id: string
+  keyName: string
+  publicKey: string
+  apiKey: string
+  keyPrefix: string
+  scope: string
+  lastUpdate: number
+}
