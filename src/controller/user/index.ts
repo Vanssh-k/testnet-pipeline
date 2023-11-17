@@ -1,12 +1,12 @@
 import {
   getUploads,
-  updateDataUsage,
   getUserFiles,
   createTagHelper,
   getTagDetailsHelper,
   getAllTagsHelper,
-  removeTagHelper
+  removeTagHelper,
 } from './helper/userHelper'
+import logger from '../../utils/logger'
 import { NextFunction, Request, Response } from 'express'
 
 export const get_uploads = async (
@@ -56,6 +56,7 @@ export const user_data_usage = async (
       dataUsed: user.dataUsed,
     })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -69,24 +70,7 @@ export const faucet_status = async (
     const user = req.body.user
     res.status(200).json(user.faucet)
   } catch (error) {
-    next(error)
-  }
-}
-
-export const update_data_usage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { user: record, info } = req as any
-    const update = await updateDataUsage(
-      record,
-      req.query.requestId as string,
-      info.enterprise as string
-    )
-    res.status(200).json(update)
-  } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -97,7 +81,10 @@ export const get_tag_details = async (
   next: NextFunction
 ) => {
   try {
-    const tagDetails = await getTagDetailsHelper(req.query.tag as string, req.body.user.publicKey)
+    const tagDetails = await getTagDetailsHelper(
+      req.query.tag as string,
+      req.body.user.publicKey
+    )
     return res.status(200).json({ data: tagDetails })
   } catch (error) {
     next(error)
@@ -110,7 +97,10 @@ export const remove_tag = async (
   next: NextFunction
 ) => {
   try {
-    const response = await removeTagHelper(req.query.tag as string, req.body.user.publicKey)
+    const response = await removeTagHelper(
+      req.query.tag as string,
+      req.body.user.publicKey
+    )
     return res.status(200).json('Success')
   } catch (error) {
     next(error)
@@ -143,9 +133,13 @@ export const create_tag = async (
     )
     return res.status(200).json(response)
   } catch (error: any) {
-    if(error?.$metadata) {
-      return res.status(502).json('Inappropriate Inputs')
-    }
+    const myLogger = logger('error', 'user')
+    myLogger.error(
+      'In create_tag, create tag failed for tag: ' +
+        req.body.tag +
+        ' error: ' +
+        error.message
+    )
     next(error)
   }
 }
