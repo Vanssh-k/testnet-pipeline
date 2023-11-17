@@ -3,12 +3,11 @@ import supertest from 'supertest'
 import config from '../../../config'
 
 // get_uploads
-describe('userHelper', () => {
+describe('user', () => {
   test('Get Uploads: GET /files_uploaded', async () => {
     await supertest(app)
-      .get(
-        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=1'
-      )
+      .get('/api/user/files_uploaded?pageNo=1')
+      .set('Authorization', `Bearer ${config.test_wallet7_api_key}`)
       .expect(200)
       .then((response) => {
         const uploads = JSON.parse(response.text)
@@ -19,17 +18,15 @@ describe('userHelper', () => {
 
   test('Get Uploads Page no 0: GET /files_uploaded', async () => {
     await supertest(app)
-      .get(
-        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=0'
-      )
+      .get('/api/user/files_uploaded?pageNo=0')
+      .set('Authorization', `Bearer ${config.test_wallet7_api_key}`)
       .expect(502)
   }, 30000)
 
   test('Get Uploads Page no>count: GET /files_uploaded', async () => {
     await supertest(app)
-      .get(
-        '/api/user/files_uploaded?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD&pageNo=10'
-      )
+      .get('/api/user/files_uploaded?pageNo=10')
+      .set('Authorization', `Bearer ${config.test_wallet7_api_key}`)
       .expect(200)
       .then((response) => {
         const uploads = JSON.parse(response.text)
