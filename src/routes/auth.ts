@@ -8,6 +8,7 @@ import {
   remove_api_key,
   create_api_key,
   get_user_keys,
+  verify_user_signature,
 } from '../controller/authentication'
 import validator from '../middlewares/validators'
 import validate from '../middlewares/validate'
@@ -20,6 +21,13 @@ router.get(
   validate(validator.messageSchema, { query: true }),
   authenticator(['verifypublickey'], ['useWeb3', 'useNewUserBypass']),
   get_message
+)
+
+router.post(
+  '/verify_user_signature',
+  validate(validator.verifySignerSchema, { body: true }),
+  authenticator(['verifysignature']),
+  verify_user_signature
 )
 
 router.post(

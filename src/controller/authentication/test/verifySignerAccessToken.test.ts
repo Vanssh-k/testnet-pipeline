@@ -73,3 +73,17 @@ test('Verify Access Token Unauthorized Case: POST /verify_access_token', async (
     .set('Authorization', 'Bearer blablabla')
     .expect(401)
 }, 10000)
+
+test('Verify User Signature: POST /verify_user_signature', async () => {
+  const verificationMessage = await getVerificationMessage()
+  const signedMessage = await getSignedMessage(verificationMessage)
+  const data = {
+    publicKey,
+    signedMessage,
+  }
+  const response = await supertest(app)
+    .post('/api/auth/verify_user_signature')
+    .send(data)
+  const jsonRes = JSON.parse(response.text)
+  expect(typeof jsonRes.publicKey).toBe('string')
+}, 10000)

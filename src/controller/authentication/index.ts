@@ -43,6 +43,25 @@ export const verify_signer = async (
   }
 }
 
+// Return data usage if signature authentic
+export const verify_user_signature = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const record = req.body.user
+    res.status(200).json({
+      publicKey: record.publicKey,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+    })
+  } catch (error) {
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
 // Return if user is authentic along with his data usage
 export const verify_access_token = async (
   req: Request,
