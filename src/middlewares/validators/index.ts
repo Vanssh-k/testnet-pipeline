@@ -1,9 +1,17 @@
-import { publicKeySchema, getUploadsSchema, createTagSchema, getTagSchema } from './user'
+import {
+  publicKeySchema,
+  getUploadsSchema,
+  createTagSchema,
+  getTagSchema,
+  messageSchema
+} from './user'
 import {
   symbolSchema,
   cidSchema,
+  bundleSchema,
   addCIDToQueueSchema,
   addCidSchema,
+  pinningSchema,
   migrationRequestEntSchema,
   migrationRequestIdSchema,
   migrationRequestSchema,
@@ -24,6 +32,7 @@ import { verifyPublishSchema, verifyRemoveSchema } from './ipns'
 
 export default {
   getTagSchema,
+  messageSchema,
   createTagSchema,
   verifySignerSchema,
   tweetRechargeSchema,
@@ -39,6 +48,8 @@ export default {
   getUploadsSchema,
   symbolSchema,
   cidSchema,
+  pinningSchema,
+  bundleSchema,
   addCIDToQueueSchema,
   addCidSchema,
   migrationRequestEntSchema,

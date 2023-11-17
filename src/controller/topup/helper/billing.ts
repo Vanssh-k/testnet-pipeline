@@ -10,10 +10,14 @@ const LighthouseBillingContract = new ethers.Contract(
 )
 
 const getSubscriptionStatus = async (publicKey: string, subId: number) => {
-  const data = await LighthouseBillingContract.getSubscriptionStatus(publicKey, subId)
+  const data = await LighthouseBillingContract.getSubscriptionStatus(
+    publicKey,
+    subId
+  )
   return { status: data[0], subscriptionId: data[1] }
 }
 
+// Not in use currently
 const getPurchasablePlans = async () => {
   const data = await LighthouseBillingContract.getActivePlanList()
   return { activePurchasablePlans: data }

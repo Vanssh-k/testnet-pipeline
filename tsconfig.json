@@ -5,11 +5,13 @@
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,  
-    "target": "ESNext",
+    "module": "commonjs",
+    "target": "es6",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "allowJs": true,
+    "noImplicitAny": true,
   },
   "include": ["src","src/**/*.ts",],
   "exclude": ["node_modules", "**/*.spec.ts","**/*.test.ts",".vscode","dist"],
@@ -17,4 +19,5 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   }
+  
 }

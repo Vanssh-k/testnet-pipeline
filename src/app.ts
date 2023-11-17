@@ -1,21 +1,24 @@
 import fs from 'fs'
+import express, { Request, Response } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import cron from 'node-cron'
+import bodyParser from 'body-parser'
+import expressWinston from 'express-winston'
+
 import config from './config'
 import logger from './utils/logger'
-import bodyParser from 'body-parser'
+import swaggerDocs from './docs/swagger'
+import { requestFilter, responseFilter } from './utils/loggerFilters'
+import { exportAndClearLogs } from './controller/log'
+import errorHandler from './middlewares/error-handler'
+
 import AuthRouter from './routes/auth'
 import UserRouter from './routes/user'
 import IPNSRouter from './routes/ipns'
 import TopUpRouter from './routes/topup'
-import expressWinston from 'express-winston'
-import { exportAndClearLogs } from './controller/log'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
-import express, { Request, Response } from 'express'
-import errorHandler from './middlewares/error-handler'
-import { requestFilter, responseFilter } from './utils/loggerFilters'
 
 const app = express()
 
@@ -24,17 +27,18 @@ app.use(bodyParser.json())
 
 app.use(
   expressWinston.logger({
-    winstonInstance: logger,
+    winstonInstance: logger('info', 'combined'),
     requestFilter: requestFilter,
     responseFilter: responseFilter,
-    statusLevels: true,
   })
 )
 
 app.use(morgan('dev'))
 app.use(cors())
 
-app.get('/api/health', (req: Request, res: Response) => {
+swaggerDocs(app)
+
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).send('OK')
 })
 
@@ -51,9 +55,9 @@ if (!fs.existsSync(config.logPath)) {
   fs.mkdirSync(config.logPath)
 }
 
-cron.schedule('0 0 * * *', () => {
-  console.log('Log CRON Started')
-  exportAndClearLogs()
-})
+// cron.schedule('0 0 * * *', () => {
+//   console.log('Log CRON Started')
+//   exportAndClearLogs()
+// })
 
 export default app

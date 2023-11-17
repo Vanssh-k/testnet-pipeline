@@ -11,11 +11,12 @@ const subscriptionPlans = 'subscriptionPlans'
 const messageString =
   'Please prove you are the owner of this wallet by signing this message, nonce='
 const freeDataLimitInBytes = 1073741824
-const filecoinDealRecords = 'filecoin-deal-records'
-const carBundleRecords = 'car-bundle-records'
-const fileBundleRecords = 'file-bundle-records'
+const filecoinDealRecords = 'filecoin-deals'
+const carBundleRecords = 'aggregate-records'
+const fileBundleRecords = 'file-aggregate-info'
 const ipnsTable = 'user-ipns-records'
 const fileTableEncryption = 'file-table-encryption'
+const filePODSI = 'file-podsi'
 const cacheClearTime = {
   day: 86400,
   week: 604800,
@@ -40,5 +41,6 @@ export {
   fileBundleRecords,
   fileTableEncryption,
   ipnsTable,
+  filePODSI,
   cacheClearTime,
 }

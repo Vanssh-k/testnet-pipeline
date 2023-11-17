@@ -1,13 +1,12 @@
-import dbbClient from '../db/ddbClient'
-import DatabaseError from '../../errors/database-error'
-import { filecoinDealRecords } from '../../controller/libs/constants'
+import dbbClient from '../../db/ddbClient'
+import DatabaseError from '../../../errors/database-error'
 
 export default async (aggregateIn: string) => {
   try {
     const params = {
-      TableName: filecoinDealRecords,
-      IndexName: 'aggregateIn-index',
-      KeyConditionExpression: 'aggregateIn = :a',
+      TableName: 'testnet-filecoin-deals',
+      IndexName: 'aggregateID-index',
+      KeyConditionExpression: 'aggregateID = :a',
       ExpressionAttributeValues: {
         ':a': aggregateIn,
       },

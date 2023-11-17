@@ -3,6 +3,10 @@ import {
   get_ticker,
   deal_status,
   file_info,
+  get_proof,
+  aggregate_info,
+  bundle_details,
+  pin_cid,
   migration_request,
   migration_request_ent,
   list_migration_requests,
@@ -32,11 +36,34 @@ router.get(
   deal_status
 )
 
+router.get(
+  '/bundle_details',
+  validate(validator.bundleSchema, { query: true }),
+  bundle_details
+)
+
+router.get(
+  '/get_proof',
+  get_proof
+)
+
+router.get(
+  '/aggregate_info',
+  aggregate_info
+)
+
 router.post(
   '/migration_request',
   validate(validator.migrationRequestSchema, { body: true }),
-  authenticator(['verifysignature']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   migration_request
+)
+
+router.post(
+  '/pin',
+  validate(validator.pinningSchema, { body: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  pin_cid
 )
 
 router.post(

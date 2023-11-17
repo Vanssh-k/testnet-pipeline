@@ -1,11 +1,10 @@
-import dbbClient from '../db/ddbClient'
-import DatabaseError from '../../errors/database-error'
-import { carBundleRecords } from '../../controller/libs/constants'
+import dbbClient from '../../db/ddbClient'
+import DatabaseError from '../../../errors/database-error'
 
 export default async (id: string) => {
   try {
     const params = {
-      TableName: carBundleRecords,
+      TableName: 'testnet-aggregate-records',
       Key: {
         aggregateID: id,
       },

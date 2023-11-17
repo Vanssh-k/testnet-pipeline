@@ -4,9 +4,9 @@ import getNetwork from '../../middlewares/getNetwork'
 import NotFoundError from '../../errors/not-found-error'
 import { NextFunction, Response, Request } from 'express'
 import { cacheFunction } from '../../repository/db/cacheClient'
-import { cidDealStatus } from './helper/cidHelper'
+import { cidDealStatus, bundleDetails, podsi, podsiTestnet, aggregateInfo } from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
-import { migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
+import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
 import listMigrationRequests from '../../repository/migration/listMigrationRequests'
 
@@ -39,6 +39,66 @@ export const deal_status = async (
     // )
     const status = await cidDealStatus(req.query.cid as string)
     res.status(200).json(status)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const bundle_details = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const status = await bundleDetails(req.query.bundleId as string)
+    res.status(200).json(status)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const get_proof = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let proof
+    if(req.query.network === 'testnet') {
+      proof = await podsiTestnet(req.query.cid as string)
+    } else{
+      proof = await podsi(req.query.cid as string)
+    }
+    res.status(200).json(proof)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const aggregate_info = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let proof
+    if(req.query.network === 'testnet') {
+      proof = await aggregateInfo(req.query.aggregateId as string)
+    }
+    res.status(200).json(proof)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const pin_cid = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const requestID = await pinCID(req.body.user, req.body.cid, req.body.fileName?req.body.fileName:'pinned-file', req.body.raas)
+    res.status(200).json({ requestID })
   } catch (error) {
     next(error)
   }

@@ -49,57 +49,23 @@ export const getUploads = async (publicKey: string, pageNo: number) => {
   return fileList
 }
 
-// Scope for optimization here
-export const updateDataUsage = async (
-  record: any,
-  requestId: string,
-  enterprise: string
+export const createTagHelper = async (
+  tag: string,
+  cid: string,
+  publicKey: string
 ) => {
-  if (enterprise === 'lighthouse') {
-    // Get all CID
-    const cidList = await migrationRequestInfo(requestId)
-    if (!cidList) {
-      /* istanbul ignore next */
-      throw new NotFoundError()
-    }
-
-    // Sum usage for CID pinned but userDataUpdated is false
-    let totalUsage = 0
-
-    const requests = cidList
-      .filter(
-        (cid: any) =>
-          !cid.userDataUpdated &&
-          cid.cidStatus === 'pinned' &&
-          cid.fileSizeInBytes
-      )
-      .map(async (cid: any) => {
-        totalUsage += parseInt(cid.fileSizeInBytes, 10)
-        await updateMigrationCIDRecord(cid.id, true)
-      })
-
-    await Promise.all(requests)
-    const dataUsed = parseInt(record.dataUsed, 10) + totalUsage
-    await updateUserData(record.publicKey, dataUsed)
-    return 'Success'
-  }
-  // TODO handle data usage update for other entreprise
-  return 'Success'
-}
-
-export const createTagHelper = async (tag: string, cid: string, publicKey: string) => {
   const saveResponse = await createTag({
-    id: publicKey+'-'+tag,
+    id: publicKey + '-' + tag,
     tag: tag,
     cid: cid,
     publicKey: publicKey,
-    lastUpdate: Date.now()
+    lastUpdate: Date.now(),
   })
   return saveResponse
 }
 
 export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
-  const tagDetails = await getTagData(publicKey+'-'+tag)
+  const tagDetails = await getTagData(publicKey + '-' + tag)
   return tagDetails
 }
 
@@ -109,6 +75,6 @@ export const getAllTagsHelper = async (publicKey: string) => {
 }
 
 export const removeTagHelper = async (tag: string, publicKey: string) => {
-  const tagDetails = await removeTag(publicKey+'-'+tag)
+  const tagDetails = await removeTag(publicKey + '-' + tag)
   return 'Success'
 }

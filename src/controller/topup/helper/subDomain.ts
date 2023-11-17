@@ -4,7 +4,6 @@ import {
   getRecord,
   updateSubDomain,
 } from '../../../repository/topup/subdomain'
-import { usersActivePlan } from './plansHelper'
 import { addDNSRecord } from './cloudFlareHelper'
 
 import ForbiddenError from '../../../errors/forbidden'
@@ -52,8 +51,9 @@ const createSubDomain = async (publicKey: string, subDomain: string) => {
     // has user subscribed to plan
     // Temporary fix till its plan is live
     const data = {
-      data: {planDetails: {dedicatedGateway: 1}, subscriptionId: 0}, status: 200
-    }//await usersActivePlan(publicKey)
+      data: { planDetails: { dedicatedGateway: 1 }, subscriptionId: 0 },
+      status: 200,
+    } //await usersActivePlan(publicKey)
 
     if (data.status !== 200) {
       throw new ForbiddenError()
@@ -82,7 +82,6 @@ const createSubDomain = async (publicKey: string, subDomain: string) => {
     const dNSRecord = await addDNSRecord(subDomain)
     return { status: 200, data: 'Success' }
   } catch (error) {
-    console.log(error)
     return { status: 403, data: 'Forbidden' }
   }
 }

@@ -1,18 +1,8 @@
-import dbbClient from '../db/ddbClient'
-import { userTable } from '../../controller/libs/constants'
+import { IUserDetails } from '../../types/user'
 import DatabaseError from '../../errors/database-error'
-
-interface IUserDetails {
-  publicKey: string
-  message: number
-  dataLimit: number
-  dataUsed: number
-  fileCount: number
-  faucet: any
-  network: string
-  createdAt: number
-  updatedAt: number
-}
+import { userTable } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient'
+import logger from '../../utils/logger'
 
 export default async (updatedDetails: IUserDetails, network: string) => {
   try {
@@ -27,8 +17,9 @@ export default async (updatedDetails: IUserDetails, network: string) => {
 
     await dbbClient.put(params)
     return 'Put Successful'
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    const myLogger = logger('error', 'authentication')
+    myLogger.error('Error update user details: ' + error.message)
     throw new DatabaseError({})
   }
 }

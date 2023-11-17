@@ -6,9 +6,7 @@ import {
   revokeApiKey,
   refreshAccessToken,
 } from './helper/authHelper'
-import { tweetRecharge } from './helper/tweetHelper'
 import { NextFunction, Response, Request } from 'express'
-import { clearCacheStartsWith } from '../../repository/db/cacheClient'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (
@@ -20,10 +18,12 @@ export const get_message = async (
     const message = await getMessage(
       req.query.publicKey as string,
       req.body.network,
-      req.body.user
+      req.body.user,
+      req.query.encryption as string
     )
     res.status(200).json(message)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -38,6 +38,26 @@ export const verify_signer = async (
     const token = await verifySigner(req.body.user)
     res.status(200).json(token)
   } catch (error) {
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
+// Return data usage if signature authentic
+export const verify_user_signature = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const record = req.body.user
+    res.status(200).json({
+      publicKey: record.publicKey,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+    })
+  } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -50,13 +70,13 @@ export const verify_access_token = async (
 ) => {
   try {
     const record = req.body.user
-
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
     })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -70,6 +90,7 @@ export const refresh_access_token = async (
     const token = refreshAccessToken(req.body.user)
     res.status(200).json(token)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -84,6 +105,7 @@ export const create_api_key = async (
     const apiKey = await createApiKey(req.body.user, keyName)
     res.status(200).json(apiKey)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -97,6 +119,7 @@ export const get_user_keys = async (
     const data = await getUserKeys(req.body.user.publicKey)
     res.status(200).json(data)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -114,6 +137,7 @@ export const verify_api_key = async (
       dataUsed: record.dataUsed,
     })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -129,20 +153,6 @@ export const remove_api_key = async (
       req.body.user.publicKey
     )
     res.status(200).send({ data: 'Success' })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const tweet_recharge = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    await tweetRecharge(req.body.user, req.query.twitterID as string)
-    // await clearCacheStartsWith(`user-${req.body.user.publicKey}`)
-    res.status(200).json('Data Limit Upgraded')
   } catch (error) {
     next(error)
   }

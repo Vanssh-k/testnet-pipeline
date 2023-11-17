@@ -12,6 +12,12 @@ export const cidSchema = joi.object({
   }),
 })
 
+export const bundleSchema = joi.object({
+  bundleId: joi.string().required().messages({
+    'any.required': `bundle ID not found`,
+  }),
+})
+
 export const addCidSchema = joi.object({
   name: joi.string().required().messages({
     'any.required': `file name not found`,
@@ -21,15 +27,17 @@ export const addCidSchema = joi.object({
   }),
 })
 
+export const pinningSchema = joi.object({
+  cid: joi.string().required().messages({
+    'any.required': `cid not found`,
+  }),
+  fileName: joi.string(),
+  raas: joi.any(),
+})
+
 export const migrationRequestSchema = joi.object({
   data: joi.string().required().messages({
     'any.required': `data not found`,
-  }),
-  signedMessage: joi.string().required().messages({
-    'any.required': `signedMessage not found`,
-  }),
-  publicKey: joi.string().required().messages({
-    'any.required': `publicKey not found`,
   }),
 })
 
