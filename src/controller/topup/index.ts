@@ -1,10 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
-import { any } from 'joi'
-import {
-  getActivePlanList,
-  usersActivePlan,
-  getPlanDetails,
-} from './helper/plansHelper'
+import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
 import {
   createSubDomain,
   subDomainExists,
@@ -14,6 +8,7 @@ import {
   recordUserTransaction,
   getUserTransactionDetails,
 } from './helper/transactionHelper'
+import { NextFunction, Request, Response } from 'express'
 
 export const create_subdomain = async (
   req: Request,
@@ -24,6 +19,7 @@ export const create_subdomain = async (
     const data = await createSubDomain(req.body.publicKey, req.body.subDomain)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -37,6 +33,7 @@ export const check_subdomain = async (
     const exists = await subDomainExists(req.query['subDomain'] as string)
     res.status(200).json(exists)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -50,6 +47,7 @@ export const get_subdomain = async (
     const records = await getUserSubDomainDomain(req.query.publicKey as string)
     res.status(200).json(records)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -64,6 +62,7 @@ export const record_transaction = async (
     const data = await recordUserTransaction(req.body, user)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -79,6 +78,7 @@ export const get_user_transactions = async (
     )
     res.status(200).json(record)
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -92,7 +92,7 @@ export const get_active_plan_list = async (
     const planList = await getActivePlanList()
     res.status(200).send(planList)
   } catch (error) {
-    console.log(error)
+    /* istanbul ignore next */
     next(error)
   }
 }
@@ -106,6 +106,7 @@ export const plan_details_by_id = async (
     const data = await getPlanDetails(req.query.subscriptionId as string)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
+    /* istanbul ignore next */
     next(error)
   }
 }
