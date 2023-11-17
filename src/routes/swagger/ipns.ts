@@ -1,8 +1,8 @@
 /**
- * @swagger
- * /api/ipns/generate_key:
- *    get:
- *    tags:
+ *  @swagger
+ *  /api/ipns/generate_key:
+ *   get:
+ *      tags:
  *        - IPNS Operations
  *      summary: 'Generate IPNS key'
  *      description: 'This endpoint generates a new IPNS key.'

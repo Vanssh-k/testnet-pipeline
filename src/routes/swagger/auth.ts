@@ -51,6 +51,37 @@
  *        '401':
  *          description: 'Unauthorized'
  *  @swagger
+ *  /api/auth/verify_user_signature:
+ *   post:
+ *     tags:
+ *      - Authentication
+ *     summary: Verify User Signature
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               publicKey:
+ *                 type: string
+ *               signedMessage:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 publicKey:
+ *                   type: string
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *  @swagger
  *  /api/auth/verify_access_token:
  *    get:
  *      tags:
