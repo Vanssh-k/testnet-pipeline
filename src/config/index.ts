@@ -103,8 +103,6 @@ const envVarsSchema = Joi.object({
     'any.required': `'TWITTER_API_KEY IS MISSING'`,
   }),
 
-  data_dog_key: Joi.string(),
-  data_dog_host: Joi.string(),
   lighthouse_public_node_token: Joi.string(),
   migration_ocean_access_token: Joi.string(),
   lighthouse_billing_address: Joi.string(),
