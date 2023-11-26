@@ -4,9 +4,19 @@ import getNetwork from '../../middlewares/getNetwork'
 import NotFoundError from '../../errors/not-found-error'
 import { NextFunction, Response, Request } from 'express'
 import { cacheFunction } from '../../repository/db/cacheClient'
-import { cidDealStatus, bundleDetails, podsi, podsiTestnet, aggregateInfo } from './helper/cidHelper'
+import {
+  cidDealStatus,
+  bundleDetails,
+  podsi,
+  podsiTestnet,
+  aggregateInfo,
+} from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
-import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migrationHelper'
+import {
+  pinCID,
+  migrationRequest,
+  migrationRequestEnt,
+} from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
 import listMigrationRequests from '../../repository/migration/listMigrationRequests'
 
@@ -64,9 +74,9 @@ export const get_proof = async (
 ) => {
   try {
     let proof
-    if(req.query.network === 'testnet') {
+    if (req.query.network === 'testnet') {
       proof = await podsiTestnet(req.query.cid as string)
-    } else{
+    } else {
       proof = await podsi(req.query.cid as string)
     }
     res.status(200).json(proof)
@@ -82,7 +92,7 @@ export const aggregate_info = async (
 ) => {
   try {
     let proof
-    if(req.query.network === 'testnet') {
+    if (req.query.network === 'testnet') {
       proof = await aggregateInfo(req.query.aggregateId as string)
     }
     res.status(200).json(proof)
@@ -97,7 +107,12 @@ export const pin_cid = async (
   next: NextFunction
 ) => {
   try {
-    const requestID = await pinCID(req.body.user, req.body.cid, req.body.fileName?req.body.fileName:'pinned-file', req.body.raas)
+    const requestID = await pinCID(
+      req.body.user,
+      req.body.cid,
+      req.body.fileName ? req.body.fileName : 'pinned-file',
+      req.body.raas
+    )
     res.status(200).json({ requestID })
   } catch (error) {
     next(error)
@@ -195,7 +210,6 @@ export const file_info = async (
       encryption: record.encryption,
       fileName: record.fileName,
       mimeType: record.mimeType,
-      txHash: record.txHash,
       cidStatus: record.cidStatus,
     })
   } catch (error) {

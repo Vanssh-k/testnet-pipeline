@@ -26,6 +26,7 @@ import removeApiKey from '../../../repository/user/auth/removeApiKey'
 import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
 
 // Local user
+import refreshMessage from '../../../repository/user/refreshMessage'
 import updateUserDetails from '../../../repository/user/updateUserDetails'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 
@@ -70,6 +71,7 @@ export const getMessage = async (
 
 export const verifySigner = async (record: IUserDetails) => {
   // Change the message and return access token
+  refreshMessage(record.publicKey)
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',
