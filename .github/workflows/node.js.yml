@@ -41,6 +41,7 @@ jobs:
           TEST_WALLET4_PRIVATE_KEY: ${{ secrets.TEST_WALLET4_PRIVATE_KEY }}
           TEST_WALLET5_PRIVATE_KEY: ${{ secrets.TEST_WALLET5_PRIVATE_KEY }}
           TEST_WALLET6_PRIVATE_KEY: ${{ secrets.TEST_WALLET6_PRIVATE_KEY }}
+          TEST_WALLET7_API_KEY: ${{ secrets.TEST_WALLET7_API_KEY }}
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
