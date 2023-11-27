@@ -7,6 +7,7 @@ import {
   refreshAccessToken,
 } from './helper/authHelper'
 import { NextFunction, Response, Request } from 'express'
+import refreshMessage from '../../repository/user/refreshMessage'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (
@@ -51,6 +52,7 @@ export const verify_user_signature = async (
 ) => {
   try {
     const record = req.body.user
+    refreshMessage(record.publicKey)
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
