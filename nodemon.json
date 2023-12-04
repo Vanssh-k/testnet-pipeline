@@ -1,7 +1,25 @@
 {
-    "ignore": [
-        ".git",
-        "node_modules",
-        "dist"
-    ]
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    "dist",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/__test__",
+    "src/**/test"
+
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node"
+  },
+  "runOnChangeOnly": false,
+  "watch": [
+    "src/**/*.ts"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js,ts"
 }

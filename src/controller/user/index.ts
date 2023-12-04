@@ -8,6 +8,10 @@ import {
 } from './helper/userHelper'
 import logger from '../../utils/logger'
 import { NextFunction, Request, Response } from 'express'
+import {
+  generateTokenAndSendMail,
+  verifyEmailToken,
+} from '../../repository/user/verifyEmail'
 
 export const get_uploads = async (
   req: Request,
@@ -140,6 +144,37 @@ export const create_tag = async (
         ' error: ' +
         error.message
     )
+    next(error)
+  }
+}
+
+export const send_email_verification_mail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const status = await generateTokenAndSendMail(
+      (req.body.user.publicKey as string).trim(),
+      req.query.email as string
+    )
+
+    res.status(200).send(status)
+  } catch (error) {
+    next(error)
+  }
+}
+export const verify_email_token = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const status = await verifyEmailToken(
+      (req.query.verification_token as string).trim()
+    )
+    res.status(200).send(status)
+  } catch (error) {
     next(error)
   }
 }

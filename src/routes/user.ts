@@ -8,6 +8,8 @@ import {
   create_tag,
   get_all_tags,
   remove_tag,
+  send_email_verification_mail,
+  verify_email_token,
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -34,6 +36,18 @@ router.get(
   validate(validator.publicKeySchema, { query: true }),
   authenticator(['verifypublickey']),
   user_data_usage
+)
+
+router.get(
+  '/send_verification_email',
+  validate(validator.emailSchema, { query: true }),
+  // authenticator(['verifyToken'], ['publicKeyOnly']),
+  send_email_verification_mail
+)
+router.get(
+  '/verify_email',
+  validate(validator.verificationTokenSchema, { query: true }),
+  verify_email_token
 )
 
 router.get('/faucet_status', authenticator(['verifyToken']), faucet_status)

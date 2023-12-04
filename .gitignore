@@ -35,3 +35,6 @@ dist/
 logs/
 
 prisma/migrations
+src/repository/web2Payments
+src/controller/topup/helper/stripe.ts
+temp.json
