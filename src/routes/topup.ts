@@ -7,6 +7,7 @@ import {
   get_subdomain,
   get_user_transactions,
   plan_details_by_id,
+  create_stripe_order,
 } from '../controller/topup'
 import validate from '../middlewares/validate'
 import validator from '../middlewares/validators'
@@ -53,5 +54,11 @@ router.get(
 )
 
 router.get('/get_active_plan_list', get_active_plan_list)
+
+router.get(
+  '/purchase_plan_via_stripe',
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  create_stripe_order
+)
 
 export default router
