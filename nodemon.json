@@ -18,8 +18,5 @@
   "watch": [
     "src/**/*.ts"
   ],
-  "env": {
-    "NODE_ENV": "development"
-  },
   "ext": "js,ts"
 }

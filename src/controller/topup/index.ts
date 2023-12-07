@@ -1,4 +1,7 @@
-import { create_session_order } from '../../repository/web2Payments/stripe'
+import {
+  create_session_order,
+  setup_card_stripe,
+} from '../../repository/web2Payments/stripe'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
 import {
   createSubDomain,
@@ -121,6 +124,23 @@ export const create_stripe_order = async (
     const data = await create_session_order(
       req.body?.user?.publicKey ?? '0x8233fd42e8484cda9beeb136aa7416bcd5adaa91',
       parseInt(`${req.query?.subscriptionId ?? '0'}`)
+    )
+    res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
+export const setup_card_with_stripe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await setup_card_stripe(
+      req.body?.user?.publicKey ?? '0x8233fd42e8484cda9beeb136aa7416bcd5adaa91'
     )
     res.status(200).json({ ...data })
   } catch (error) {
