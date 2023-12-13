@@ -9,6 +9,7 @@ import {
   plan_details_by_id,
   create_stripe_order,
   setup_card_with_stripe,
+  webhook_stripe,
 } from '../controller/topup'
 import validate from '../middlewares/validate'
 import validator from '../middlewares/validators'
@@ -61,6 +62,8 @@ router.get(
   authenticator(['verifyToken'], ['publicKeyOnly']),
   create_stripe_order
 )
+
+router.post('/stripe_webhook', webhook_stripe)
 
 router.get(
   '/add_card_to_stripe',
