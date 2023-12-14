@@ -157,9 +157,7 @@ export const setup_card_with_stripe = async (
   next: NextFunction
 ) => {
   try {
-    const data = await setup_card_stripe(
-      req.body?.user?.publicKey ?? '0x8233fd42e8484cda9beeb136aa7416bcd5adaa91'
-    )
+    const data = await setup_card_stripe(req.body?.user?.publicKey ?? '')
     res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)

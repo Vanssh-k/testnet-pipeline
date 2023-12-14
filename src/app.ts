@@ -19,17 +19,14 @@ import IPNSRouter from './routes/ipns'
 import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
-import { webhook_stripe } from './controller/topup'
+import WebhookRouter from './routes/webhooks'
 
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.post(
-  '/api/topup/stripe_webhook',
-  express.raw({ type: 'application/json' }),
-  webhook_stripe
-)
+app.use('/api/webhook', WebhookRouter)
+
 app.use(bodyParser.json())
 
 app.use(
