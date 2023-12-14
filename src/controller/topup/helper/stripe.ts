@@ -9,17 +9,17 @@ export const validateStripPayload = async (req: Request) => {
   let event: any
   if (webhookSecret) {
     try {
-      console.log({ webhookSecret, body: JSON.stringify(req.body) })
-      event = await stripe.webhooks.constructEventAsync(
-        JSON.stringify(req.body),
+      event = await stripe.webhooks.constructEvent(
+        req.body,
         req.headers['stripe-signature'] as any,
         webhookSecret,
         undefined
       )
+      return { data: event.data.object, eventType: event.type }
     } catch (err) {
       console.log(`⚠️  Webhook signature verification failed:  ${err}`)
       throw new CustomError(`webhook error`, 400, err)
     }
   }
-  return { data: event?.data?.object, eventType: event?.type }
+  return { data: null, eventType: null }
 }

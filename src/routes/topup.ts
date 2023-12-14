@@ -9,7 +9,6 @@ import {
   plan_details_by_id,
   create_stripe_order,
   setup_card_with_stripe,
-  webhook_stripe,
 } from '../controller/topup'
 import validate from '../middlewares/validate'
 import validator from '../middlewares/validators'
@@ -59,14 +58,8 @@ router.get('/get_active_plan_list', get_active_plan_list)
 
 router.get(
   '/purchase_plan_via_stripe',
-  // authenticator(['verifyToken'], ['publicKeyOnly']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   create_stripe_order
-)
-
-router.post(
-  '/stripe_webhook',
-  express.raw({ type: 'application/json' }),
-  webhook_stripe
 )
 
 router.get(

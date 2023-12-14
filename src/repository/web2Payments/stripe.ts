@@ -159,8 +159,10 @@ export const processStripePayment = async (data: any, eventType: any) => {
       .retrieve(data.customer)
       .then(async (customer) => {
         try {
+          const { data: paidFor } =
+            await stripe.checkout.sessions.listLineItems(data.id)
           //save and Create Login
-          console.log(customer, data)
+          console.log({ customer, data, paidFor })
         } catch (err: any) {
           new CustomError(`${err.message}`, 406, err)
         }
