@@ -88,8 +88,8 @@ export const setup_card_stripe = async (address: string) => {
     payment_method_types: ['card'],
     mode: 'setup', // This mode is for setting up payment methods
     customer: customer.id,
-    success_url: 'https://your-success-url.com', // Your success URL
-    cancel_url: 'https://your-cancel-url.com', // Your cancel URL
+    success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&mode=add-card`,
+    cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&mode=add-card`,
   })
 
   return { url: session.url }
@@ -129,8 +129,8 @@ export const create_session_order = async (address: string, subID: number) => {
       ],
       mode: 'payment',
       customer: customer.id,
-      success_url: `${config.payment_url}/checkout-success`,
-      cancel_url: `${config.payment_url}/cart`,
+      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
+      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
     })
     return { url: session.url }
   } else {
@@ -146,8 +146,8 @@ export const create_session_order = async (address: string, subID: number) => {
           quantity: 1,
         },
       ],
-      success_url: `${config.payment_url}/checkout-success`,
-      cancel_url: `${config.payment_url}/cart`,
+      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
+      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
     })
     return { url: session.url }
   }
