@@ -1,4 +1,3 @@
-import express, { Request, Response } from 'express'
 import Stripe from 'stripe'
 import config from '../../config'
 import { CustomError } from '../../errors'
@@ -6,7 +5,6 @@ import {
   getPurchasablePlans,
   IDeductionDetails,
 } from '../../controller/topup/helper/billing'
-import { add } from 'winston'
 
 const stripe = new Stripe(config.stripe_key)
 
@@ -16,7 +14,7 @@ async function upsertCustomer(
 ) {
   // Search for customers with the given userId in metadata
   const existingCustomers = await stripe.customers.list({
-    email: email ?? `${walletAddress}@lighthouse.storage`,
+    email: email ?? `${walletAddress}`,
   })
 
   let customer
@@ -28,7 +26,7 @@ async function upsertCustomer(
   } else {
     // No customer found, create a new one
     customer = await stripe.customers.create({
-      email: email ?? `${walletAddress}@lighthouse.storage`,
+      email: email ?? `${walletAddress}`,
       metadata: { walletAddress },
     })
   }
@@ -107,50 +105,31 @@ export const create_session_order = async (address: string, subID: number) => {
   }
   const customer = await upsertCustomer(address)
 
-  if (plan.totalNumOfDeduction === 1) {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      phone_number_collection: {
-        enabled: true,
-      },
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `Lighthouse Plan: ${plan.detail.planName}`,
-              description: `Lighthouse Topup storage: ${plan.detail.storageInGB}GB \n Plus ${plan.detail.bandwidthInGB}GB bandwidth`,
-              metadata: { planID: plan.index, ...plan.detail },
-            },
-            unit_amount: plan.amount / 1e4,
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    phone_number_collection: {
+      enabled: true,
+    },
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `Lighthouse Plan: ${plan.detail.planName}`,
+            description: `Lighthouse Topup storage: ${plan.detail.storageInGB}GB \n Plus ${plan.detail.bandwidthInGB}GB bandwidth`,
+            metadata: { planID: plan.index, ...plan.detail },
           },
-          quantity: 1,
+          unit_amount: plan.amount / 1e4,
         },
-      ],
-      mode: 'payment',
-      customer: customer.id,
-      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
-      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
-    })
-    return { url: session.url }
-  } else {
-    const { product, price } = await createProductAndPrice(plan)
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      payment_method_collection: 'always',
-      mode: 'subscription',
-      customer: customer.id,
-      line_items: [
-        {
-          price: price.id,
-          quantity: 1,
-        },
-      ],
-      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
-      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
-    })
-    return { url: session.url }
-  }
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    customer: customer.id,
+    success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
+    cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
+  })
+  return { url: session.url }
 }
 
 export const processStripePayment = async (data: any, eventType: any) => {
