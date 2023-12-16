@@ -26,7 +26,7 @@ async function upsertCustomer(
   } else {
     // No customer found, create a new one
     customer = await stripe.customers.create({
-      email: email ?? `${walletAddress}`,
+      email: email ?? `${walletAddress}@lighthouse.storage`,
       metadata: { walletAddress },
     })
   }
@@ -110,6 +110,16 @@ export const create_session_order = async (address: string, subID: number) => {
     phone_number_collection: {
       enabled: true,
     },
+    invoice_creation: {
+      enabled: true,
+      invoice_data: {
+        metadata: {
+          planID: plan.index,
+          ...plan.detail,
+          walletAddress: address,
+        },
+      },
+    },
     line_items: [
       {
         price_data: {
@@ -126,8 +136,8 @@ export const create_session_order = async (address: string, subID: number) => {
     ],
     mode: 'payment',
     customer: customer.id,
-    success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
-    cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}}&plan-id=${subID}`,
+    success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
+    cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
   })
   return { url: session.url }
 }
@@ -138,11 +148,14 @@ export const processStripePayment = async (data: any, eventType: any) => {
       .retrieve(data.customer)
       .then(async (customer) => {
         try {
-          const { data: paidFor } =
-            await stripe.checkout.sessions.listLineItems(data.id)
+          console.log({
+            customer,
+            data,
+            invoice: data.invoice_creation.invoice_data,
+          })
+          // const invoice = await stripe.invoices.retrieve(data.id)
 
           //ADD Paid For to DB, customer, data.ID for ref
-          console.log({ customer, data, paidFor })
         } catch (err: any) {
           new CustomError(`${err.message}`, 406, err)
         }
