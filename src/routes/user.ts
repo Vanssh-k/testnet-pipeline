@@ -41,9 +41,10 @@ router.get(
 router.get(
   '/send_verification_email',
   validate(validator.emailSchema, { query: true }),
-  // authenticator(['verifyToken'], ['publicKeyOnly']),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   send_email_verification_mail
 )
+
 router.get(
   '/verify_email',
   validate(validator.verificationTokenSchema, { query: true }),

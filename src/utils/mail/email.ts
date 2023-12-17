@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
-import config from '../config'
-import { VerifyMailTemplate } from './mail/emailTemplate/verifyEmailTemplate'
+import config from '../../config'
+import { VerifyMailTemplate } from './emailTemplate/verifyEmailTemplate'
 
 const mailService = nodemailer.createTransport({
   service: 'gmail',
@@ -20,24 +20,16 @@ export function generateRandomString(length: number = 32): string {
   return result
 }
 
-export const sendMail = async (
-  title: string,
+export const sendVerifyEmail = async (
   to: string | string[],
-  mail: string
+  verifyURL: string
 ) => {
   const data = await mailService.sendMail({
     from: 'Lighthouse',
     sender: 'Lighthouse Storage',
     to,
-    subject: title,
-    html: mail,
+    subject: 'Verify your email address',
+    html: VerifyMailTemplate(verifyURL),
   })
   return data
-}
-
-export const sendVerifyEmail = async (
-  to: string | string[],
-  verifyURL: string
-) => {
-  return sendMail('Verify Email', to, VerifyMailTemplate(verifyURL))
 }

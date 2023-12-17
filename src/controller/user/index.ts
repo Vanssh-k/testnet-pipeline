@@ -11,7 +11,7 @@ import { NextFunction, Request, Response } from 'express'
 import {
   generateTokenAndSendMail,
   verifyEmailToken,
-} from '../../repository/user/verifyEmail'
+} from './helper/verifyEmail'
 
 export const get_uploads = async (
   req: Request,
@@ -164,6 +164,7 @@ export const send_email_verification_mail = async (
     next(error)
   }
 }
+
 export const verify_email_token = async (
   req: Request,
   res: Response,
