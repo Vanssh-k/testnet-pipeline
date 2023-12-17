@@ -8,7 +8,7 @@ export default async (usersPublicKey: string, pageNo: number) => {
   try {
     let records = null
     let count = 0
-    let exclusiveStartKey = null
+    let exclusiveStartKey = undefined
     if (pageNo < 1) {
       throw new DatabaseError()
     }
@@ -16,16 +16,15 @@ export default async (usersPublicKey: string, pageNo: number) => {
       const params: any = {
         TableName: fileTable,
         IndexName: 'publicKey-createdAt-index',
-        ScanIndexForward: false,
         KeyConditionExpression: 'publicKey = :p',
         ExpressionAttributeValues: {
-          ':p': { S: usersPublicKey },
+          ':p': usersPublicKey,
         },
         Limit: 1000,
         ExclusiveStartKey: exclusiveStartKey,
       }
 
-      records = await dbbClient.send(new QueryCommand(params))
+      records = await dbbClient.query(params)
       count += 1
       exclusiveStartKey = records.LastEvaluatedKey
       if (!exclusiveStartKey && pageNo > count) {
@@ -41,9 +40,6 @@ export default async (usersPublicKey: string, pageNo: number) => {
       return []
     }
 
-    for (let i = 0; i < Items.length; i++) {
-      Items[i] = unmarshall(Items[i])
-    }
     return Items
   } catch (error) {
     /* istanbul ignore next */
