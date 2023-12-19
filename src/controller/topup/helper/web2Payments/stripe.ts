@@ -96,10 +96,10 @@ export const setup_card_stripe = async (address: string) => {
 export const create_session_order = async (
   address: string,
   subID: number,
-  emailId: string
+  emailId: string | undefined
 ) => {
-  if (!emailId) {
-    new CustomError('Forbidden', 403, 'Email not updated in profile')
+  if (emailId === undefined) {
+    throw new CustomError('Forbidden', 403, 'Email not updated in profile')
   }
   const plans = (await getPurchasablePlans()).activePurchasablePlans
   const plan = plans.find((elem) => elem.index === subID)
