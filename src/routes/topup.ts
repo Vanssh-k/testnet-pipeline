@@ -8,7 +8,6 @@ import {
   get_user_transactions,
   plan_details_by_id,
   create_stripe_order,
-  setup_card_with_stripe,
 } from '../controller/topup'
 import validate from '../middlewares/validate'
 import validator from '../middlewares/validators'
@@ -58,14 +57,9 @@ router.get('/get_active_plan_list', get_active_plan_list)
 
 router.get(
   '/purchase_plan_via_stripe',
+  validate(validator.subscriptionIdSchema, { query: true }),
   authenticator(['verifyToken']),
   create_stripe_order
-)
-
-router.get(
-  '/add_card_to_stripe',
-  authenticator(['verifyToken'], ['publicKeyOnly']),
-  setup_card_with_stripe
 )
 
 export default router
