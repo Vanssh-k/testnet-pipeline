@@ -1,7 +1,6 @@
 import {
   create_session_order,
   processStripePayment,
-  setup_card_stripe,
 } from './helper/web2Payments/stripe'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
 import { validateStripPayload } from './helper/stripe'
@@ -125,10 +124,9 @@ export const create_stripe_order = async (
   try {
     const data = await create_session_order(
       req.body.user.publicKey,
-      parseInt(`${req.query?.subscriptionId ?? '0'}`),
-      req.body.user?.profile?.email ?? null
+      parseInt(req.query.subscriptionId as string),
+      req.body.user.profile?.email ?? null
     )
-    console.log(data)
     res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)
@@ -146,21 +144,6 @@ export const webhook_stripe = async (
     const { data: stripeData, eventType } = await validateStripPayload(req)
     await processStripePayment(stripeData, eventType)
     res.status(200).json({})
-  } catch (error) {
-    console.log(error)
-    /* istanbul ignore next */
-    next(error)
-  }
-}
-
-export const setup_card_with_stripe = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const data = await setup_card_stripe(req.body?.user?.publicKey ?? '')
-    res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)
     /* istanbul ignore next */
