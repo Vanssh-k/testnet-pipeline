@@ -2,7 +2,7 @@ import {
   create_session_order,
   processStripePayment,
   setup_card_stripe,
-} from '../../repository/web2Payments/stripe'
+} from './helper/web2Payments/stripe'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
 import { validateStripPayload } from './helper/stripe'
 import {
@@ -124,9 +124,11 @@ export const create_stripe_order = async (
 ) => {
   try {
     const data = await create_session_order(
-      req.body?.user?.publicKey ?? '0x8233fd42e8484cda9beeb136aa7416bcd5adaa91',
-      parseInt(`${req.query?.subscriptionId ?? '0'}`)
+      req.body.user.publicKey,
+      parseInt(`${req.query?.subscriptionId ?? '0'}`),
+      req.body.user?.profile?.email ?? null
     )
+    console.log(data)
     res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)
