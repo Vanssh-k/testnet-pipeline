@@ -58,7 +58,7 @@ router.get('/get_active_plan_list', get_active_plan_list)
 
 router.get(
   '/purchase_plan_via_stripe',
-  authenticator(['verifyToken'], ['publicKeyOnly']),
+  authenticator(['verifyToken']),
   create_stripe_order
 )
 
