@@ -52,11 +52,12 @@ export const verify_user_signature = async (
 ) => {
   try {
     const record = req.body.user
-    refreshMessage(record.publicKey)
+    refreshMessage(record.publicKey, Date.now())
     res.status(200).json({
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
+      profile: record.profile,
     })
   } catch (error) {
     /* istanbul ignore next */
@@ -76,6 +77,7 @@ export const verify_access_token = async (
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
+      profile: record.profile,
     })
   } catch (error) {
     /* istanbul ignore next */
@@ -137,6 +139,7 @@ export const verify_api_key = async (
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
+      profile: record.profile,
     })
   } catch (error) {
     /* istanbul ignore next */
