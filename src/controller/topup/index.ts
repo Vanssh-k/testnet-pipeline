@@ -125,7 +125,7 @@ export const create_stripe_order = async (
     const data = await create_session_order(
       req.body.user.publicKey,
       parseInt(req.query.subscriptionId as string),
-      req.body.user.profile?.email ?? null
+      req.body.user.profile?.email ?? undefined
     )
     res.status(200).json({ ...data })
   } catch (error) {
