@@ -79,6 +79,7 @@ async function createProductAndPrice(plan: IDeductionDetails) {
   return { product, price }
 }
 
+// Currently not in use
 export const setup_card_stripe = async (address: string) => {
   const customer = await upsertCustomer(address)
   const session = await stripe.checkout.sessions.create({
