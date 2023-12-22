@@ -53,18 +53,25 @@ export const cidDealStatus = async (cid: string) => {
   }
 }
 
+type DealInfo = {
+  dealId: number
+  storageProvider: string
+  proof: any
+  aggPieceCID: string
+  aggPieceSize: number
+  aggCarFileSize: number
+}
+type dealResponse = {
+  pieceCID: string
+  dealInfo: DealInfo[]
+}
+
 export const podsi = async (cid: string) => {
   const cidRecord = await getCIDRecord(cid)
   /* istanbul ignore next */
-  const dealResponse: {
-    [key: number]: {
-      storageProvider: string
-      proof: any
-      pieceCID: string
-      pieceSize: number
-      carFileSize: number
-    }
-  } = {}
+
+  const dealArray: DealInfo[] = []
+  const pieceCid: string = cidRecord[0]['pieceCid']
   for (let i = 0; i < cidRecord.length; i++) {
     const cidProof = await podsiRecord(cidRecord[i]['pieceCid'])
     let proofOfAggregate: any = null
@@ -85,24 +92,28 @@ export const podsi = async (cid: string) => {
 
         const deals = await filecoinDeal(aggregatedIn['aggregateID'])
         for (let i = 0; i < deals.length; i++) {
-          dealResponse[parseInt(deals[i]['chainDealID'])] = {
+          dealArray.push({
+            dealId: parseInt(deals[i]['chainDealID']),
             storageProvider: deals[i]['storageProvider'],
             proof: {
               inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
               verifierData: proofOfAggregate['fileProof']['verifierData'],
               indexRecord: proofOfAggregate['fileProof']['indexRecord'],
-              pieceCID: proofOfAggregate['pieceCID'],
             },
-            pieceCID: aggregatedIn.commpCID,
-            pieceSize: parseInt(aggregatedIn.pieceSize),
-            carFileSize: parseInt(aggregatedIn.carFileSize),
-          }
+            aggPieceCID: aggregatedIn.commpCID,
+            aggPieceSize: parseInt(aggregatedIn.pieceSize),
+            aggCarFileSize: parseInt(aggregatedIn.carFileSize),
+          })
         }
       }
     }
   }
+  const dealRes: dealResponse = {
+    pieceCID: pieceCid,
+    dealInfo: dealArray,
+  }
 
-  return dealResponse
+  return dealRes
 }
 
 export const podsiTestnet = async (cid: string) => {
