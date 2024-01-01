@@ -35,3 +35,5 @@ dist/
 logs/
 
 prisma/migrations
+temp.json
+stripe

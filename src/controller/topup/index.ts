@@ -1,4 +1,9 @@
+import {
+  create_session_order,
+  processStripePayment,
+} from './helper/web2Payments/stripe'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
+import { validateStripPayload } from './helper/stripe'
 import {
   createSubDomain,
   subDomainExists,
@@ -106,6 +111,41 @@ export const plan_details_by_id = async (
     const data = await getPlanDetails(req.query.subscriptionId as string)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
+export const create_stripe_order = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await create_session_order(
+      req.body.user.publicKey,
+      parseInt(req.query.subscriptionId as string),
+      req.body.user.profile?.email ?? undefined
+    )
+    res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
+export const webhook_stripe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { data: stripeData, eventType } = await validateStripPayload(req)
+    await processStripePayment(stripeData, eventType)
+    res.status(200).json({})
+  } catch (error) {
+    console.log(error)
     /* istanbul ignore next */
     next(error)
   }

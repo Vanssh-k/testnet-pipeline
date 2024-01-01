@@ -58,11 +58,16 @@ const baseConfig = {
   test_wallet6_private_key:
     process.env.TEST_WALLET6_PRIVATE_KEY ??
     '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de86',
+  stripe_key: process.env.STRIPE_KEY ?? '',
+  stripe_webhook: process.env.STRIPE_WEBHOOK ?? '',
+  payment_url: process.env.PAYMENT_URL ?? '',
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02', // Wallet in use: 0x5129b1153f4f9f321f41cba831899336cb4134c7
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
   migration_ocean_access_token:
     process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,
+  no_reply_email_password: process.env.MAIL_REPLY_PASSWORD,
+  no_reply_email: process.env.MAIL_EMAIL,
 }
 
 const envVarsSchema = Joi.object({
@@ -113,6 +118,15 @@ const envVarsSchema = Joi.object({
   test_wallet5_private_key: Joi.string(),
   test_wallet6_private_key: Joi.string(),
   test_wallet7_api_key: Joi.string(),
+  no_reply_email_password: Joi.string().required().messages({
+    'any.required': `'MAIL_REPLY_PASSWORD IS MISSING'`,
+  }),
+  no_reply_email: Joi.string().required().messages({
+    'any.required': `'MAIL_EMAIL IS MISSING'`,
+  }),
+  stripe_key: Joi.string().required(),
+  payment_url: Joi.string().required(),
+  // stripe_webhook: Joi.string().valid(''),
 }).unknown()
 
 const { value: envVars, error } = envVarsSchema.validate(baseConfig)

@@ -3,7 +3,9 @@ import {
   getUploadsSchema,
   createTagSchema,
   getTagSchema,
-  messageSchema
+  messageSchema,
+  emailSchema,
+  verificationTokenSchema,
 } from './user'
 import {
   symbolSchema,
@@ -57,4 +59,6 @@ export default {
   migrationRequestSchema,
   verifyPublishSchema,
   verifyRemoveSchema,
+  emailSchema,
+  verificationTokenSchema,
 }
