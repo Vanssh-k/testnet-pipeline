@@ -5,6 +5,7 @@ export interface IUserDetails {
   dataUsed: number
   fileCount: number
   faucet: any
+  profile: any
   network: string
   createdAt: number
   updatedAt: number

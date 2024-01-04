@@ -53,118 +53,121 @@ export const cidDealStatus = async (cid: string) => {
   }
 }
 
-export const podsi = async (cid: string) => {
-  const cidRecord = await getCIDRecord(cid)
-  // Get bundle record
-  let aggregatedIn: any
-  /* istanbul ignore next */
-  if (cidRecord[0]['aggregateIn'] !== 'none') {
-    aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
-  }
-
-  /* istanbul ignore next */
-  if (aggregatedIn) {
-    const dealInfo = []
-    if (aggregatedIn['aggFileStatus'] === 'deal initiated') {
-      const deals = await filecoinDeal(aggregatedIn['aggregateID'])
-      for (let i = 0; i < deals.length; i++) {
-        dealInfo.push({
-          dealId: parseInt(deals[i]['chainDealID']),
-          storageProvider: deals[i]['storageProvider'],
-        })
-      }
-    }
-
-    // Fetch info from PODSI table
-    const records = await podsiRecord(cidRecord[0]['pieceCid'])
-
-    const proofResponse = {
-      pieceCID: aggregatedIn.commpCID,
-      pieceSize: parseInt(aggregatedIn.pieceSize),
-      carFileSize: parseInt(aggregatedIn.carFileSize),
-      proof: records[0],
-      dealInfo: dealInfo,
-    }
-
-    return proofResponse
-  }
-
-  return {}
+type DealInfo = {
+  dealId: number
+  storageProvider: string
+  proof: any
+  aggPieceCID: string
+  aggPieceSize: number
+  aggCarFileSize: number
+}
+type dealResponse = {
+  pieceCID: string
+  dealInfo: DealInfo[]
 }
 
-export const podsiTestnet = async (cid: string) => {
-  const cidRecords = await getCIDRecordTestnet(cid)
-  // Get bundle record
-  const aggregatedIn: any = []
-  let pieceCID = ''
-  let pieceSize = 0
-  let carFileSize = 0
-  let aggregateInfoIndex = 0
+export const podsi = async (cid: string) => {
+  const cidRecord = await getCIDRecord(cid)
+  /* istanbul ignore next */
 
-  for (let i = 0; i < cidRecords.length; i++) {
-    if (i >= 30) {
-      break
-    }
-    if (cidRecords[i]['aggregateIn'] !== 'none') {
-      const tempAgg = await getBundleRecordTestnet(
-        cidRecords[i]['aggregatedIn']
+  const dealArray: DealInfo[] = []
+  const pieceCid: string = cidRecord[0]['pieceCid']
+  for (let i = 0; i < cidRecord.length; i++) {
+    const cidProof = await podsiRecord(cidRecord[i]['pieceCid'])
+    let proofOfAggregate: any = null
+    if (cidRecord[i]['aggregateIn'] !== 'none') {
+      const aggregatedIn: any = await getBundleRecord(
+        cidRecord[i]['aggregatedIn']
       )
-      aggregatedIn.push(tempAgg)
-    }
-  }
-
-  if (aggregatedIn.length > 0) {
-    const dealInfo = []
-    for (let i = 0; i < aggregatedIn.length; i++) {
-      if (aggregatedIn[i]['commpCID']) {
-        aggregateInfoIndex = i
-        pieceCID = aggregatedIn[i]['commpCID']
-        pieceSize = parseInt(aggregatedIn[i].pieceSize)
-        carFileSize = parseInt(aggregatedIn[i].carFileSize)
-        break
-      }
-    }
-    for (let i = 0; i < aggregatedIn.length; i++) {
-      if (dealInfo.length > 2) {
-        break
-      }
-      if (aggregatedIn[i]['fileStatus'] === 'deal initiated') {
-        const deals = await filecoinDealTestnet(aggregatedIn[i]['aggregateID'])
-        for (let i = 0; i < deals.length; i++) {
-          if (!parseInt(deals[i]['chainDealID'])) {
-            continue
+      if (aggregatedIn['aggFileStatus'] === 'deal initiated') {
+        if (!cidProof[0]['aggregateID']) {
+          proofOfAggregate = cidProof[0]
+        } else {
+          for (let i = 0; i < cidProof.length; i++) {
+            if (cidProof[i]['aggregateID'] === aggregatedIn['aggregateID']) {
+              proofOfAggregate = cidProof[i]
+            }
           }
-          dealInfo.push({
-            dealUUID: deals[i]['dealUUID'],
+        }
+
+        const deals = await filecoinDeal(aggregatedIn['aggregateID'])
+        for (let i = 0; i < deals.length; i++) {
+          dealArray.push({
             dealId: parseInt(deals[i]['chainDealID']),
             storageProvider: deals[i]['storageProvider'],
+            proof: {
+              inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
+              verifierData: proofOfAggregate['fileProof']['verifierData'],
+              indexRecord: proofOfAggregate['fileProof']['indexRecord'],
+            },
+            aggPieceCID: aggregatedIn.commpCID,
+            aggPieceSize: parseInt(aggregatedIn.pieceSize),
+            aggCarFileSize: parseInt(aggregatedIn.carFileSize),
           })
         }
       }
     }
-
-    // Fetch info from PODSI table
-    const records = await podsiRecordTestnet(
-      cidRecords[aggregateInfoIndex]['pieceCid']
-    )
-    let previousAggregates: any = []
-    if (cidRecords[0].oldAggregates) {
-      previousAggregates = Array.from(cidRecords[0].oldAggregates)
-    }
-
-    const proofResponse = {
-      pieceCID: pieceCID,
-      pieceSize: pieceSize,
-      carFileSize: carFileSize,
-      proof: records[0],
-      dealInfo: dealInfo,
-      previousAggregates: previousAggregates,
-    }
-
-    return proofResponse
+  }
+  const dealRes: dealResponse = {
+    pieceCID: pieceCid,
+    dealInfo: dealArray,
   }
 
-  return {}
+  return dealRes
+}
+
+export const podsiTestnet = async (cid: string) => {
+  const cidRecord = await getCIDRecordTestnet(cid)
+  /* istanbul ignore next */
+
+  const dealArray: DealInfo[] = []
+  const pieceCid: string = cidRecord[0]['pieceCid']
+  for (let i = 0; i < cidRecord.length; i++) {
+    if (i > 10) {
+      break
+    }
+    const cidProof = await podsiRecordTestnet(cidRecord[i]['pieceCid'])
+    let proofOfAggregate: any = null
+    if (cidRecord[i]['aggregateIn'] !== 'none') {
+      const aggregatedIn: any = await getBundleRecordTestnet(
+        cidRecord[i]['aggregatedIn']
+      )
+
+      if (aggregatedIn['fileStatus'] === 'deal initiated') {
+        if (!cidProof[0]['aggregateID']) {
+          proofOfAggregate = cidProof[0]
+        } else {
+          for (let i = 0; i < cidProof.length; i++) {
+            if (cidProof[i]['aggregateID'] === aggregatedIn['aggregateID']) {
+              proofOfAggregate = cidProof[i]
+            }
+          }
+        }
+
+        const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
+        for (let i = 0; i < deals.length; i++) {
+          dealArray.push({
+            dealId: parseInt(deals[i]['chainDealID']),
+            storageProvider: deals[i]['storageProvider'],
+            proof: {
+              inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
+              verifierData: proofOfAggregate['fileProof']['verifierData'],
+              indexRecord: proofOfAggregate['fileProof']['indexRecord'],
+            },
+            aggPieceCID: aggregatedIn.commpCID,
+            aggPieceSize: parseInt(aggregatedIn.pieceSize),
+            aggCarFileSize: parseInt(aggregatedIn.carFileSize),
+          })
+        }
+      }
+    }
+  }
+  const dealRes: dealResponse = {
+    pieceCID: pieceCid,
+    dealInfo: dealArray,
+  }
+
+  return dealRes
 }
 
 export const aggregateInfo = async (aggregateID: string) => {

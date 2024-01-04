@@ -27,7 +27,7 @@ import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
 
 // Local user
 import refreshMessage from '../../../repository/user/refreshMessage'
-import updateUserDetails from '../../../repository/user/updateUserDetails'
+import createNewUser from '../../../repository/user/createNewUser'
 import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
 
 // Local encryption
@@ -42,36 +42,42 @@ export const getMessage = async (
   record: IUserDetails | null,
   encryption: string
 ) => {
+  if (network === 'evm') {
+    publicKey = publicKey.trim().toLowerCase()
+  }
   const timestamp = Date.now()
   const message = messageString + timestamp
 
-  const updatedDetails = {
-    publicKey,
-    message: timestamp,
-    dataLimit: record?.dataLimit ? record.dataLimit : freeDataLimitInBytes,
-    dataUsed: record?.dataUsed ? record.dataUsed : 0,
-    fileCount: record?.fileCount ? record.fileCount : 0,
-    faucet: record?.faucet ? record.faucet : {},
-    network: record?.network ? record.network : network,
-    createdAt: record?.createdAt ? record.createdAt : timestamp,
-    updatedAt: timestamp,
-  }
-  if (network === 'evm') {
-    updatedDetails.publicKey = updatedDetails.publicKey.trim().toLowerCase()
+  // New user
+  if (!record) {
+    const userRecord = {
+      publicKey,
+      message: timestamp,
+      dataLimit: freeDataLimitInBytes,
+      dataUsed: 0,
+      fileCount: 0,
+      faucet: {},
+      network: network,
+      profile: {},
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
+
+    await createNewUser(userRecord, network)
+  } else {
+    await refreshMessage(record.publicKey, timestamp)
   }
 
-  const _ = await Promise.all([
-    `${encryption}`?.toLowerCase() === 'true'
-      ? sendMessageToEnc(publicKey, message)
-      : null,
-    updateUserDetails(updatedDetails, network),
-  ])
+  if (`${encryption}`?.toLowerCase() === 'true') {
+    await sendMessageToEnc(publicKey, message)
+  }
+
   return message
 }
 
 export const verifySigner = async (record: IUserDetails) => {
   // Change the message and return access token
-  refreshMessage(record.publicKey)
+  refreshMessage(record.publicKey, Date.now())
   const payLoad = { publicKey: record.publicKey }
   const accessToken = jwt.sign(payLoad, config.jwt_secret, {
     algorithm: 'HS256',

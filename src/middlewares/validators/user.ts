@@ -33,3 +33,14 @@ export const getTagSchema = joi.object({
     'any.required': `tag not found`,
   }),
 })
+
+export const emailSchema = joi.object({
+  email: joi.string().email().messages({
+    'any.required': `email not found`,
+  }),
+})
+export const verificationTokenSchema = joi.object({
+  verification_token: joi.string().min(20).messages({
+    'any.required': `email not found`,
+  }),
+})
