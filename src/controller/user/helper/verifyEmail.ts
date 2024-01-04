@@ -1,7 +1,7 @@
 import NodeCache from 'node-cache'
 import {
   generateRandomString,
-  sendVerifyEmail,
+  sendVerificationEmail,
 } from '../../../utils/mail/email'
 import updateEmail from '../../../repository/user/updateEmail'
 
@@ -19,7 +19,7 @@ export const generateTokenAndSendMail = async (
     createdAt: Date.now(),
   })
 
-  await sendVerifyEmail(
+  await sendVerificationEmail(
     email,
     `https://files.lighthouse.storage/verify?token=${token}`
   )

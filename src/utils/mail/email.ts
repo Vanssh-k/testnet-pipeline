@@ -21,7 +21,7 @@ export function generateRandomString(length: number = 32): string {
   return result
 }
 
-export const sendVerifyEmail = async (
+export const sendVerificationEmail = async (
   to: string | string[],
   verifyURL: string
 ) => {
