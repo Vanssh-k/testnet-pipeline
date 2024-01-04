@@ -5,7 +5,7 @@ import {
 } from '../../../utils/mail/email'
 import updateEmail from '../../../repository/user/updateEmail'
 
-const cache = new NodeCache({ stdTTL: 300 }) // Set the cache TTL to 300 seconds (5 minutes)
+const cache = new NodeCache({ stdTTL: 3600 }) // Set the cache TTL to 3600 seconds (1 hour)
 
 export const generateTokenAndSendMail = async (
   address: string,
