@@ -124,9 +124,6 @@ const envVarsSchema = Joi.object({
   no_reply_email: Joi.string().required().messages({
     'any.required': `'MAIL_EMAIL IS MISSING'`,
   }),
-  stripe_key: Joi.string().required(),
-  payment_url: Joi.string().required(),
-  // stripe_webhook: Joi.string().valid(''),
 }).unknown()
 
 const { value: envVars, error } = envVarsSchema.validate(baseConfig)
