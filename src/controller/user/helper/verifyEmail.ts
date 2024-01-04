@@ -12,6 +12,14 @@ export const generateTokenAndSendMail = async (
   email: string
 ) => {
   const token = generateRandomString(64)
+  const lastMailByUser: any = cache.get(`lastMailByUser/${address}`)
+  if (lastMailByUser) {
+    if ((Date.now() - lastMailByUser) / 1000 < 120) {
+      throw new Error('Wait for two min before sending another mail!!!')
+    }
+  }
+
+  cache.set(`lastMailByUser/${address}`, Date.now())
   cache.set(`verifytoken/${token}`, {
     address,
     email,
@@ -28,7 +36,6 @@ export const generateTokenAndSendMail = async (
 
 export const verifyEmailToken = async (token: string) => {
   const data: any = cache.get(`verifytoken/${token}`)
-  console.log(data)
   if (!data) {
     throw new Error('This Token is expired')
   }
