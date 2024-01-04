@@ -16,6 +16,7 @@ export default async (usersPublicKey: string, pageNo: number) => {
       const params: any = {
         TableName: fileTable,
         IndexName: 'publicKey-createdAt-index',
+        ScanIndexForward: false,
         KeyConditionExpression: 'publicKey = :p',
         ExpressionAttributeValues: {
           ':p': usersPublicKey,
