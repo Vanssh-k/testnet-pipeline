@@ -104,7 +104,7 @@ export const VerifyMailTemplate = (url: string) => `
           >
             Get in touch
           </p>
-          <p style="margin: 0; color: white; fill: white; display: flex; justify-content: center;">
+          <p style="margin: 0; color: white; fill: white; display: inline-flex;">
             <a href="https://t.me/LighthouseStorage" style="margin: 0 10px">
               <img
                 src="https://drive.google.com/uc?export=download&id=1DcOAJnnLl0jVuLsDd_D9jdXSsSRMi4M3"
