@@ -2,7 +2,7 @@ import { v4 } from 'uuid'
 import Stripe from 'stripe'
 import config from '../../../../config'
 import { CustomError } from '../../../../errors'
-import { getPurchasablePlans, IDeductionDetails } from '../billing'
+import { paymentPlans } from '../../../libs/paymentPlans'
 import { recordTransactions } from '../../../../repository/topup/userTransactions'
 import updateUserDataLimit from '../../../../repository/user/updateUserDataLimit'
 import getNetwork from '../../../../middlewares/getNetwork'
@@ -57,8 +57,7 @@ export const create_session_order = async (
   if (emailId === undefined) {
     throw new CustomError('Forbidden', 403, 'Email not updated in profile')
   }
-  const plans = (await getPurchasablePlans()).activePurchasablePlans
-  const plan = plans.find((elem) => elem.index === subID)
+  const plan = paymentPlans.find((elem) => elem.index === subID)
   if (!plan) {
     throw new CustomError(
       'InvalidPlanID',
@@ -78,7 +77,8 @@ export const create_session_order = async (
       invoice_data: {
         metadata: {
           planID: plan.index,
-          ...plan.detail,
+          storageInGB: plan.storageInGB,
+          amount: plan.amount,
           walletAddress: address,
         },
       },
@@ -88,11 +88,15 @@ export const create_session_order = async (
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `Lighthouse Plan: ${plan.detail.planName}`,
-            description: `Lighthouse Topup storage: ${plan.detail.storageInGB}GB \n Plus ${plan.detail.bandwidthInGB}GB bandwidth`,
-            metadata: { planID: plan.index, ...plan.detail },
+            name: `Lighthouse Plan: ${plan.planName}`,
+            description: `Lighthouse Topup storage: ${plan.storageInGB}GB`,
+            metadata: {
+              planID: plan.index,
+              storageInGB: plan.storageInGB,
+              amount: plan.amount,
+            },
           },
-          unit_amount: plan.amount / 1e4,
+          unit_amount: plan.amount * 100,
         },
         quantity: 1,
       },
@@ -129,6 +133,7 @@ export const processStripePayment = async (data: any, eventType: any) => {
             publicKey: invoiceMetadata.walletAddress,
             tokenAddress: 'Fiat Payment',
             subscriptionID: invoiceMetadata.planID.toString(),
+            amount: invoiceMetadata.amount,
             network: 'stripe',
             createdAt: Date.now(),
           })
