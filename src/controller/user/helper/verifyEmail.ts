@@ -48,7 +48,7 @@ export const verifyEmailToken = async (token: string) => {
     throw new Error('This Token is expired')
   }
   if (!data.isUsed) {
-    updateEmail(data.address, { email: data.email })
+    updateEmail(data.address, data.email)
     return { message: 'verified' }
   } else {
     throw new Error('Token has already been used')
