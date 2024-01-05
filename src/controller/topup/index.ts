@@ -79,7 +79,7 @@ export const get_user_transactions = async (
 ) => {
   try {
     const record = await getUserTransactionDetails(
-      req.query.publicKey as string
+      req.body.user.publicKey as string
     )
     res.status(200).json(record)
   } catch (error) {

@@ -49,7 +49,7 @@ router.get(
 
 router.get(
   '/get_user_transactions',
-  validate(validator.publicKeySchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
   get_user_transactions
 )
 
