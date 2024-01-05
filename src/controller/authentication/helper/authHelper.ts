@@ -58,6 +58,7 @@ export const getMessage = async (
       fileCount: 0,
       faucet: {},
       network: network,
+      email: '',
       profile: {},
       createdAt: timestamp,
       updatedAt: timestamp,

@@ -2,16 +2,16 @@ import dbbClient from '../db/ddbClient'
 import { userTable } from '../../controller/libs/constants'
 import DatabaseError from '../../errors/database-error'
 
-export default async (publicKey: string, email: { email: string }) => {
+export default async (publicKey: string, email: string) => {
   try {
     const params = {
       TableName: userTable,
       Key: {
         publicKey,
       },
-      UpdateExpression: 'set profile = :p, updatedAt = :u',
+      UpdateExpression: 'set email = :e, updatedAt = :u',
       ExpressionAttributeValues: {
-        ':p': email,
+        ':e': email,
         ':u': Date.now(),
       },
     }
