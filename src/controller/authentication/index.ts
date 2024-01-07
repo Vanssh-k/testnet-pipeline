@@ -57,7 +57,7 @@ export const verify_user_signature = async (
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
-      profile: record.profile ? record.profile : {},
+      email: record.email,
     })
   } catch (error) {
     /* istanbul ignore next */
@@ -77,7 +77,7 @@ export const verify_access_token = async (
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
-      profile: record.profile ? record.profile : {},
+      email: record.email,
     })
   } catch (error) {
     /* istanbul ignore next */
@@ -139,7 +139,7 @@ export const verify_api_key = async (
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
-      profile: record.profile ? record.profile : {},
+      email: record.email,
     })
   } catch (error) {
     /* istanbul ignore next */

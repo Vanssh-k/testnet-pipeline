@@ -79,7 +79,7 @@ export const get_user_transactions = async (
 ) => {
   try {
     const record = await getUserTransactionDetails(
-      req.query.publicKey as string
+      req.body.user.publicKey as string
     )
     res.status(200).json(record)
   } catch (error) {
@@ -125,7 +125,7 @@ export const create_stripe_order = async (
     const data = await create_session_order(
       req.body.user.publicKey,
       parseInt(req.query.subscriptionId as string),
-      req.body.user.profile?.email ?? undefined
+      req.body.user.email ?? undefined
     )
     res.status(200).json({ ...data })
   } catch (error) {

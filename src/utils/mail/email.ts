@@ -3,7 +3,8 @@ import config from '../../config'
 import { VerifyMailTemplate } from './emailTemplate/verifyEmailTemplate'
 
 const mailService = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'mail.gandi.net',
+  port: 587,
   auth: {
     user: config.no_reply_email,
     pass: config.no_reply_email_password,
@@ -20,16 +21,20 @@ export function generateRandomString(length: number = 32): string {
   return result
 }
 
-export const sendVerifyEmail = async (
+export const sendVerificationEmail = async (
   to: string | string[],
   verifyURL: string
 ) => {
-  const data = await mailService.sendMail({
-    from: 'Lighthouse',
-    sender: 'Lighthouse Storage',
-    to,
-    subject: 'Verify your email address',
-    html: VerifyMailTemplate(verifyURL),
-  })
-  return data
+  try {
+    const data = await mailService.sendMail({
+      from: 'no-reply@lighthouse.storage',
+      sender: 'Lighthouse Storage',
+      to,
+      subject: 'Verify your email address',
+      html: VerifyMailTemplate(verifyURL),
+    })
+    return data
+  } catch (err) {
+    console.log(err)
+  }
 }

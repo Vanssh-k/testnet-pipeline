@@ -1,17 +1,33 @@
 import NodeCache from 'node-cache'
 import {
   generateRandomString,
-  sendVerifyEmail,
+  sendVerificationEmail,
 } from '../../../utils/mail/email'
 import updateEmail from '../../../repository/user/updateEmail'
 
-const cache = new NodeCache({ stdTTL: 300 }) // Set the cache TTL to 300 seconds (5 minutes)
+const cache = new NodeCache({ stdTTL: 3600 }) // Set the cache TTL to 3600 seconds (1 hour)
+
+const isEmailValid = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
 
 export const generateTokenAndSendMail = async (
   address: string,
   email: string
 ) => {
+  if (!isEmailValid(email)) {
+    throw new Error('Invalid email address!!!')
+  }
   const token = generateRandomString(64)
+  const lastMailByUser: any = cache.get(`lastMailByUser/${address}`)
+  if (lastMailByUser) {
+    if ((Date.now() - lastMailByUser) / 1000 < 120) {
+      throw new Error('Wait for two min before sending another mail!!!')
+    }
+  }
+
+  cache.set(`lastMailByUser/${address}`, Date.now())
   cache.set(`verifytoken/${token}`, {
     address,
     email,
@@ -19,7 +35,7 @@ export const generateTokenAndSendMail = async (
     createdAt: Date.now(),
   })
 
-  await sendVerifyEmail(
+  await sendVerificationEmail(
     email,
     `https://files.lighthouse.storage/verify?token=${token}`
   )
@@ -28,12 +44,11 @@ export const generateTokenAndSendMail = async (
 
 export const verifyEmailToken = async (token: string) => {
   const data: any = cache.get(`verifytoken/${token}`)
-  console.log(data)
   if (!data) {
     throw new Error('This Token is expired')
   }
   if (!data.isUsed) {
-    updateEmail(data.address, { email: data.email })
+    updateEmail(data.address, data.email)
     return { message: 'verified' }
   } else {
     throw new Error('Token has already been used')

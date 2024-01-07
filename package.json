@@ -58,7 +58,7 @@
         "morgan": "^1.10.0",
         "node-cache": "^5.1.2",
         "node-cron": "^3.0.2",
-        "nodemailer": "^6.9.7",
+        "nodemailer": "^6.9.8",
         "prom-client": "^15.1.0",
         "redis": "^4.6.5",
         "stripe": "^14.7.0",

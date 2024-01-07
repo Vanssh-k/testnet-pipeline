@@ -66,8 +66,8 @@ const baseConfig = {
   migration_ocean_access_token:
     process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,
-  no_reply_email_password: process.env.MAIL_REPLY_PASSWORD,
-  no_reply_email: process.env.MAIL_EMAIL,
+  no_reply_email_password: process.env.NO_REPLY_EMAIL_PASSWORD,
+  no_reply_email: process.env.NO_REPLY_EMAIL_ID,
 }
 
 const envVarsSchema = Joi.object({
@@ -124,9 +124,6 @@ const envVarsSchema = Joi.object({
   no_reply_email: Joi.string().required().messages({
     'any.required': `'MAIL_EMAIL IS MISSING'`,
   }),
-  stripe_key: Joi.string().required(),
-  payment_url: Joi.string().required(),
-  // stripe_webhook: Joi.string().valid(''),
 }).unknown()
 
 const { value: envVars, error } = envVarsSchema.validate(baseConfig)
