@@ -12,6 +12,7 @@ import swaggerDocs from './docs/swagger'
 import { requestFilter, responseFilter } from './utils/loggerFilters'
 import { exportAndClearLogs } from './controller/log'
 import errorHandler from './middlewares/error-handler'
+import * as prometheusMetrics from './middlewares/prometheus'
 
 import AuthRouter from './routes/auth'
 import UserRouter from './routes/user'
@@ -42,10 +43,19 @@ app.use(cors())
 
 swaggerDocs(app)
 
+app.use(prometheusMetrics.middleware)
+
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).send('OK')
 })
-
+app.get('/metrics', async (req: Request, res: Response) => {
+  try {
+    res.set('Content-Type', prometheusMetrics.promClient.register.contentType)
+    res.end(await prometheusMetrics.promClient.register.metrics())
+  } catch (ex) {
+    res.status(500).end(ex)
+  }
+})
 app.use('/api/auth', AuthRouter)
 app.use('/api/user', UserRouter)
 app.use('/api/ipns', IPNSRouter)
