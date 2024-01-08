@@ -21,11 +21,11 @@ services:
     depends_on:
       - prometheus
 
-  lighthosue_backend:
+  lighthouse_backend:
     build:
       context: .
       dockerfile: dockerfile
-    container_name: lighthosue_backend
+    container_name: lighthouse_backend
     ports:
       - "8000:8000"
     depends_on:
