@@ -27,6 +27,14 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/api/webhook', WebhookRouter)
+app.get('/metrics', async (req: Request, res: Response) => {
+  try {
+    res.set('Content-Type', prometheusMetrics.promClient.register.contentType)
+    res.end(await prometheusMetrics.promClient.register.metrics())
+  } catch (ex) {
+    res.status(500).end(ex)
+  }
+})
 
 app.use(bodyParser.json())
 
@@ -48,14 +56,7 @@ app.use(prometheusMetrics.middleware)
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).send('OK')
 })
-app.get('/metrics', async (req: Request, res: Response) => {
-  try {
-    res.set('Content-Type', prometheusMetrics.promClient.register.contentType)
-    res.end(await prometheusMetrics.promClient.register.metrics())
-  } catch (ex) {
-    res.status(500).end(ex)
-  }
-})
+
 app.use('/api/auth', AuthRouter)
 app.use('/api/user', UserRouter)
 app.use('/api/ipns', IPNSRouter)
