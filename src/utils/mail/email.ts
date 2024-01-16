@@ -26,10 +26,13 @@ export const sendVerificationEmail = async (
   verifyURL: string
 ) => {
   try {
+    const plainTextContent = `Please verify your email address by visiting the following link: ${verifyURL}
+    The verification link will expire in an hour. If you have any questions, do reach out to us on Discord  we're always happy to help you out.`
     const data = await mailService.sendMail({
       from: 'no-reply@lighthouse.storage',
       sender: 'Lighthouse Storage',
       to,
+      text: plainTextContent,
       subject: 'Verify your email address',
       html: VerifyMailTemplate(verifyURL),
     })
