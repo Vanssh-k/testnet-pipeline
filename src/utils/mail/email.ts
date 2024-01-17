@@ -2,8 +2,8 @@ import nodemailer from 'nodemailer'
 import config from '../../config'
 
 const mailService = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
+  host: 'mail.gandi.net',
+  port: 587,
   auth: {
     user: config.no_reply_email,
     pass: config.no_reply_email_password,
