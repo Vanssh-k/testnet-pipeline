@@ -3,8 +3,8 @@ import config from '../../config'
 import { VerifyMailTemplate } from './emailTemplate/verifyEmailTemplate'
 
 const mailService = nodemailer.createTransport({
-  host: 'mail.gandi.net',
-  port: 587,
+  host: 'smtp.gmail.com',
+  port: 465,
   auth: {
     user: config.no_reply_email,
     pass: config.no_reply_email_password,
