@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 import config from '../../config'
-import { VerifyMailTemplate } from './emailTemplate/verifyEmailTemplate'
 
 const mailService = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -26,15 +25,14 @@ export const sendVerificationEmail = async (
   verifyURL: string
 ) => {
   try {
-    const plainTextContent = `Please verify your email address by visiting the following link: ${verifyURL}
-    The verification link will expire in an hour. If you have any questions, do reach out to us on Discord  we're always happy to help you out.`
+    const plainTextContent = `Hello,\nPlease verify your email address by visiting the following link:\n${verifyURL}\n\nThe verification link will expire in an hour. If you have any questions, do reach out to us on Discord  we're always happy to help you out.
+    \nThanks,\nTeam Lighthouse`
     const data = await mailService.sendMail({
       from: 'no-reply@lighthouse.storage',
       sender: 'Lighthouse Storage',
       to,
       text: plainTextContent,
       subject: 'Verify your email address',
-      html: VerifyMailTemplate(verifyURL),
     })
     return data
   } catch (err) {
