@@ -1,9 +1,6 @@
-import {
-  create_session_order,
-  processStripePayment,
-} from './helper/web2Payments/stripe'
+import { create_session_order } from './helper/stripePayment'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
-import { validateStripPayload } from './helper/stripe'
+import { handleStripeWebhook } from './helper/stripeWebhook'
 import {
   createSubDomain,
   subDomainExists,
@@ -141,8 +138,7 @@ export const webhook_stripe = async (
   next: NextFunction
 ) => {
   try {
-    const { data: stripeData, eventType } = await validateStripPayload(req)
-    await processStripePayment(stripeData, eventType)
+    await handleStripeWebhook(req)
     res.status(200).json({})
   } catch (error) {
     console.log(error)
