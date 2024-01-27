@@ -1,11 +1,7 @@
-import { v4 } from 'uuid'
 import Stripe from 'stripe'
 import config from '../../../config'
 import { CustomError } from '../../../errors'
 import { paymentPlans } from '../../libs/paymentPlans'
-import { recordTransactions } from '../../../repository/topup/userTransactions'
-import updateUserDataLimit from '../../../repository/user/updateUserDataLimit'
-import getNetwork from '../../../middlewares/getNetwork'
 
 const stripe = new Stripe(config.stripe_key)
 
