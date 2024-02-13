@@ -1,11 +1,7 @@
-import { v4 } from 'uuid'
 import Stripe from 'stripe'
-import config from '../../../../config'
-import { CustomError } from '../../../../errors'
-import { paymentPlans } from '../../../libs/paymentPlans'
-import { recordTransactions } from '../../../../repository/topup/userTransactions'
-import updateUserDataLimit from '../../../../repository/user/updateUserDataLimit'
-import getNetwork from '../../../../middlewares/getNetwork'
+import config from '../../../config'
+import { CustomError } from '../../../errors'
+import { paymentPlans } from '../../libs/paymentPlans'
 
 const stripe = new Stripe(config.stripe_key)
 
@@ -107,51 +103,4 @@ export const create_session_order = async (
     cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
   })
   return { url: session.url }
-}
-
-export const processStripePayment = async (data: any, eventType: any) => {
-  if (eventType === 'checkout.session.completed') {
-    stripe.customers
-      .retrieve(data.customer)
-      .then(async (customer) => {
-        try {
-          const invoiceMetadata = data.invoice_creation.invoice_data.metadata
-          // const invoice = await stripe.invoices.retrieve(data.id)
-          // console.log(invoice)
-
-          // check typeof wallet
-          const network = getNetwork(invoiceMetadata.walletAddress)
-          if (network === 'evm') {
-            invoiceMetadata.walletAddress =
-              invoiceMetadata.walletAddress.toLowerCase()
-          }
-
-          // Add TX to DB
-          const _ = await recordTransactions({
-            id: v4().toString(),
-            txHash: data.id,
-            publicKey: invoiceMetadata.walletAddress,
-            tokenAddress: 'Fiat Payment',
-            subscriptionID: invoiceMetadata.planID.toString(),
-            amount: invoiceMetadata.amount,
-            network: 'stripe',
-            createdAt: Date.now(),
-          })
-          //ADD Paid For to DB, customer, data.ID for ref
-          const dataCapPurchased =
-            parseInt(`${invoiceMetadata.storageInGB ?? 0}`, 10) * 1073741824 //GB converted to bytes
-          if (dataCapPurchased) {
-            const updateDataCapResponse = await updateUserDataLimit(
-              invoiceMetadata.walletAddress,
-              dataCapPurchased
-            )
-            console.log('plan updated')
-          }
-        } catch (err: any) {
-          new CustomError(`${err.message}`, 406, err)
-        }
-      })
-      .catch((err: any) => new CustomError(`${err.message}`, 406, err))
-  }
-  return 'success'
 }
