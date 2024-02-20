@@ -6,6 +6,7 @@ import {
   messageSchema,
   emailSchema,
   verificationTokenSchema,
+  verifyWeb3authSchema,
 } from './user'
 import {
   symbolSchema,
@@ -61,4 +62,5 @@ export default {
   verifyRemoveSchema,
   emailSchema,
   verificationTokenSchema,
+  verifyWeb3authSchema,
 }
