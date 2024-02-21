@@ -54,7 +54,7 @@ router.get(
 
 router.post(
   '/verify_web3auth_email',
-  validate(validator.verificationTokenSchema, { body: true }),
+  validate(validator.verifyWeb3authSchema, { body: true }),
   verify_web3auth_token
 )
 
