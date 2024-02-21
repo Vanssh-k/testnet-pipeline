@@ -52,7 +52,7 @@ router.get(
   verify_email_token
 )
 
-router.get(
+router.post(
   '/verify_web3auth_email',
   validate(validator.verificationTokenSchema, { body: true }),
   verify_web3auth_token
