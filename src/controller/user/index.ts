@@ -202,7 +202,7 @@ export const verify_web3auth_token = async (
       app_pub_key.toLowerCase()
     ) {
       // Verified
-      updateEmail(app_pub_key.toLowerCase(), (jwtDecoded.payload as any).email)
+      updateEmail(req.body.address.toLowerCase(), (jwtDecoded.payload as any).email)
 
       res.status(200).json({ name: 'Verification Successful' })
     } else {
