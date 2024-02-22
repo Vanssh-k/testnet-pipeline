@@ -48,4 +48,7 @@ export const verifyWeb3authSchema = joi.object({
   appPubKey: joi.string().required().messages({
     'any.required': `appPubKey not found`,
   }),
+  address: joi.string().required().messages({
+    'any.required': `appPubKey not found`,
+  }),
 })
