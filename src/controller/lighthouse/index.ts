@@ -10,6 +10,9 @@ import {
   podsi,
   podsiTestnet,
   aggregateInfo,
+  fileInfoTestnet,
+  dealInfoTestnet,
+  raasInfoTestnet,
 } from './helper/cidHelper'
 import fileDetailsByCid from '../../repository/file/fileDetailsByCid'
 import {
@@ -75,16 +78,34 @@ export const get_proof = async (
   try {
     let proof
     if (req.query.network === 'testnet') {
+      console.log('testnet')
       proof = await podsiTestnet(req.query.cid as string)
+      console.log(proof)
     } else {
-      proof = await podsi(req.query.cid as string)
+      // proof = await podsi(req.query.cid as string)
     }
     res.status(200).json(proof)
   } catch (error) {
+    console.log('error', error)
     next(error)
   }
 }
-
+export const file_info_testnet = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let fileInfo
+    if (req.query.network === 'testnet') {
+      fileInfo = await fileInfoTestnet(req.query.cid as string)
+    }
+    res.status(200).json(fileInfo)
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
 export const aggregate_info = async (
   req: Request,
   res: Response,
@@ -212,6 +233,38 @@ export const file_info = async (
       mimeType: record.mimeType,
       cidStatus: record.cidStatus,
     })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const raas_info = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let raasInfo
+    if (req.query.network === 'testnet') {
+      raasInfo = await raasInfoTestnet(req.query.cid as string)
+    }
+    res.status(200).json(raasInfo)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deal_id = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let dealInfo
+    if (req.query.network === 'testnet') {
+      dealInfo = await dealInfoTestnet(req.query.dealId as string)
+    }
+    res.status(200).json(dealInfo)
   } catch (error) {
     next(error)
   }
