@@ -2,6 +2,7 @@ import express from 'express'
 import {
   get_ticker,
   deal_status,
+  deal_id,
   file_info,
   get_proof,
   aggregate_info,
@@ -11,10 +12,13 @@ import {
   migration_request_ent,
   list_migration_requests,
   migration_request_info,
+  file_info_testnet,
+  raas_info,
 } from '../controller/lighthouse'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
 import validator from '../middlewares/validators'
+import { ReturnValuesOnConditionCheckFailure } from '@aws-sdk/client-dynamodb'
 
 const router = express.Router()
 
@@ -29,6 +33,17 @@ router.get(
   validate(validator.cidSchema, { query: true }),
   file_info
 )
+router.get(
+  '/file_info_testnet',
+  // validate(validator.cidSchema, { query: true }),
+  file_info_testnet
+)
+
+router.get(
+  '/raas_info',
+  // validate(validator.cidSchema, { query: true }),
+  raas_info
+)
 
 router.get(
   '/deal_status',
@@ -36,21 +51,17 @@ router.get(
   deal_status
 )
 
+router.get('/deal_id', deal_id)
+
 router.get(
   '/bundle_details',
   validate(validator.bundleSchema, { query: true }),
   bundle_details
 )
 
-router.get(
-  '/get_proof',
-  get_proof
-)
+router.get('/get_proof', get_proof)
 
-router.get(
-  '/aggregate_info',
-  aggregate_info
-)
+router.get('/aggregate_info', aggregate_info)
 
 router.post(
   '/migration_request',
