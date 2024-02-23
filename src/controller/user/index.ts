@@ -12,7 +12,7 @@ import {
   generateTokenAndSendMail,
   verifyEmailToken,
 } from './helper/verifyEmail'
-import * as jose from 'jose'
+import jose, { JWTPayload, JWTVerifyResult } from 'jose'
 import updateEmail from '../../repository/user/updateEmail'
 
 export const get_uploads = async (
@@ -182,33 +182,46 @@ export const verify_email_token = async (
   }
 }
 
-export const verify_web3auth_token = async (
+export const verify_web3auth_email = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const idToken = req.headers.authorization?.split(' ')[1]
-    const app_pub_key = req.body.appPubKey
+    const app_pub_key = req.query.appPubKey as string
+    const idToken = req.query.idToken as string
+
+    if (!idToken || !app_pub_key) {
+      res.status(400).json({ name: 'Invalid request' })
+      return
+    }
+
     const jwks = jose.createRemoteJWKSet(
       new URL('https://api-auth.web3auth.io/jwks')
     )
-    const jwtDecoded = await jose.jwtVerify(idToken as string, jwks, {
-      algorithms: ['ES256'],
-    })
+    const jwtDecoded: JWTVerifyResult<JWTPayload> = await jose.jwtVerify(
+      idToken,
+      jwks,
+      {
+        algorithms: ['ES256'],
+      }
+    )
+    const payload = jwtDecoded.payload as any
 
     if (
-      (jwtDecoded.payload as any).wallets[0].public_key.toLowerCase() ===
-      app_pub_key.toLowerCase()
+      payload.wallets[0].public_key.toLowerCase() === app_pub_key.toLowerCase()
     ) {
-      // Verified
-      updateEmail(req.body.address.toLowerCase(), (jwtDecoded.payload as any).email)
-
-      res.status(200).json({ name: 'Verification Successful' })
+      if (typeof payload?.email === 'string') {
+        await updateEmail(req.body.user.publicKey as string, payload.email)
+        res.status(200).json({ name: 'Verification Successful' })
+      } else {
+        res.status(400).json({ name: 'Invalid Email' })
+      }
     } else {
       res.status(400).json({ name: 'Verification Failed' })
     }
   } catch (error) {
+    res.status(400).json({ name: 'Verification Failed' })
     next(error)
   }
 }

@@ -44,11 +44,11 @@ export const verificationTokenSchema = joi.object({
     'any.required': `email not found`,
   }),
 })
-export const verifyWeb3authSchema = joi.object({
-  appPubKey: joi.string().required().messages({
-    'any.required': `appPubKey not found`,
+export const web3authEmailVerificationSchema = joi.object({
+  idToken: joi.string().required().messages({
+    'any.required': `idToken not found`,
   }),
-  address: joi.string().required().messages({
+  appPubKey: joi.string().required().messages({
     'any.required': `appPubKey not found`,
   }),
 })
