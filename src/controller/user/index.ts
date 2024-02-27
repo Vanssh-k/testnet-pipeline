@@ -226,7 +226,6 @@ export const verify_web3auth_email = async (
       res.status(400).json({ name: 'Verification Failed' })
     }
   } catch (error) {
-    res.status(400).json({ name: 'Verification Failed' })
     next(error)
   }
 }
