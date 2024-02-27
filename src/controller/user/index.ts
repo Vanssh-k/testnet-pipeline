@@ -12,7 +12,12 @@ import {
   generateTokenAndSendMail,
   verifyEmailToken,
 } from './helper/verifyEmail'
-import jose, { JWTPayload, JWTVerifyResult } from 'jose'
+import {
+  JWTPayload,
+  JWTVerifyResult,
+  createRemoteJWKSet,
+  jwtVerify,
+} from 'jose'
 import updateEmail from '../../repository/user/updateEmail'
 
 export const get_uploads = async (
@@ -196,10 +201,10 @@ export const verify_web3auth_email = async (
       return
     }
 
-    const jwks = jose.createRemoteJWKSet(
+    const jwks = createRemoteJWKSet(
       new URL('https://api-auth.web3auth.io/jwks')
     )
-    const jwtDecoded: JWTVerifyResult<JWTPayload> = await jose.jwtVerify(
+    const jwtDecoded: JWTVerifyResult<JWTPayload> = await jwtVerify(
       idToken,
       jwks,
       {
