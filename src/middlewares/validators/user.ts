@@ -51,4 +51,7 @@ export const web3authEmailVerificationSchema = joi.object({
   appPubKey: joi.string().required().messages({
     'any.required': `appPubKey not found`,
   }),
+  email: joi.string().required().messages({
+    'any.required': `email not found`,
+  }),
 })
