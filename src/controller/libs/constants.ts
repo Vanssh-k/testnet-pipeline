@@ -30,6 +30,7 @@ const TestnetTableName = {
   FILE_RECORD_TABLE: 'file-records',
   DEAL_RECORD_TABLE: 'deal-records',
 }
+const endowmentTable = 'endowment'
 
 export {
   userTable,
@@ -52,4 +53,5 @@ export {
   filePODSI,
   cacheClearTime,
   TestnetTableName,
+  endowmentTable,
 }

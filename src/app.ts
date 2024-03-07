@@ -21,6 +21,7 @@ import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
 import WebhookRouter from './routes/stripeWebhook'
+import InstrumentationRouter from './routes/instrumentation'
 
 const app = express()
 
@@ -63,7 +64,7 @@ app.use('/api/ipns', IPNSRouter)
 app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
-
+app.use('/api/instrumentation', InstrumentationRouter)
 app.use(errorHandler)
 
 if (!fs.existsSync(config.logPath)) {

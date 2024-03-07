@@ -29,6 +29,7 @@ import {
   subdomainSchema,
   subscriptionIdSchema,
   recordTransactionSchema,
+  tokenAddressSchema,
 } from './topup'
 import { verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth'
 import { verifyPublishSchema, verifyRemoveSchema } from './ipns'
@@ -63,4 +64,5 @@ export default {
   emailSchema,
   verificationTokenSchema,
   web3authEmailVerificationSchema,
+  tokenAddressSchema,
 }

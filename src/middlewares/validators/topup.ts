@@ -41,3 +41,9 @@ export const subscriptionIdSchema = joi.object({
     'any.required': `subscriptionId not found`,
   }),
 })
+
+export const tokenAddressSchema = joi.object({
+  tokenAddress: joi
+    .string()
+    .default('0x0000000000000000000000000000000000000000'),
+})
