@@ -7,10 +7,18 @@ import updateEmail from '../../../repository/user/updateEmail'
 
 const cache = new NodeCache({ stdTTL: 3600 }) // Set the cache TTL to 3600 seconds (1 hour)
 
+const isEmailValid = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 export const generateTokenAndSendMail = async (
   address: string,
   email: string
 ) => {
+  if (!isEmailValid(email)) {
+    throw new Error('Invalid email address!!!')
+  }
   const token = generateRandomString(64)
   const lastMailByUser: any = cache.get(`lastMailByUser/${address}`)
   if (lastMailByUser) {
@@ -40,7 +48,7 @@ export const verifyEmailToken = async (token: string) => {
     throw new Error('This Token is expired')
   }
   if (!data.isUsed) {
-    updateEmail(data.address, { email: data.email })
+    updateEmail(data.address, data.email)
     return { message: 'verified' }
   } else {
     throw new Error('Token has already been used')

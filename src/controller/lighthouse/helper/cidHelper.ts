@@ -16,7 +16,10 @@ import getCIDRecordTestnet from '../../../repository/filecoin/testnet/getCIDReco
 import getBundleRecordTestnet from '../../../repository/filecoin/testnet/getBundleRecordTestnet'
 import filecoinDealTestnet from '../../../repository/filecoin/testnet/filecoinDealTestnet'
 import podsiRecordTestnet from '../../../repository/filecoin/testnet/podsiRecordTestnet'
-
+import getPodsiRecordTestnet from '../../../repository/filecoin/testnet/getPodsiRecordTestnet'
+import getRaasInfoTestnet from '../../../repository/filecoin/testnet/getRaasInfoTestnet'
+import getFileInfoTestnet from '../../../repository/filecoin/testnet/getFileInfoTestnet'
+import getDealInfoTestnet from '../../../repository/filecoin/testnet/getDealInfoTestnet'
 export const cidDealStatus = async (cid: string) => {
   try {
     const cidRecord = await getCIDRecord(cid)
@@ -53,6 +56,18 @@ export const cidDealStatus = async (cid: string) => {
   }
 }
 
+export const dealInfoTestnet = async (dealId: string) => {
+  const dealRecord = await getDealInfoTestnet(dealId)
+  const dealRecordInfo = dealRecord[0]
+  return {
+    dealId: dealRecordInfo.chainDealID,
+    storageProvider: dealRecordInfo.storageProvider,
+    startEpoch: dealRecordInfo.startEpoch,
+    endEpoch: dealRecordInfo.endEpoch,
+    publishCid: dealRecordInfo.publishCid,
+  }
+}
+
 type DealInfo = {
   dealId: number
   storageProvider: string
@@ -61,9 +76,18 @@ type DealInfo = {
   aggPieceSize: number
   aggCarFileSize: number
 }
+type DealInfoTestnet = {
+  dealId: number
+  storageProvider: string
+  proof: any
+}
 type dealResponse = {
   pieceCID: string
   dealInfo: DealInfo[]
+}
+type dealResponseTestnet = {
+  pieceCID: string
+  dealInfo: DealInfoTestnet[]
 }
 
 export const podsi = async (cid: string) => {
@@ -116,53 +140,66 @@ export const podsi = async (cid: string) => {
   return dealRes
 }
 
-export const podsiTestnet = async (cid: string) => {
-  const cidRecord = await getCIDRecordTestnet(cid)
-  /* istanbul ignore next */
+export const fileInfoTestnet = async (cid: string) => {
+  const fileRecord = await getFileInfoTestnet(cid)
 
-  const dealArray: DealInfo[] = []
-  const pieceCid: string = cidRecord[0]['pieceCid']
-  for (let i = 0; i < cidRecord.length; i++) {
-    if (i > 10) {
-      break
-    }
-    const cidProof = await podsiRecordTestnet(cidRecord[i]['pieceCid'])
-    let proofOfAggregate: any = null
-    if (cidRecord[i]['aggregateIn'] !== 'none') {
-      const aggregatedIn: any = await getBundleRecordTestnet(
-        cidRecord[i]['aggregatedIn']
-      )
-
-      if (aggregatedIn['fileStatus'] === 'deal initiated') {
-        if (!cidProof[0]['aggregateID']) {
-          proofOfAggregate = cidProof[0]
-        } else {
-          for (let i = 0; i < cidProof.length; i++) {
-            if (cidProof[i]['aggregateID'] === aggregatedIn['aggregateID']) {
-              proofOfAggregate = cidProof[i]
-            }
-          }
-        }
-
-        const deals = await filecoinDealTestnet(aggregatedIn['aggregateID'])
-        for (let i = 0; i < deals.length; i++) {
-          dealArray.push({
-            dealId: parseInt(deals[i]['chainDealID']),
-            storageProvider: deals[i]['storageProvider'],
-            proof: {
-              inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
-              verifierData: proofOfAggregate['fileProof']['verifierData'],
-              indexRecord: proofOfAggregate['fileProof']['indexRecord'],
-            },
-            aggPieceCID: aggregatedIn.commpCID,
-            aggPieceSize: parseInt(aggregatedIn.pieceSize),
-            aggCarFileSize: parseInt(aggregatedIn.carFileSize),
-          })
-        }
-      }
-    }
+  return {
+    cid: fileRecord?.cid,
+    cidV1: fileRecord?.cidV1,
+    fileSize: fileRecord?.fileSize,
+    pieceCid: fileRecord?.pieceCid,
+    pieceSize: fileRecord?.pieceSize,
+    carSize: fileRecord?.carSize,
   }
-  const dealRes: dealResponse = {
+}
+
+export const raasInfoTestnet = async (cid: string) => {
+  const raasRecord = await getRaasInfoTestnet(cid)
+  const raasInfo = raasRecord[0]
+  return {
+    cid: raasInfo.cid,
+    dealIDs: raasInfo.dealIDs,
+    miners: raasInfo.miners,
+    currentReplications: raasInfo.currentReplications,
+    replicationTarget: raasInfo.replicationTarget,
+  }
+}
+
+export const podsiTestnet = async (cid: string) => {
+  const cidInfo = await getPodsiRecordTestnet(cid)
+  // const cidInfo = cidRecord[0]
+  const raasRecord = await getRaasInfoTestnet(cid)
+  const raasInfo = raasRecord[0]
+  const deals = raasInfo?.dealIDs
+  const storageProvider = raasInfo.miners
+  /* istanbul ignore next */
+  const dealArray: DealInfoTestnet[] = []
+  const pieceCid: string = cidInfo?.pieceCid
+  // for (let i = 0; i < cidRecord.length; i++) {
+  // const cidProof = await podsiRecord(cidInfo['pieceCid'])
+  // let proofOfAggregate: any = null
+  // if (cidInfo['aggregateIn'] !== 'none') {
+  // const aggregatedIn: any = await getBundleRecord(cidInfo['aggregatedIn'])
+  // if (aggregatedIn['aggFileStatus'] === 'deal initiated') {
+  for (let i = 0; i < deals.length; i++) {
+    dealArray.push({
+      dealId: parseInt(deals[i]),
+      storageProvider: storageProvider[i],
+      proof: cidInfo?.fileProofs[i],
+      // {
+      //   inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
+      //   verifierData: proofOfAggregate['fileProof']['verifierData'],
+      //   indexRecord: proofOfAggregate['fileProof']['indexRecord'],
+      // },
+      // aggPieceCID: aggregatedIn.commpCID,
+      // aggPieceSize: parseInt(aggregatedIn.pieceSize),
+      // aggCarFileSize: parseInt(aggregatedIn.carFileSize),
+    })
+    // }
+  }
+  // }
+  // }
+  const dealRes: dealResponseTestnet = {
     pieceCID: pieceCid,
     dealInfo: dealArray,
   }

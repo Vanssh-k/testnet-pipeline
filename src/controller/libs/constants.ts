@@ -23,6 +23,15 @@ const cacheClearTime = {
   month: 2628000,
 }
 
+const TestnetTableName = {
+  PODSI_TABLE: 'inclusion-proof',
+  RAAS_TABLE: 'raas-testing',
+  AGGREGATE_TABLE: 'aggregate-file-records',
+  FILE_RECORD_TABLE: 'file-records',
+  DEAL_RECORD_TABLE: 'deal-records',
+}
+const endowmentTable = 'endowment'
+
 export {
   userTable,
   userAuthTable,
@@ -43,4 +52,6 @@ export {
   ipnsTable,
   filePODSI,
   cacheClearTime,
+  TestnetTableName,
+  endowmentTable,
 }

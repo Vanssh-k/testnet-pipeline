@@ -1,12 +1,10 @@
-FROM node:14-alpine
+FROM node:18-alpine
 
-WORKDIR /apis
-RUN chown -R node:node /apis
-USER node
+WORKDIR /app
 
 COPY package.json ./
 RUN npm install
 
 COPY ./ ./
 
-CMD ["npm", "start"]
+CMD npm run build && npm start

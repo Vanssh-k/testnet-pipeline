@@ -1,9 +1,6 @@
-import {
-  create_session_order,
-  processStripePayment,
-} from './helper/web2Payments/stripe'
+import { create_session_order } from './helper/stripePayment'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
-import { validateStripPayload } from './helper/stripe'
+import { handleStripeWebhook } from './helper/stripeWebhook'
 import {
   createSubDomain,
   subDomainExists,
@@ -79,7 +76,7 @@ export const get_user_transactions = async (
 ) => {
   try {
     const record = await getUserTransactionDetails(
-      req.query.publicKey as string
+      req.body.user.publicKey as string
     )
     res.status(200).json(record)
   } catch (error) {
@@ -125,7 +122,7 @@ export const create_stripe_order = async (
     const data = await create_session_order(
       req.body.user.publicKey,
       parseInt(req.query.subscriptionId as string),
-      req.body.user.profile?.email ?? undefined
+      req.body.user.email ?? undefined
     )
     res.status(200).json({ ...data })
   } catch (error) {
@@ -141,8 +138,7 @@ export const webhook_stripe = async (
   next: NextFunction
 ) => {
   try {
-    const { data: stripeData, eventType } = await validateStripPayload(req)
-    await processStripePayment(stripeData, eventType)
+    await handleStripeWebhook(req)
     res.status(200).json({})
   } catch (error) {
     console.log(error)

@@ -10,6 +10,7 @@ import {
   remove_tag,
   send_email_verification_mail,
   verify_email_token,
+  verify_web3auth_email,
 } from '../controller/user'
 import authenticator from '../middlewares/authenticator'
 import validate from '../middlewares/validate'
@@ -49,6 +50,13 @@ router.get(
   '/verify_email',
   validate(validator.verificationTokenSchema, { query: true }),
   verify_email_token
+)
+
+router.get(
+  '/verify_web3auth_email',
+  validate(validator.web3authEmailVerificationSchema, { query: true }),
+  authenticator(['verifyToken'], ['publicKeyOnly']),
+  verify_web3auth_email
 )
 
 router.get('/faucet_status', authenticator(['verifyToken']), faucet_status)

@@ -2,7 +2,7 @@ import redis from 'ioredis'
 
 const client = redis.createClient()
 
-client.on('error', (err) => {
+client.on('error', (err: any) => {
   if (err.code === 'ECONNREFUSED') {
     console.error('Redis connection refused')
     client.quit()
