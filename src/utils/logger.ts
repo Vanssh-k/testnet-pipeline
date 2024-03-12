@@ -1,5 +1,6 @@
 import config from '../config'
 import { createLogger, format, transports } from 'winston'
+import LokiTransport from 'winston-loki'
 
 const httpTransportOptions = {
   host: config.data_dog_host,
@@ -24,9 +25,12 @@ export default function logger(logLevel: string, service: string) {
     transports: [
       config.isDev
         ? new transports.File({
-            filename: config.logPath + '/combined.log',
+            filename: `${config.logPath}/combined.log`,
           })
-        : new transports.Http(httpTransportOptions),
+        : new LokiTransport({
+            host: config.loki_host,
+            labels: { service: config.serviceName, env: config.env },
+          }),
     ],
   })
   return logger

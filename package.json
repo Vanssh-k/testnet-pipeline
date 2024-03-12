@@ -69,6 +69,7 @@
         "uuid": "^8.3.2",
         "winston": "^3.8.2",
         "winston-elasticsearch": "^0.17.4",
+        "winston-loki": "^6.0.8",
         "yamljs": "^0.3.0"
     },
     "devDependencies": {
