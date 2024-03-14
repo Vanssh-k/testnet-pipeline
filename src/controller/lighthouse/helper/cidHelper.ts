@@ -170,14 +170,14 @@ export const podsi = async (cid: string) => {
 
 export const fileInfoTestnet = async (cid: string) => {
   const fileRecord = await getFileInfoTestnet(cid)
-  const fileInfo = fileRecord[0]
+
   return {
-    cid: fileInfo.cid,
-    cidV1: fileInfo.cidV1,
-    fileSize: fileInfo.fileSize,
-    pieceCid: fileInfo.pieceCid,
-    pieceSize: fileInfo.pieceSize,
-    carSize: fileInfo.carSize,
+    cid: fileRecord?.cid,
+    cidV1: fileRecord?.cidV1,
+    fileSize: fileRecord?.fileSize,
+    pieceCid: fileRecord?.pieceCid,
+    pieceSize: fileRecord?.pieceSize,
+    carSize: fileRecord?.carSize,
   }
 }
 
@@ -194,15 +194,15 @@ export const raasInfoTestnet = async (cid: string) => {
 }
 
 export const podsiTestnet = async (cid: string) => {
-  const cidRecord = await getPodsiRecordTestnet(cid)
-  const cidInfo = cidRecord[0]
+  const cidInfo = await getPodsiRecordTestnet(cid)
+  // const cidInfo = cidRecord[0]
   const raasRecord = await getRaasInfoTestnet(cid)
   const raasInfo = raasRecord[0]
   const deals = raasInfo?.dealIDs
   const storageProvider = raasInfo.miners
   /* istanbul ignore next */
   const dealArray: DealInfoTestnet[] = []
-  const pieceCid: string = cidInfo['pieceCid']
+  const pieceCid: string = cidInfo?.pieceCid
   // for (let i = 0; i < cidRecord.length; i++) {
   // const cidProof = await podsiRecord(cidInfo['pieceCid'])
   // let proofOfAggregate: any = null
@@ -213,7 +213,7 @@ export const podsiTestnet = async (cid: string) => {
     dealArray.push({
       dealId: parseInt(deals[i]),
       storageProvider: storageProvider[i],
-      proof: cidInfo.fileProofs[i],
+      proof: cidInfo?.fileProofs[i],
       // {
       //   inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
       //   verifierData: proofOfAggregate['fileProof']['verifierData'],
