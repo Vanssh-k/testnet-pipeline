@@ -12,6 +12,7 @@ import swaggerDocs from './docs/swagger'
 import { requestFilter, responseFilter } from './utils/loggerFilters'
 import { exportAndClearLogs } from './controller/log'
 import errorHandler from './middlewares/error-handler'
+import * as prometheusMetrics from './middlewares/prometheus'
 
 import AuthRouter from './routes/auth'
 import UserRouter from './routes/user'
@@ -20,12 +21,21 @@ import TopUpRouter from './routes/topup'
 import GovernanceRouter from './routes/governance'
 import LighthouseRouter from './routes/lighthouse'
 import WebhookRouter from './routes/stripeWebhook'
+import InstrumentationRouter from './routes/instrumentation'
 
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/api/webhook', WebhookRouter)
+app.get('/metrics', async (req: Request, res: Response) => {
+  try {
+    res.set('Content-Type', prometheusMetrics.promClient.register.contentType)
+    res.end(await prometheusMetrics.promClient.register.metrics())
+  } catch (ex) {
+    res.status(500).end(ex)
+  }
+})
 
 app.use(bodyParser.json())
 
@@ -42,6 +52,8 @@ app.use(cors())
 
 swaggerDocs(app)
 
+app.use(prometheusMetrics.middleware)
+
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).send('OK')
 })
@@ -52,7 +64,7 @@ app.use('/api/ipns', IPNSRouter)
 app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
-
+app.use('/api/instrumentation', InstrumentationRouter)
 app.use(errorHandler)
 
 if (!fs.existsSync(config.logPath)) {
