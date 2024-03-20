@@ -27,22 +27,20 @@ import getFileInfo from '../../../repository/filecoin/mainnet/getFileInfo'
 
 export const cidDealStatus = async (cid: string) => {
   try {
-    const raasRecord = await getRaasInfo(cid)
-    const raasInfo = raasRecord[0]
-    const fileRecord = await getFileInfo(cid)
-    const fileInfo = fileRecord[0]
+    const raasInfo = await getRaasInfo(cid)
+    const fileInfo = await getFileInfo(cid)
     const deals: any = []
-    for (let i = 0; i < raasInfo.dealIDs.length; i++) {
-      const dealRecord = await getDealInfo(raasInfo.dealIDs[i])
+    for (let i = 0; i < raasInfo?.dealIDs.length; i++) {
+      const dealRecord = await getDealInfo(raasInfo?.dealIDs[i])
       const dealRecordInfo = dealRecord[0]
       deals[i] = {}
-      deals[i].pieceCID = raasInfo.cid
-      deals[i].payloadCid = fileInfo.cidV1
-      deals[i].pieceSize = parseInt(fileInfo.pieceSize)
-      deals[i].carFileSize = parseInt(fileInfo.carSize)
+      deals[i].pieceCID = raasInfo?.cid
+      deals[i].payloadCid = fileInfo?.cidV1
+      deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
+      deals[i].carFileSize = parseInt(fileInfo?.carSize)
       deals[i].dealId = parseInt(dealRecordInfo.chainDealID)
-      deals[i].miner = raasInfo.miners[i]
-      deals[i].content = parseInt(fileInfo.fileSize)
+      deals[i].miner = raasInfo?.miners[i]
+      deals[i].content = parseInt(fileInfo?.fileSize)
     }
     console.log(deals)
     return deals

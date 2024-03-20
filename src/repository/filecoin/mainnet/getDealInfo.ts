@@ -1,17 +1,19 @@
 import dbbClient from '../../db/ddbClient'
 import DatabaseError from '../../../errors/database-error'
 import { MainnetTableName } from '../../../controller/libs/constants'
+
 export default async (dealId: string) => {
   try {
     const params = {
       TableName: MainnetTableName.DEAL_RECORD_TABLE,
-      FilterExpression: 'chainDealID = :c',
+      IndexName: 'chainDealID-index',
+      KeyConditionExpression: 'chainDealID = :c',
       ExpressionAttributeValues: {
         ':c': Number(dealId),
       },
     }
 
-    const record = await dbbClient.scan(params)
+    const record = await dbbClient.query(params)
     return record.Items ?? []
   } catch (error) {
     /* istanbul ignore next */
