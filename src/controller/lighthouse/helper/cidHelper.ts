@@ -20,39 +20,71 @@ import getPodsiRecordTestnet from '../../../repository/filecoin/testnet/getPodsi
 import getRaasInfoTestnet from '../../../repository/filecoin/testnet/getRaasInfoTestnet'
 import getFileInfoTestnet from '../../../repository/filecoin/testnet/getFileInfoTestnet'
 import getDealInfoTestnet from '../../../repository/filecoin/testnet/getDealInfoTestnet'
+import getDealInfo from '../../../repository/filecoin/mainnet/getDealInfo'
+import getPodsiRecord from '../../../repository/filecoin/mainnet/getPodsiRecord'
+import getRaasInfo from '../../../repository/filecoin/mainnet/getRaasInfo'
+import getFileInfo from '../../../repository/filecoin/mainnet/getFileInfo'
+
 export const cidDealStatus = async (cid: string) => {
   try {
-    const cidRecord = await getCIDRecord(cid)
-
-    // Get bundle record
-    let aggregatedIn: any
-    /* istanbul ignore next */
-    if (cidRecord[0]['aggregateIn'] !== 'none') {
-      aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
+    const raasInfo = await getRaasInfo(cid)
+    const fileInfo = await getFileInfo(cid)
+    const deals: any = []
+    for (let i = 0; i < raasInfo?.dealIDs.length; i++) {
+      const dealRecord = await getDealInfo(raasInfo?.dealIDs[i])
+      const dealRecordInfo = dealRecord[0]
+      deals[i] = {}
+      deals[i].pieceCID = raasInfo?.cid
+      deals[i].payloadCid = fileInfo?.cidV1
+      deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
+      deals[i].carFileSize = parseInt(fileInfo?.carSize)
+      deals[i].dealId = parseInt(dealRecordInfo.chainDealID)
+      deals[i].miner = 'f0' + raasInfo?.miners[i]
+      deals[i].content = parseInt(fileInfo?.fileSize)
+      deals[i].dealStatus = dealRecordInfo.dealStatus
+      deals[i].startEpoch = dealRecordInfo.startEpoch
+      deals[i].endEpoch = dealRecordInfo.endEpoch
+      deals[i].publishCid = dealRecordInfo.publishCID
+      deals[i].dealUUID = dealRecordInfo.dealUUID
+      deals[i].providerCollateral = dealRecordInfo.providerCollateral
+      deals[i].chainDealID = dealRecordInfo.chainDealID
     }
-
-    // Check bundle status
-    // If initiated then get miner details
-    let deals: any = []
-    /* istanbul ignore next */
-    if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
-      deals = await filecoinDeal(aggregatedIn['aggregateID'])
-    }
-
-    /* istanbul ignore next */
-    for (let i = 0; i < deals.length; i++) {
-      deals[i].pieceCID = aggregatedIn.commpCID
-      deals[i].payloadCid = aggregatedIn.payloadCid
-      deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
-      deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
-      deals[i].dealId = parseInt(deals[i]['chainDealID'])
-      deals[i].miner = deals[i]['storageProvider']
-      deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
-    }
-
     return deals
   } catch (e) {
-    return []
+    console.log(e)
+    try {
+      const cidRecord = await getCIDRecord(cid)
+
+      // Get bundle record
+      let aggregatedIn: any
+      /* istanbul ignore next */
+      if (cidRecord[0]['aggregateIn'] !== 'none') {
+        aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
+      }
+
+      // Check bundle status
+      // If initiated then get miner details
+      let deals: any = []
+      /* istanbul ignore next */
+      if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
+        deals = await filecoinDeal(aggregatedIn['aggregateID'])
+      }
+
+      /* istanbul ignore next */
+      for (let i = 0; i < deals.length; i++) {
+        deals[i].pieceCID = aggregatedIn.commpCID
+        deals[i].payloadCid = aggregatedIn.payloadCid
+        deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
+        deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
+        deals[i].dealId = parseInt(deals[i]['chainDealID'])
+        deals[i].miner = deals[i]['storageProvider']
+        deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
+      }
+
+      return deals
+    } catch (e) {
+      return []
+    }
   }
 }
 
