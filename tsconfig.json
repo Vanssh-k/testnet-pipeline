@@ -14,10 +14,5 @@
     "noImplicitAny": true,
   },
   "include": ["src","src/**/*.ts",],
-  "exclude": ["node_modules", "**/*.spec.ts","**/*.test.ts",".vscode","dist"],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
-  
+  "exclude": ["node_modules", "**/*.spec.ts","**/*.test.ts",".vscode","dist"],  
 }
