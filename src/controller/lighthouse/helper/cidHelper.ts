@@ -28,6 +28,9 @@ import getFileInfo from '../../../repository/filecoin/mainnet/getFileInfo'
 export const cidDealStatus = async (cid: string) => {
   try {
     const raasInfo = await getRaasInfo(cid)
+    if (!raasInfo) {
+      throw new Error()
+    }
     const fileInfo = await getFileInfo(cid)
     const deals: any = []
     for (let i = 0; i < raasInfo?.dealIDs.length; i++) {
@@ -51,7 +54,6 @@ export const cidDealStatus = async (cid: string) => {
     }
     return deals
   } catch (e) {
-    console.log(e)
     try {
       const cidRecord = await getCIDRecord(cid)
 
