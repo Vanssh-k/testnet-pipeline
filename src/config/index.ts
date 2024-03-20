@@ -8,7 +8,9 @@ const baseConfig = {
   env,
   isDev: env === 'development',
   isTest: env === 'testing',
+  serviceName: 'lighthouse-backend',
   logPath: 'logs',
+  loki_host: process.env.LOKI_HOST ?? 'http://loki:3100',
   service: 'backend',
   lighthouse_ipfs_node: 'https://node.lighthouse.storage',
   lighthouse_auth_enc_node: 'https://encryption.lighthouse.storage',
@@ -33,6 +35,8 @@ const baseConfig = {
   data_dog_host: process.env.DATADOG_HOST ?? '',
   transaction_route_token: process.env.TRANSACTION_ROUTE_TOKEN ?? '',
   polygon_rpc: process.env.POLYGON_RPC ?? '',
+  filecoin_rpc:
+    process.env.FILECOIN_RPC ?? 'https://api.calibration.node.glif.io/rpc/v1',
   migration_test_access_token: process.env.MIGRATION_TEST_ACCESS_TOKEN ?? '',
   route_access_token: process.env.ROUTE_ACCESS_TOKEN ?? '',
   lighthouse_public_node_token:
@@ -63,6 +67,16 @@ const baseConfig = {
   payment_url: process.env.PAYMENT_URL ?? '',
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02', // Wallet in use: 0x5129b1153f4f9f321f41cba831899336cb4134c7
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
+  lighthouse_fundReceive_address:
+    process.env.LIGHTHOUSE_FUNDRECEIVE_ADDRESS ??
+    '0x6c73096F924D60af951A2CA345b435958387BC3f',
+  lighthouse_endowment_address:
+    process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ??
+    '0xfaf011f515e558ad29aE4D2b13A0b2fBBD7c9C54',
+  lighthouse_glifYield_address:
+    process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ??
+    '0xa45cEA9F88eA50310744483b989E759b3d091ea8',
+
   migration_ocean_access_token:
     process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,

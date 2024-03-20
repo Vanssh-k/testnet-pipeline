@@ -39,10 +39,16 @@ export const cidDealStatus = async (cid: string) => {
       deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
       deals[i].carFileSize = parseInt(fileInfo?.carSize)
       deals[i].dealId = parseInt(dealRecordInfo.chainDealID)
-      deals[i].miner = raasInfo?.miners[i]
-      deals[i].content = parseInt(fileInfo?.fileSize)
+      deals[i].miner = 'f0' + raasInfo.miners[i]
+      deals[i].content = parseInt(fileInfo.fileSize)
+      deals[i].dealStatus = dealRecordInfo.dealStatus
+      deals[i].startEpoch = dealRecordInfo.startEpoch
+      deals[i].endEpoch = dealRecordInfo.endEpoch
+      deals[i].publishCid = dealRecordInfo.publishCID
+      deals[i].dealUUID = dealRecordInfo.dealUUID
+      deals[i].providerCollateral = dealRecordInfo.providerCollateral
+      deals[i].chainDealID = dealRecordInfo.chainDealID
     }
-    console.log(deals)
     return deals
   } catch (e) {
     console.log(e)
