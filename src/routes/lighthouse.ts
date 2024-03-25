@@ -10,6 +10,7 @@ import {
   pin_cid,
   migration_request,
   migration_request_ent,
+  cid_pin_status,
   list_migration_requests,
   migration_request_info,
   file_info_testnet,
@@ -88,6 +89,12 @@ router.get(
   '/list_migration_requests',
   validate(validator.publicKeySchema, { query: true }),
   list_migration_requests
+)
+
+router.get(
+  '/cid_pin_status',
+  validate(validator.cidSchema, { query: true }),
+  cid_pin_status
 )
 
 router.get(
