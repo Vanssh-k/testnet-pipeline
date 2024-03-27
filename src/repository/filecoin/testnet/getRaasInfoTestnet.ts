@@ -6,7 +6,7 @@ export default async (cid: string) => {
     const params = {
       TableName: TestnetTableName.RAAS_TABLE,
       Key: {
-        aggregateID: cid,
+        cid: cid,
       },
     }
 
