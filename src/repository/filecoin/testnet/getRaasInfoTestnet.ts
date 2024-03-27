@@ -5,16 +5,13 @@ export default async (cid: string) => {
   try {
     const params = {
       TableName: TestnetTableName.RAAS_TABLE,
-      IndexName: 'cid-index',
-      // FilterExpression: 'cid = :c',
-      KeyConditionExpression: 'cid = :c',
-      ExpressionAttributeValues: {
-        ':c': cid,
+      Key: {
+        aggregateID: cid,
       },
     }
-    // const record = await dbbClient.scan(params)
-    const record = await dbbClient.query(params)
-    return record.Items ?? []
+
+    const record = await dbbClient.get(params)
+    return record.Item
   } catch (error) {
     /* istanbul ignore next */
     console.log('Error getting raas record', error)

@@ -188,24 +188,22 @@ export const fileInfoTestnet = async (cid: string) => {
 }
 
 export const raasInfoTestnet = async (cid: string) => {
-  const raasRecord = await getRaasInfoTestnet(cid)
-  const raasInfo = raasRecord[0]
+  const raasInfo = await getRaasInfoTestnet(cid)
   return {
-    cid: raasInfo.cid,
-    dealIDs: raasInfo.dealIDs,
-    miners: raasInfo.miners,
-    currentReplications: raasInfo.currentReplications,
-    replicationTarget: raasInfo.replicationTarget,
+    cid: raasInfo?.cid,
+    dealIDs: raasInfo?.dealIDs,
+    miners: raasInfo?.miners,
+    currentReplications: raasInfo?.currentReplications,
+    replicationTarget: raasInfo?.replicationTarget,
   }
 }
 
 export const podsiTestnet = async (cid: string) => {
   const cidInfo = await getPodsiRecordTestnet(cid)
   // const cidInfo = cidRecord[0]
-  const raasRecord = await getRaasInfoTestnet(cid)
-  const raasInfo = raasRecord[0]
+  const raasInfo = await getRaasInfoTestnet(cid)
   const deals = raasInfo?.dealIDs
-  const storageProvider = raasInfo.miners
+  const storageProvider = raasInfo?.miners
   /* istanbul ignore next */
   const dealArray: DealInfoTestnet[] = []
   const pieceCid: string = cidInfo?.pieceCid
