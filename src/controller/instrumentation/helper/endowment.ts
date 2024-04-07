@@ -11,14 +11,14 @@ const contract = new ethers.Contract(contractAddress, EndowmentABI, provider)
 
 const getPoolBalance = async (tokenAddress: string): Promise<number> => {
   const bal = await contract.getContractBalance(tokenAddress)
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 const getAccumulatedBalance = async (): Promise<number> => {
   const bal = await contract.getVaultBalance(
     config.lighthouse_glifYield_address
   )
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 const getTransactions = async (): Promise<any> => {

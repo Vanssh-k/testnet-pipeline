@@ -9,12 +9,12 @@ const contract = new ethers.Contract(contractAddress, FundReceiveABI, provider)
 
 const getNativeBalance = async (): Promise<number> => {
   const bal = await contract.getNativeBalance()
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 const getTokenBalance = async (tokenAddress: string): Promise<number> => {
   const bal = await contract.getERC20Balance(tokenAddress)
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 export { getNativeBalance, getTokenBalance }

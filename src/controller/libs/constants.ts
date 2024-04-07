@@ -30,7 +30,15 @@ const TestnetTableName = {
   FILE_RECORD_TABLE: 'file-records',
   DEAL_RECORD_TABLE: 'deal-records',
 }
-const endowmentTable = 'endowment'
+const endowmentTable = 'endownment-transactions'
+
+const MainnetTableName = {
+  PODSI_TABLE: 'de-inclusion-proof',
+  RAAS_TABLE: 'de-raas',
+  AGGREGATE_TABLE: 'de-aggregate-info',
+  FILE_RECORD_TABLE: 'de-file-info',
+  DEAL_RECORD_TABLE: 'de-filecoin-deals',
+}
 
 export {
   userTable,
@@ -53,5 +61,6 @@ export {
   filePODSI,
   cacheClearTime,
   TestnetTableName,
+  MainnetTableName,
   endowmentTable,
 }

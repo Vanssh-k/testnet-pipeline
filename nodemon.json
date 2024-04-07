@@ -1,22 +1,6 @@
 {
-  "restartable": "rs",
-  "ignore": [
-    ".git",
-    "node_modules/**/node_modules",
-    "dist",
-    "src/**/*.test.ts",
-    "src/**/*.spec.ts",
-    "src/**/__test__",
-    "src/**/test"
-
-  ],
-  "verbose": true,
-  "execMap": {
-    "js": "node"
-  },
-  "runOnChangeOnly": false,
-  "watch": [
-    "src/**/*.ts"
-  ],
-  "ext": "js,ts"
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "ts-node ./src/index.ts"
 }

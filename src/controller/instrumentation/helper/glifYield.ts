@@ -9,17 +9,17 @@ const contract = new ethers.Contract(contractAddress, GlifABI, provider)
 
 const getNetDeposit = async (): Promise<number> => {
   const bal = await contract.netDeposit()
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 const getNetWithdrawl = async (): Promise<number> => {
   const bal = await contract.netWithdrawl()
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 const getiFILBalance = async (): Promise<number> => {
   const bal = await contract.getiFILBalance()
-  return Number(bal)
+  return Number(ethers.formatEther(bal))
 }
 
 export { getNetDeposit, getNetWithdrawl, getiFILBalance }

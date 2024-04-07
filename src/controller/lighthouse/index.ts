@@ -22,6 +22,7 @@ import {
 } from './helper/migrationHelper'
 import migrationRequestInfo from '../../repository/migration/migrationRequestInfo'
 import listMigrationRequests from '../../repository/migration/listMigrationRequests'
+import cidPinStatus from '../../repository/migration/cidPinStatus'
 
 // get ticker of a token by its symbol as input
 export const get_ticker = async (
@@ -265,6 +266,34 @@ export const deal_id = async (
       dealInfo = await dealInfoTestnet(req.query.dealId as string)
     }
     res.status(200).json(dealInfo)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const cid_pin_status = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const pinStatus = await cidPinStatus(req.query.cid as string)
+    let pinned = 'failed'
+    let fileSize = '0'
+    for (let i = 0; i < pinStatus.length; i++) {
+      if (pinStatus[i].cidStatus === 'pinned') {
+        pinned = 'pinned'
+        fileSize = pinStatus[i].fileSizeInBytes
+        break
+      }
+      if (pinStatus[i].cidStatus === 'queued') {
+        pinned = 'queued'
+      }
+    }
+    res.status(200).json({
+      status: pinned,
+      fileSize: fileSize,
+    })
   } catch (error) {
     next(error)
   }
