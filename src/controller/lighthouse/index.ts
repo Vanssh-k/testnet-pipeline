@@ -279,7 +279,7 @@ export const cid_pin_status = async (
   try {
     const pinStatus = await cidPinStatus(req.query.cid as string)
     let pinned = 'failed'
-    let fileSize = 0
+    let fileSize = '0'
     for (let i = 0; i < pinStatus.length; i++) {
       if (pinStatus[i].cidStatus === 'pinned') {
         pinned = 'pinned'
