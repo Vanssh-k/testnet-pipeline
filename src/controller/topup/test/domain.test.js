@@ -6,9 +6,7 @@ import config from '../../../config'
 // create_subdomain
 test('Add SubDomain Main Case: POST /create_subdomain', async () => {
   await supertest(app)
-    .get(
-      '/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
-    )
+    .get('/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588')
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text)
@@ -20,18 +18,13 @@ test('Add SubDomain Main Case: POST /create_subdomain', async () => {
         subDomain: 'testingDomain',
       }
 
-      await supertest(app)
-        .post('/api/topup/create_subdomain')
-        .send(data)
-        .expect(200)
+      await supertest(app).post('/api/topup/create_subdomain').send(data).expect(200)
     })
 }, 30000)
 
 test('Add SubDomain Forbidden: POST /create_subdomain', async () => {
   await supertest(app)
-    .get(
-      '/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
-    )
+    .get('/api/auth/get_message?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588')
     .expect(200)
     .then(async (response) => {
       const verificationMessage = JSON.parse(response.text)
@@ -43,10 +36,7 @@ test('Add SubDomain Forbidden: POST /create_subdomain', async () => {
         subDomain: 'api',
       }
 
-      await supertest(app)
-        .post('/api/topup/create_subdomain')
-        .send(data)
-        .expect(403)
+      await supertest(app).post('/api/topup/create_subdomain').send(data).expect(403)
     })
 }, 30000)
 
@@ -74,9 +64,7 @@ test('Check Sub Domain Not Exist: GET /check_subdomain', async () => {
 // get_subdomain
 test('Get Sub Domain Main Case: GET /get_subdomain', async () => {
   await supertest(app)
-    .get(
-      '/api/topup/get_subdomain?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
-    )
+    .get('/api/topup/get_subdomain?publicKey=0xA3C960B3BA29367ecBCAf1430452C6cd7516F588')
     .expect(200)
     .then((response) => {
       const subDomain = JSON.parse(response.text)
@@ -86,9 +74,7 @@ test('Get Sub Domain Main Case: GET /get_subdomain', async () => {
 
 test('Get Sub Domain Not Found: GET /get_subdomain', async () => {
   await supertest(app)
-    .get(
-      '/api/topup/get_subdomain?publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5161'
-    )
+    .get('/api/topup/get_subdomain?publicKey=0x487fc2fE07c593EAb555729c3DD6dF85020B5161')
     .expect(200)
     .then((response) => {
       const subDomain = JSON.parse(response.text)
