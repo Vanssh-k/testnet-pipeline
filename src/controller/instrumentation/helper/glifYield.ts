@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
-import GlifABI from '../../../contract_abi/glifYield'
-import config from '../../../config'
+import GlifABI from '../../../contract_abi/glifYield.js'
+import config from '../../../config/index.js'
 
 const contractAddress = config.lighthouse_glifYield_address
 const provider = new ethers.JsonRpcProvider(config.filecoin_rpc)

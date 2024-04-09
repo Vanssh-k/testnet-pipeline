@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import * as promClient from 'prom-client'
 import cron from 'node-cron'
-import { parse } from 'dotenv'
 
 export const httpActiveRequests = new promClient.Gauge({
   name: 'active_http_requests',
@@ -24,10 +23,7 @@ export const requestDurationHistogram = new promClient.Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'path', 'status'],
-  buckets: [
-    0.0005, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5,
-    10, 20, 30, 40, 50, 60,
-  ],
+  buckets: [0.0005, 0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10, 20, 30, 40, 50, 60],
 })
 
 export const responseSizeHistogram = new promClient.Histogram({
@@ -49,9 +45,7 @@ export const middleware = (req: Request, res: Response, next: NextFunction) => {
   httpActiveRequests.inc()
   res.on('finish', () => {
     const responseSize = parseInt(res.get('Content-Length') || '0', 10)
-    responseSizeHistogram
-      .labels(req.method, req.path, res.statusCode?.toString() || '500')
-      .observe(responseSize)
+    responseSizeHistogram.labels(req.method, req.path, res.statusCode?.toString() || '500').observe(responseSize)
     if (userId) {
       dailyUserCounter.labels(userId).inc()
       monthlyUserCounter.labels(userId).inc()

@@ -5,9 +5,7 @@ import config from '../../../config'
 
 test('List Migration Request: GET /list_migration_requests', async () => {
   await supertest(app)
-    .get(
-      '/api/lighthouse/list_migration_requests?publicKey=0xc88c729ef2c18baf1074ea0df537d61a54a8ce7b'
-    )
+    .get('/api/lighthouse/list_migration_requests?publicKey=0xc88c729ef2c18baf1074ea0df537d61a54a8ce7b')
     .expect(200)
     .then((response) => {
       const requestList = JSON.parse(response.text)
@@ -17,9 +15,7 @@ test('List Migration Request: GET /list_migration_requests', async () => {
 
 test('Migration Request Info: GET /migration_request_info', async () => {
   await supertest(app)
-    .get(
-      '/api/lighthouse/migration_request_info?requestId=706da465-c11d-49c1-af80-5f2e74bc6821'
-    )
+    .get('/api/lighthouse/migration_request_info?requestId=706da465-c11d-49c1-af80-5f2e74bc6821')
     .expect(200)
     .then((response) => {
       const requestInfo = JSON.parse(response.text)
@@ -29,9 +25,7 @@ test('Migration Request Info: GET /migration_request_info', async () => {
 
 test('Migration Request: POST /migration_request', async () => {
   const data = {
-    data: JSON.stringify([
-      { cid: 'QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc' },
-    ]),
+    data: JSON.stringify([{ cid: 'QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc' }]),
   }
   await supertest(app)
     .post('/api/lighthouse/migration_request')
@@ -61,10 +55,7 @@ test('Migration Request Wrong CID: POST /migration_request', async () => {
     data: JSON.stringify('["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2c"]'),
   }
 
-  await supertest(app)
-    .post('/api/lighthouse/migration_request')
-    .send(data)
-    .expect(401)
+  await supertest(app).post('/api/lighthouse/migration_request').send(data).expect(401)
 }, 10000)
 
 // Enterprise

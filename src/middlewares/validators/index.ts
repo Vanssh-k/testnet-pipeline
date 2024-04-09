@@ -7,7 +7,7 @@ import {
   emailSchema,
   verificationTokenSchema,
   web3authEmailVerificationSchema,
-} from './user'
+} from './user.js'
 import {
   symbolSchema,
   cidSchema,
@@ -18,23 +18,21 @@ import {
   migrationRequestEntSchema,
   migrationRequestIdSchema,
   migrationRequestSchema,
-} from './lighthouse'
-import {
-  getFileEncryptionKeySchema,
-  saveFileEncryptionKeySchema,
-} from './encryption'
-import { addProposalSchema } from './governance'
+} from './lighthouse.js'
+import { getFileEncryptionKeySchema, saveFileEncryptionKeySchema } from './encryption.js'
+import { addProposalSchema } from './governance.js'
 import {
   addSubdomainSchema,
   subdomainSchema,
   subscriptionIdSchema,
   recordTransactionSchema,
   tokenAddressSchema,
-} from './topup'
-import { verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth'
-import { verifyPublishSchema, verifyRemoveSchema } from './ipns'
+} from './topup.js'
+import { apiKeyName, verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth.js'
+import { verifyPublishSchema, verifyRemoveSchema } from './ipns.js'
 
 export default {
+  apiKeyName,
   getTagSchema,
   messageSchema,
   createTagSchema,

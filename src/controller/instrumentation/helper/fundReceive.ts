@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
-import FundReceiveABI from '../../../contract_abi/fundReceive'
-import config from '../../../config'
+import FundReceiveABI from '../../../contract_abi/fundReceive.js'
+import config from '../../../config/index.js'
 
 const contractAddress = config.lighthouse_fundReceive_address
 const provider = new ethers.JsonRpcProvider(config.filecoin_rpc)

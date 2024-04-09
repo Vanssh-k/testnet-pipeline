@@ -1,18 +1,16 @@
-export interface IUserDetails {
+export type UserDetails = {
   publicKey: string
   message: number
   dataLimit: number
   dataUsed: number
   fileCount: number
-  faucet: any
   email: string
-  profile: any
   network: string
   createdAt: number
   updatedAt: number
 }
 
-export interface IUserAuthDetails {
+export type UserAuthDetails = {
   id: string
   keyName: string
   publicKey: string

@@ -1,76 +1,31 @@
-import {
-  getMessage,
-  getUserKeys,
-  verifySigner,
-  createApiKey,
-  revokeApiKey,
-  refreshAccessToken,
-} from './helper/authHelper'
+import { getMessage, getUserKeys, createApiKey, revokeApiKey } from './helper/authHelper.js'
 import { NextFunction, Response, Request } from 'express'
-import refreshMessage from '../../repository/user/refreshMessage'
+import { getAccessToken } from './helper/jwt.js'
+import { removeCache } from '../../db/db/cacheClient.js'
 
 // Get message - user will sign this message to verify himself
-export const get_message = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_message = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const message = await getMessage(
-      req.query.publicKey as string,
-      req.body.network,
-      req.body.user,
-      req.query.encryption as string
-    )
+    const message = await getMessage(req.query.publicKey as string, req.query.encryption as string)
     res.status(200).json(message)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
 // Return access token if user is authentic
-export const verify_signer = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const verify_signer = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = await verifySigner(req.body.user)
-    res.status(200).json(token)
+    removeCache(`message-${req.body.publicKey}`)
+    const accessToken = getAccessToken(req.body.publicKey)
+    res.status(200).json(accessToken)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
 // Return data usage if signature authentic
-export const verify_user_signature = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const record = req.body.user
-    refreshMessage(record.publicKey, Date.now())
-    res.status(200).json({
-      publicKey: record.publicKey,
-      dataLimit: record.dataLimit,
-      dataUsed: record.dataUsed,
-      email: record.email,
-    })
-  } catch (error) {
-    /* istanbul ignore next */
-    next(error)
-  }
-}
-
-// Return if user is authentic along with his data usage
-export const verify_access_token = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_profile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const record = req.body.user
     res.status(200).json({
@@ -80,59 +35,30 @@ export const verify_access_token = async (
       email: record.email,
     })
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const refresh_access_token = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const create_api_key = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = refreshAccessToken(req.body.user)
-    res.status(200).json(token)
-  } catch (error) {
-    /* istanbul ignore next */
-    next(error)
-  }
-}
-
-export const create_api_key = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const keyName = req.body.keyName ? req.body.keyName : 'key'
-    const apiKey = await createApiKey(req.body.user, keyName)
+    const keyName = req.query.keyName as string
+    const apiKey = await createApiKey(req.body.publicKey, keyName)
     res.status(200).json(apiKey)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const get_user_keys = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_user_keys = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await getUserKeys(req.body.user.publicKey)
     res.status(200).json(data)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const verify_api_key = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const verify_api_key = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const record = req.body.user
     res.status(200).json({
@@ -142,21 +68,13 @@ export const verify_api_key = async (
       email: record.email,
     })
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const remove_api_key = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const remove_api_key = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const status = await revokeApiKey(
-      req.query.keyId as string,
-      req.body.user.publicKey
-    )
+    await revokeApiKey(req.query.keyId as string, req.body.user.publicKey)
     res.status(200).send({ data: 'Success' })
   } catch (error) {
     next(error)

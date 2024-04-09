@@ -1,9 +1,6 @@
 import { v4 } from 'uuid'
-import { activatePlan } from './plansHelper'
-import {
-  getUserTransactions,
-  recordTransactions,
-} from '../../../repository/topup/userTransactions'
+import { activatePlan } from './plansHelper.js'
+import { getUserTransactions, recordTransactions } from '../../../db/topup/userTransactions.js'
 
 const recordUserTransaction = async (bodyData: any, userRecord: any) => {
   const record = {

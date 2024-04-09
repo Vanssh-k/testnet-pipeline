@@ -12,9 +12,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: config.isDev
-          ? 'http://localhost:8000'
-          : 'https://api.lighthouse.storage',
+        url: config.isDev ? 'http://localhost:8000' : 'https://api.lighthouse.storage',
         description: config.isDev ? 'Development server' : 'Production server',
       },
     ],
@@ -40,11 +38,7 @@ const swaggerSpec = swaggerJsdoc(options)
 
 function swaggerDocs(app: Express) {
   // Swagger page
-  app.use(
-    '/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, { explorer: true })
-  )
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }))
 
   // Docs in JSON format
   app.get('/docs.json', (req: Request, res: Response) => {

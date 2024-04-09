@@ -1,6 +1,6 @@
 import axios from 'axios'
-import config from '../../../config'
-import logger from '../../../utils/logger'
+import config from '../../../config/index.js'
+import logger from '../../../utils/logger.js'
 
 export const sendMessageToEnc = async (publicKey: string, message: string) => {
   const data = await Promise.all(
@@ -19,11 +19,10 @@ export const sendMessageToEnc = async (publicKey: string, message: string) => {
       })
         .then((res) => res.data)
         .catch((err) => {
-          const myLogger = logger('error', 'authentication')
-          myLogger.error('In sendMessageToEnc: ' + err.message)
+          logger.error('In sendMessageToEnc: ' + err.message)
           return null
-        })
-    )
+        }),
+    ),
   )
   return data
 }

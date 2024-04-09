@@ -1,30 +1,23 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
-import verifyCID from '../../../utils/verifyCID'
-import { MigrationStatus } from '../../../types/status'
-import { DatabaseError, BadRequestError } from '../../../errors'
-import processDealParam from './processDealParameters'
-import testnetDealParams from '../../../repository/filecoin/testnet/testnetDealParams'
-import addMigrationCIDs from '../../../repository/migration/addMigrationCIDs'
-import createMigrationRequest from '../../../repository/migration/createMigrationRequest'
+import * as isIPFS from 'is-ipfs'
+import { MigrationStatus } from '../../../types/status.js'
+import processDealParam from './processDealParameters.js'
+import testnetDealParams from '../../../db/filecoin/testnet/testnetDealParams.js'
+import addMigrationCIDs from '../../../db/migration/addMigrationCIDs.js'
+import createMigrationRequest from '../../../db/migration/createMigrationRequest.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const addCIDToRAASTestnet = async (cid: string, fileID: string) => {
   await delay(30000) // after 5 min
-  const __ = await axios.get(
-    `https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`
-  )
+  const __ = await axios.get(`https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`)
 }
 
-export const pinCID = async (
-  record: any,
-  cid: string,
-  fileName: string,
-  raas: any
-) => {
+export const pinCID = async (record: any, cid: string, fileName: string, raas: any) => {
   // Verify CID's
-  if (!verifyCID(cid)) {
-    throw new BadRequestError(`Invalid CID`)
+  if (!isIPFS.cid(cid)) {
+    throw new CustomError(400, `Invalid CID`)
   }
 
   // Save Migration Request
@@ -63,9 +56,7 @@ export const pinCID = async (
     const addCIDToTestnet = addCIDToRAASTestnet(cid, id)
   }
 
-  const startMigration = axios.get(
-    `http://3.111.219.80/api?requestId=${requestID}`
-  )
+  const startMigration = axios.get(`http://3.111.219.80/api?requestId=${requestID}`)
 
   return requestID
 }
@@ -76,13 +67,13 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   const data = JSON.parse(bodyData)
   console.log(data)
   if (data.length === 0) {
-    throw new DatabaseError('No CID included')
+    throw new CustomError(400, 'No CID included')
   }
 
   // Verify CID's
   for (let i = 0; i < data.length; i++) {
-    if (!verifyCID(data[i]['cid'])) {
-      throw new BadRequestError(`Row ${i}is not a CID`)
+    if (!isIPFS.cid(data[i]['cid'])) {
+      throw new CustomError(400, `Row ${i}is not a CID`)
     }
   }
 
@@ -115,28 +106,22 @@ export const migrationRequest = async (record: any, bodyData: string) => {
     })
   }
 
-  const startMigration = axios.get(
-    `http://3.111.219.80/api?requestId=${requestID}`
-  )
+  const startMigration = axios.get(`http://3.111.219.80/api?requestId=${requestID}`)
   console.log(requestID)
   return requestID
 }
 
-export const migrationRequestEnt = async (
-  publicKey: string,
-  bodyData: string,
-  enterprise: any
-) => {
+export const migrationRequestEnt = async (publicKey: string, bodyData: string, enterprise: any) => {
   // Get CID, filename array
   const data = JSON.parse(bodyData)
   if (data.length === 0) {
-    throw new DatabaseError('No CID included')
+    throw new CustomError(400, 'No CID included')
   }
 
   // Verify CID's
   for (let i = 0; i < data.length; i++) {
-    if (!verifyCID(data[i])) {
-      throw new BadRequestError(`Row ${i}is not a CID`)
+    if (!isIPFS.cid(data[i])) {
+      throw new CustomError(400, `Row ${i}is not a CID`)
     }
   }
 
@@ -169,8 +154,6 @@ export const migrationRequestEnt = async (
     })
   }
 
-  const startMigration = axios.get(
-    `http://3.111.219.80/api?requestId=${requestID}`
-  )
+  const startMigration = axios.get(`http://3.111.219.80/api?requestId=${requestID}`)
   return requestID
 }

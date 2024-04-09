@@ -7,11 +7,7 @@ test('IPNS Test', async () => {
 
   // Generate key
   const ipns = JSON.parse(
-    (
-      await supertest(app)
-        .get('/api/ipns/generate_key')
-        .set('Authorization', `Bearer ${apiKey}`)
-    ).text
+    (await supertest(app).get('/api/ipns/generate_key').set('Authorization', `Bearer ${apiKey}`)).text,
   )
   const key = ipns.ipnsName
   expect(typeof key).toBe('string')
@@ -23,27 +19,19 @@ test('IPNS Test', async () => {
       await supertest(app)
         .get(`/api/ipns/publish_record?cid=${cid}&keyName=${key}`)
         .set('Authorization', `Bearer ${apiKey}`)
-    ).text
+    ).text,
   )
   expect(typeof publishCID.Value).toBe('string')
 
   // Get All CID
   const allRecords = JSON.parse(
-    (
-      await supertest(app)
-        .get('/api/ipns/get_ipns_records')
-        .set('Authorization', `Bearer ${apiKey}`)
-    ).text
+    (await supertest(app).get('/api/ipns/get_ipns_records').set('Authorization', `Bearer ${apiKey}`)).text,
   )
   expect(typeof allRecords[0]['ipnsName']).toBe('string')
 
   // Remove Key
   const removeKey = JSON.parse(
-    (
-      await supertest(app)
-        .delete(`/api/ipns/remove_key?keyName=${key}`)
-        .set('Authorization', `Bearer ${apiKey}`)
-    ).text
+    (await supertest(app).delete(`/api/ipns/remove_key?keyName=${key}`).set('Authorization', `Bearer ${apiKey}`)).text,
   )
   expect(typeof removeKey.Keys[0]['Id']).toBe('string')
 }, 60000)
