@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import supertest from 'supertest'
-import app from '../../../app'
+import app from '../../../app.js'
 import config from '../../../config'
 
 test('List Migration Request: GET /list_migration_requests', async () => {

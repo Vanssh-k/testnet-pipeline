@@ -1,6 +1,7 @@
-import dbbClient from '../../db/ddbClient'
-import DatabaseError from '../../../errors/database-error'
-import { MainnetTableName } from '../../../controller/libs/constants'
+import dbbClient from '../../db/ddbClient.js'
+import CustomError from '../../../middlewares/error/customError.js'
+
+import { MainnetTableName } from '../../../config/constants.js'
 
 export default async (cid: string) => {
   try {
@@ -16,6 +17,6 @@ export default async (cid: string) => {
   } catch (error) {
     /* istanbul ignore next */
     console.log('Error getting podsi record', error)
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

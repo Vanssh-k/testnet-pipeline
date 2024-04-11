@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
 import config from '../../../config'
 

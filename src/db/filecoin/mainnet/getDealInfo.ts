@@ -1,6 +1,7 @@
-import dbbClient from '../../db/ddbClient'
-import DatabaseError from '../../../errors/database-error'
-import { MainnetTableName } from '../../../controller/libs/constants'
+import dbbClient from '../../db/ddbClient.js'
+import CustomError from '../../../middlewares/error/customError.js'
+
+import { MainnetTableName } from '../../../config/constants.js'
 
 export default async (dealId: string) => {
   try {
@@ -18,6 +19,6 @@ export default async (dealId: string) => {
   } catch (error) {
     /* istanbul ignore next */
     console.error('Error getting deal record', error)
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

@@ -1,6 +1,6 @@
-import dbbClient from '../db/ddbClient'
-import DatabaseError from '../../errors/database-error'
-import { carBundleRecords } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient.js'
+import CustomError from '../../middlewares/error/customError.js'
+import { carBundleRecords } from '../../config/constants.js'
 
 export default async (id: string) => {
   try {
@@ -16,6 +16,6 @@ export default async (id: string) => {
   } catch (error) {
     /* istanbul ignore next */
     console.log(error)
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

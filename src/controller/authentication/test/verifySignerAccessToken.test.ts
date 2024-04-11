@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 const publicKey = '0x487fc2fE07c593EAb555729c3DD6dF85020B5160'
 const testWalletPrivateKey = config.test_wallet2_private_key

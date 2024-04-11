@@ -1,6 +1,6 @@
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 // get_uploads
 describe('user', () => {

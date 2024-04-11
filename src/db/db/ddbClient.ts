@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
-import config from '../../config'
+import config from '../../config/index.js'
 
 const client = new DynamoDBClient({
   region: 'ap-south-1',

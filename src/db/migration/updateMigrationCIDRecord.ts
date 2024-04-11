@@ -1,6 +1,6 @@
-import dbbClient from '../db/ddbClient'
-import { migrationCIDs } from '../../controller/libs/constants'
-import DatabaseError from '../../errors/database-error'
+import dbbClient from '../db/ddbClient.js'
+import { migrationCIDs } from '../../config/constants.js'
+import CustomError from '../../middlewares/error/customError.js'
 
 export default async (id: string, data: any) => {
   try {
@@ -18,6 +18,6 @@ export default async (id: string, data: any) => {
     await dbbClient.update(params)
     return 'Update Successful'
   } catch (error) {
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

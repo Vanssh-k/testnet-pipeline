@@ -1,6 +1,6 @@
-import dbbClient from '../db/ddbClient'
-import DatabaseError from '../../errors/database-error'
-import { filecoinDealRecords } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient.js'
+import CustomError from '../../middlewares/error/customError.js'
+import { filecoinDealRecords } from '../../config/constants.js'
 
 export default async (aggregateIn: string) => {
   try {
@@ -18,6 +18,6 @@ export default async (aggregateIn: string) => {
   } catch (error) {
     console.log(error)
     /* istanbul ignore next */
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

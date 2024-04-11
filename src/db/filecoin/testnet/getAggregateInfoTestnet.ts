@@ -1,6 +1,7 @@
-import dbbClient from '../../db/ddbClient'
-import DatabaseError from '../../../errors/database-error'
-import { TestnetTableName } from '../../../controller/libs/constants'
+import dbbClient from '../../db/ddbClient.js'
+import CustomError from '../../../middlewares/error/customError.js'
+
+import { TestnetTableName } from '../../../config/constants.js'
 export default async (id: string) => {
   try {
     const params = {
@@ -16,6 +17,6 @@ export default async (id: string) => {
     return record.Items ?? []
   } catch (error) {
     /* istanbul ignore next */
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-import app from '../../../app'
+import app from '../../../app.js'
 
 test('File Info: GET /file_info', async () => {
   await supertest(app)

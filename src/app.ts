@@ -16,6 +16,7 @@ import GovernanceRouter from './routes/governance.js'
 import LighthouseRouter from './routes/lighthouse.js'
 import WebhookRouter from './routes/stripeWebhook.js'
 import InstrumentationRouter from './routes/instrumentation.js'
+import LighthouseRouterV1 from './routes/v1/routes.js'
 
 const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -54,6 +55,8 @@ app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
 app.use('/api/instrumentation', InstrumentationRouter)
+app.use('/api/lighthouse/v1', LighthouseRouterV1)
+
 app.use(errorHandler)
 
 export default app

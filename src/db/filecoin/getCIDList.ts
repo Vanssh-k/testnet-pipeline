@@ -1,5 +1,5 @@
-import dbbClient from '../db/ddbClient'
-import { fileBundleRecords } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient.js'
+import { fileBundleRecords } from '../../config/constants.js'
 
 export default async (bundleId: string) => {
   const params = {

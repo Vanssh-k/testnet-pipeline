@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import { ethers } from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 import config from '../../../config'
 
 // create_subdomain

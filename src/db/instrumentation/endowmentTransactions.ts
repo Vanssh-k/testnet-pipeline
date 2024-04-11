@@ -1,5 +1,5 @@
-import dbbClient from '../db/ddbClient'
-import { endowmentTable } from '../../controller/libs/constants'
+import dbbClient from '../db/ddbClient.js'
+import { endowmentTable } from '../../config/constants.js'
 
 export const getEndowmentTransactions = async () => {
   try {

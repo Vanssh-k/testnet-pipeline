@@ -11,6 +11,7 @@ import {
 import {
   symbolSchema,
   cidSchema,
+  dealIdSchema,
   bundleSchema,
   addCIDToQueueSchema,
   addCidSchema,
@@ -50,6 +51,7 @@ export default {
   getUploadsSchema,
   symbolSchema,
   cidSchema,
+  dealIdSchema,
   pinningSchema,
   bundleSchema,
   addCIDToQueueSchema,

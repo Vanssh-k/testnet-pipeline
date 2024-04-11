@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import dbbClient from '../db/ddbClient'
-import { migrationRequestTable } from '../../controller/libs/constants'
-import DatabaseError from '../../errors/database-error'
+import dbbClient from '../db/ddbClient.js'
+import { migrationRequestTable } from '../../config/constants.js'
+import CustomError from '../../middlewares/error/customError.js'
 
 export default async (record: any) => {
   try {
@@ -14,6 +14,6 @@ export default async (record: any) => {
     return save
   } catch (error: any) {
     console.log(chalk.yellow('Order save error: ') + chalk.red(error.message))
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

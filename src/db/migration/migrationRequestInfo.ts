@@ -1,6 +1,6 @@
-import dbbClient from '../db/ddbClient'
-import { migrationCIDs } from '../../controller/libs/constants'
-import DatabaseError from '../../errors/database-error'
+import dbbClient from '../db/ddbClient.js'
+import { migrationCIDs } from '../../config/constants.js'
+import CustomError from '../../middlewares/error/customError.js'
 
 export default async (requestID: string) => {
   try {
@@ -17,6 +17,6 @@ export default async (requestID: string) => {
     const Items = record.Items ?? []
     return Items
   } catch (error) {
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }

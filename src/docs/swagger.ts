@@ -1,4 +1,4 @@
-import config from '../config'
+import config from '../config/index.js'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { Express, Request, Response } from 'express'

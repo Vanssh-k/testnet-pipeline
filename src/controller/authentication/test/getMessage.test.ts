@@ -1,4 +1,4 @@
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
 
 const testGetMessageWithEnc = async (publicKey: string, expectedStatusCode: number, expectedType: string) => {

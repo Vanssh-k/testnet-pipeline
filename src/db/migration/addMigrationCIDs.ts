@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import dbbClient from '../db/ddbClient'
-import { migrationCIDs } from '../../controller/libs/constants'
-import DatabaseError from '../../errors/database-error'
+import dbbClient from '../db/ddbClient.js'
+import { migrationCIDs } from '../../config/constants.js'
+import CustomError from '../../middlewares/error/customError.js'
 
 export default async (record: any) => {
   try {
@@ -14,6 +14,6 @@ export default async (record: any) => {
     return save
   } catch (error: any) {
     console.log(chalk.yellow('CID save error: ') + chalk.red(error.message))
-    throw new DatabaseError()
+    throw new CustomError(500, `Internal Server Error.`)
   }
 }
