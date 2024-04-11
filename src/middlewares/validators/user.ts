@@ -14,8 +14,8 @@ export const messageSchema = joi.object({
 })
 
 export const getUploadsSchema = joi.object({
-  pageNo: joi.number().integer().messages({
-    'any.required': `pageNo not found`,
+  lastKey: joi.string().messages({
+    'any.required': `lastKey not found`,
   }),
 })
 

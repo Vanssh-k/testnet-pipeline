@@ -40,11 +40,9 @@ export const getMessage = async (publicKey: string, encryption: string): Promise
     }
 
     await createNewUser(userRecord, network)
-    setExCache(`message-${publicKey}`, 300, timestamp)
-  } else {
-    removeCache(`message-${publicKey}`)
   }
 
+  await setExCache(`message-${publicKey}`, 300, timestamp)
   if (`${encryption}`?.toLowerCase() === 'true') {
     await sendMessageToEnc(publicKey, message)
   }

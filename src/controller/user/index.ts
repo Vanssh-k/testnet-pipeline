@@ -79,8 +79,8 @@ export const verify_web3auth_email = async (req: Request, res: Response, next: N
 
 export const create_tag = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const response = await createTagHelper(req.body.tag, req.body.cid, req.body.publicKey)
-    return res.status(200).json(response)
+    await createTagHelper(req.body.tag, req.body.cid, req.body.publicKey)
+    return res.status(200).json('Success')
   } catch (error: any) {
     next(error)
   }
@@ -106,7 +106,7 @@ export const get_all_tags = async (req: Request, res: Response, next: NextFuncti
 
 export const remove_tag = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const response = await removeTagHelper(req.query.tag as string, req.body.publicKey)
+    await removeTagHelper(req.query.tag as string, req.body.publicKey)
     return res.status(200).json('Success')
   } catch (error) {
     next(error)

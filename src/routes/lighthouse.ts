@@ -25,27 +25,6 @@ const router = express.Router()
 router.get('/get_ticker', validate(validator.symbolSchema, { query: true }), get_ticker)
 
 router.get('/file_info', validate(validator.cidSchema, { query: true }), file_info)
-router.get(
-  '/file_info_testnet',
-  // validate(validator.cidSchema, { query: true }),
-  file_info_testnet,
-)
-
-router.get(
-  '/raas_info',
-  // validate(validator.cidSchema, { query: true }),
-  raas_info,
-)
-
-router.get('/deal_status', validate(validator.cidSchema, { query: true }), deal_status)
-
-router.get('/deal_id', deal_id)
-
-router.get('/bundle_details', validate(validator.bundleSchema, { query: true }), bundle_details)
-
-router.get('/get_proof', get_proof)
-
-router.get('/aggregate_info', aggregate_info)
 
 router.post(
   '/migration_request',
@@ -77,5 +56,28 @@ router.get(
   validate(validator.migrationRequestIdSchema, { query: true }),
   migration_request_info,
 )
+
+// Filecoin
+router.get(
+  '/file_info_testnet',
+  // validate(validator.cidSchema, { query: true }),
+  file_info_testnet,
+)
+
+router.get(
+  '/raas_info',
+  // validate(validator.cidSchema, { query: true }),
+  raas_info,
+)
+
+router.get('/deal_status', validate(validator.cidSchema, { query: true }), deal_status)
+
+router.get('/deal_id', deal_id)
+
+router.get('/bundle_details', validate(validator.bundleSchema, { query: true }), bundle_details)
+
+router.get('/get_proof', get_proof)
+
+router.get('/aggregate_info', aggregate_info)
 
 export default router

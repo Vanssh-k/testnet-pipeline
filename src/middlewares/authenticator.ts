@@ -9,7 +9,7 @@ import { verifyJWT } from '../utils/verifyJWT.js'
 import getNetwork from './getNetwork.js'
 import checkApiKey from '../db/user/auth/checkApiKey.js'
 
-import { getCache } from '../db/db/cacheClient.js'
+import { getCache, removeCache } from '../db/db/cacheClient.js'
 import { NextFunction, Request, Response } from 'express'
 
 const verifyAccessToken = async (accessToken: string) => {}
@@ -29,13 +29,14 @@ export default (rule: string, clauses: string[] = []) => {
           let usersPublicKey = req.body.publicKey || req.query.publicKey
           const network = getNetwork(usersPublicKey)
           network === 'evm' ? (usersPublicKey = usersPublicKey.toLowerCase()) : null
+          console.log(usersPublicKey)
           const message = await getCache(`message-${usersPublicKey}`)
-
+          console.log(message)
           const authentic = verifySignature(usersPublicKey, messageString + message, req.body.signedMessage, network)
           if (!authentic) {
             throw new CustomError(401, 'Authentication Failed.')
           }
-
+          removeCache(`message-${usersPublicKey}`)
           req.body.publicKey = usersPublicKey
           break
 

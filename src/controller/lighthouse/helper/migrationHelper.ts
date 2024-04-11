@@ -61,11 +61,9 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
   return requestID
 }
 
-export const migrationRequest = async (record: any, bodyData: string) => {
+export const migrationRequest = async (publicKey: any, bodyData: string) => {
   // Get CID, filename array
-  console.log(bodyData)
   const data = JSON.parse(bodyData)
-  console.log(data)
   if (data.length === 0) {
     throw new CustomError(400, 'No CID included')
   }
@@ -82,7 +80,7 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   const requestID = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
-    publicKey: record.publicKey,
+    publicKey: publicKey,
     totalCID: data.length,
     migrationStatus: MigrationStatus.Queued,
     enterprise: 'lighthouse',
@@ -107,7 +105,6 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   }
 
   const startMigration = axios.get(`http://3.111.219.80/api?requestId=${requestID}`)
-  console.log(requestID)
   return requestID
 }
 

@@ -17,6 +17,7 @@ import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migratio
 import migrationRequestInfo from '../../db/migration/migrationRequestInfo.js'
 import listMigrationRequests from '../../db/migration/listMigrationRequests.js'
 import cidPinStatus from '../../db/migration/cidPinStatus.js'
+import { getCache, removeCache, setExCache } from '../../db/db/cacheClient.js'
 
 // get ticker of a token by its symbol as input
 export const get_ticker = async (req: Request, res: Response, next: NextFunction) => {
@@ -95,6 +96,7 @@ export const pin_cid = async (req: Request, res: Response, next: NextFunction) =
       req.body.fileName ? req.body.fileName : 'pinned-file',
       req.body.raas,
     )
+    await removeCache(`migration-requests-${req.body.user.publicKey}`)
     res.status(200).json({ requestID })
   } catch (error) {
     next(error)
@@ -104,9 +106,11 @@ export const pin_cid = async (req: Request, res: Response, next: NextFunction) =
 // create db record for all CID and trigger migration
 export const migration_request = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const requestID = await migrationRequest(req.body.user, req.body.data)
+    const requestID = await migrationRequest(req.body.publicKey, req.body.data)
+    await removeCache(`migration-requests-${req.body.publicKey}`)
     res.status(200).json({ requestID })
   } catch (error) {
+    console.log(error)
     next(error)
   }
 }
@@ -133,7 +137,12 @@ export const list_migration_requests = async (req: Request, res: Response, next:
       publicKey = publicKey.toLowerCase()
     }
 
-    const record = await listMigrationRequests(publicKey)
+    let record = await getCache(`migration-requests-${publicKey}`)
+    if (!record) {
+      record = await listMigrationRequests(publicKey)
+      await setExCache(`migration-requests-${publicKey}`, 300, record)
+    }
+
     res.status(200).json(record)
   } catch (error) {
     next(error)
@@ -142,7 +151,12 @@ export const list_migration_requests = async (req: Request, res: Response, next:
 
 export const migration_request_info = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const record = await migrationRequestInfo(req.query.requestId as string)
+    let record = await getCache(`migration-req-info-${req.query.requestId?.toLocaleString()}`)
+    if (!record) {
+      record = await migrationRequestInfo(req.query.requestId as string)
+      await setExCache(`migration-req-info-${req.query.requestId?.toLocaleString()}`, 300, record)
+    }
+
     res.status(200).json(record)
   } catch (error) {
     next(error)
@@ -152,14 +166,19 @@ export const migration_request_info = async (req: Request, res: Response, next: 
 // Get details of a file
 export const file_info = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const record = await cacheFunction(
-    //   async () => fileDetailsByCid(req.query.cid as string),
-    //   `cid-${req.query.cid}`,
-    //   cacheClearTime.day
-    // )
-    const record = await fileDetailsByCid(req.query.cid as string)
+    let record = await getCache(`cid-${req.query.cid?.toLocaleString()}`)
     if (!record) {
-      throw new CustomError(404, 'Not Found')
+      record = await fileDetailsByCid(req.query.cid as string)
+      if (!record) {
+        throw new CustomError(404, 'Not Found')
+      }
+      setExCache(`cid-${req.query.cid?.toLocaleString()}`, 300, {
+        fileSizeInBytes: record.fileSizeInBytes,
+        cid: record.cid,
+        encryption: record.encryption,
+        fileName: record.fileName,
+        mimeType: record.mimeType,
+      })
     }
 
     res.status(200).json({

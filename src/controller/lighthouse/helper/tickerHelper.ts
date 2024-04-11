@@ -2,7 +2,8 @@ import axios from 'axios'
 import { setExCache, getCache } from '../../../db/db/cacheClient.js'
 
 export const getTicker = async (symbol: string) => {
-  const cachedTicker = getCache(symbol)
+  const cachedTicker = await getCache(symbol)
+
   if (cachedTicker) {
     return cachedTicker
   }

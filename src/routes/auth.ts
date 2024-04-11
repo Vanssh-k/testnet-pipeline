@@ -16,7 +16,7 @@ const router = express.Router()
 
 router.get('/get_auth_message', validate(validator.messageSchema, { query: true }), get_message)
 
-router.post('/get_profile', authenticator('verifyToken'), get_profile)
+router.get('/get_profile', authenticator('verifyToken'), get_profile)
 
 router.post(
   '/verify_signer',
@@ -26,6 +26,13 @@ router.post(
 )
 
 router.post(
+  '/create_api_key',
+  validate(validator.apiKeyName, { query: true }),
+  authenticator('verifyToken', ['publicKeyOnly']),
+  create_api_key,
+)
+
+router.get(
   '/create_api_key',
   validate(validator.apiKeyName, { query: true }),
   authenticator('verifyToken', ['publicKeyOnly']),

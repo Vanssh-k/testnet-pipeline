@@ -1,7 +1,6 @@
 import { getMessage, getUserKeys, createApiKey, revokeApiKey } from './helper/authHelper.js'
 import { NextFunction, Response, Request } from 'express'
 import { getAccessToken } from './helper/jwt.js'
-import { removeCache } from '../../db/db/cacheClient.js'
 
 // Get message - user will sign this message to verify himself
 export const get_message = async (req: Request, res: Response, next: NextFunction) => {
@@ -16,7 +15,6 @@ export const get_message = async (req: Request, res: Response, next: NextFunctio
 // Return access token if user is authentic
 export const verify_signer = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    removeCache(`message-${req.body.publicKey}`)
     const accessToken = getAccessToken(req.body.publicKey)
     res.status(200).json(accessToken)
   } catch (error) {
@@ -51,7 +49,7 @@ export const create_api_key = async (req: Request, res: Response, next: NextFunc
 
 export const get_user_keys = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await getUserKeys(req.body.user.publicKey)
+    const data = await getUserKeys(req.body.publicKey)
     res.status(200).json(data)
   } catch (error) {
     next(error)
@@ -74,7 +72,7 @@ export const verify_api_key = async (req: Request, res: Response, next: NextFunc
 
 export const remove_api_key = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await revokeApiKey(req.query.keyId as string, req.body.user.publicKey)
+    await revokeApiKey(req.query.keyId as string, req.body.publicKey)
     res.status(200).send({ data: 'Success' })
   } catch (error) {
     next(error)
