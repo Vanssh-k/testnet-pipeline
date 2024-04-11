@@ -1,6 +1,6 @@
 import filecoinDeal from '../../../db/filecoin/filecoinDeal.js'
-import getCIDRecord from '../../../db/filecoin/getCIDRecord.js'
-import getBundleRecord from '../../../db/filecoin/getBundleRecord.js'
+import getCIDRecord from '../../../db/filecoin/legacy/getCIDRecord.js'
+import getBundleRecord from '../../../db/filecoin/legacy/getBundleRecord.js'
 import getCIDList from '../../../db/filecoin/getCIDList.js'
 import podsiRecord from '../../../db/filecoin/podsiRecord.js'
 
@@ -14,12 +14,13 @@ import getDealInfoTestnet from '../../../db/filecoin/testnet/getDealInfoTestnet.
 import getDealInfo from '../../../db/filecoin/mainnet/getDealInfo.js'
 import getRaasInfo from '../../../db/filecoin/mainnet/getRaasInfo.js'
 import getFileInfo from '../../../db/filecoin/mainnet/getFileInfo.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
 export const cidDealStatus = async (cid: string) => {
   try {
     const raasInfo = await getRaasInfo(cid)
     if (!raasInfo) {
-      throw new Error()
+      throw new CustomError(404, 'Record not found.')
     }
     const fileInfo = await getFileInfo(cid)
     const deals: any = []
@@ -31,7 +32,7 @@ export const cidDealStatus = async (cid: string) => {
       deals[i].payloadCid = fileInfo?.cidV1
       deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
       deals[i].carFileSize = parseInt(fileInfo?.carSize)
-      deals[i].dealId = parseInt(dealRecordInfo.chainDealID)
+      deals[i].dealId = dealRecordInfo.chainDealID
       deals[i].miner = 'f0' + raasInfo?.miners[i]
       deals[i].content = parseInt(fileInfo?.fileSize)
       deals[i].dealStatus = dealRecordInfo.dealStatus
@@ -50,8 +51,8 @@ export const cidDealStatus = async (cid: string) => {
       // Get bundle record
       let aggregatedIn: any
       /* istanbul ignore next */
-      if (cidRecord[0]['aggregateIn'] !== 'none') {
-        aggregatedIn = await getBundleRecord(cidRecord[0]['aggregatedIn'])
+      if (cidRecord[0].aggregatedIn !== 'none') {
+        aggregatedIn = await getBundleRecord(cidRecord[0].aggregatedIn)
       }
 
       // Check bundle status
@@ -70,7 +71,7 @@ export const cidDealStatus = async (cid: string) => {
         deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
         deals[i].dealId = parseInt(deals[i]['chainDealID'])
         deals[i].miner = deals[i]['storageProvider']
-        deals[i].content = parseInt(cidRecord[0]['fileSize']) // only used in package
+        deals[i].content = cidRecord[0].fileSize
       }
 
       return deals
@@ -88,7 +89,7 @@ export const dealInfoTestnet = async (dealId: string) => {
     storageProvider: dealRecordInfo.storageProvider,
     startEpoch: dealRecordInfo.startEpoch,
     endEpoch: dealRecordInfo.endEpoch,
-    publishCid: dealRecordInfo.publishCid,
+    publishCid: dealRecordInfo.publishCID,
   }
 }
 
@@ -123,7 +124,7 @@ export const podsi = async (cid: string) => {
   for (let i = 0; i < cidRecord.length; i++) {
     const cidProof = await podsiRecord(cidRecord[i]['pieceCid'])
     let proofOfAggregate: any = null
-    if (cidRecord[i]['aggregateIn'] !== 'none') {
+    if (cidRecord[i].aggregatedIn !== 'none') {
       const aggregatedIn: any = await getBundleRecord(cidRecord[i]['aggregatedIn'])
       if (aggregatedIn['aggFileStatus'] === 'deal initiated') {
         if (!cidProof[0]['aggregateID']) {
@@ -164,61 +165,52 @@ export const podsi = async (cid: string) => {
 
 export const fileInfoTestnet = async (cid: string) => {
   const fileRecord = await getFileInfoTestnet(cid)
-
+  if (!fileRecord) {
+    return {}
+  }
   return {
-    cid: fileRecord?.cid,
-    cidV1: fileRecord?.cidV1,
-    fileSize: fileRecord?.fileSize,
-    pieceCid: fileRecord?.pieceCid,
-    pieceSize: fileRecord?.pieceSize,
-    carSize: fileRecord?.carSize,
+    cid: fileRecord.cid,
+    cidV1: fileRecord.cidV1,
+    fileSize: fileRecord.fileSize,
+    pieceCid: fileRecord.pieceCid,
+    pieceSize: fileRecord.pieceSize,
+    carSize: fileRecord.carSize,
   }
 }
 
 export const raasInfoTestnet = async (cid: string) => {
   const raasInfo = await getRaasInfoTestnet(cid)
+  if (!raasInfo) {
+    return {}
+  }
   return {
-    cid: raasInfo?.cid,
-    dealIDs: raasInfo?.dealIDs,
-    miners: raasInfo?.miners,
-    currentReplications: raasInfo?.currentReplications,
-    replicationTarget: raasInfo?.replicationTarget,
+    cid: raasInfo.cid,
+    dealIDs: raasInfo.dealIDs,
+    miners: raasInfo.miners,
+    currentReplications: raasInfo.currentReplications,
+    replicationTarget: raasInfo.replicationTarget,
   }
 }
 
 export const podsiTestnet = async (cid: string) => {
   const cidInfo = await getPodsiRecordTestnet(cid)
-  // const cidInfo = cidRecord[0]
+  if (!cidInfo) {
+    throw new CustomError(404, 'Record not found.')
+  }
   const raasInfo = await getRaasInfoTestnet(cid)
   const deals = raasInfo?.dealIDs
   const storageProvider = raasInfo?.miners
   /* istanbul ignore next */
   const dealArray: DealInfoTestnet[] = []
-  const pieceCid: string = cidInfo?.pieceCid
-  // for (let i = 0; i < cidRecord.length; i++) {
-  // const cidProof = await podsiRecord(cidInfo['pieceCid'])
-  // let proofOfAggregate: any = null
-  // if (cidInfo['aggregateIn'] !== 'none') {
-  // const aggregatedIn: any = await getBundleRecord(cidInfo['aggregatedIn'])
-  // if (aggregatedIn['aggFileStatus'] === 'deal initiated') {
+  const pieceCid = cidInfo?.pieceCID
   for (let i = 0; i < deals.length; i++) {
     dealArray.push({
-      dealId: parseInt(deals[i]),
+      dealId: deals[i],
       storageProvider: storageProvider[i],
       proof: cidInfo?.fileProofs[i],
-      // {
-      //   inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
-      //   verifierData: proofOfAggregate['fileProof']['verifierData'],
-      //   indexRecord: proofOfAggregate['fileProof']['indexRecord'],
-      // },
-      // aggPieceCID: aggregatedIn.commpCID,
-      // aggPieceSize: parseInt(aggregatedIn.pieceSize),
-      // aggCarFileSize: parseInt(aggregatedIn.carFileSize),
     })
-    // }
   }
-  // }
-  // }
+
   const dealRes: dealResponseTestnet = {
     pieceCID: pieceCid,
     dealInfo: dealArray,

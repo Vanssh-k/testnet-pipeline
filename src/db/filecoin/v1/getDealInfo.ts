@@ -1,12 +1,13 @@
-import dbbClient from './db/ddbClient.js'
-import { TestnetTableName, MainnetTableName } from './db/tables.js'
-import { DealRecordInterface } from '../types/dbTypes/dealTypes.js'
-import logger from '../utils/logger.js'
-import CustomError from '../middlewares/error/customError.js'
+import dbbClient from '../../db/ddbClient.js'
+import { V1TestnetTableName, V1MainnetTableName } from '../../../config/constants.js'
+import { DealRecordInterface } from '../../../types/v1/dealTypes.js'
+import logger from '../../../utils/logger.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
 export const getDealInfo = async (dealId: string, network: string): Promise<DealRecordInterface | null> => {
   try {
-    const tableName = network === 'testnet' ? TestnetTableName.DEAL_RECORD_TABLE : MainnetTableName.DEAL_RECORD_TABLE
+    const tableName =
+      network === 'testnet' ? V1TestnetTableName.DEAL_RECORD_TABLE : V1MainnetTableName.DEAL_RECORD_TABLE
 
     const params = {
       TableName: tableName,

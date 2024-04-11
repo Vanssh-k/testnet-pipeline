@@ -1,11 +1,12 @@
 import dbbClient from '../../db/ddbClient.js'
+import logger from '../../../utils/logger.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-import { TestnetTableName } from '../../../config/constants.js'
+import { FilecoinTestnetTableName } from '../../../config/constants.js'
 export default async (id: string) => {
   try {
     const params = {
-      TableName: TestnetTableName.AGGREGATE_TABLE,
+      TableName: FilecoinTestnetTableName.AGGREGATE_TABLE,
       IndexName: 'aggregateID-index',
       KeyConditionExpression: 'aggregateID = :c',
       ExpressionAttributeValues: {
@@ -16,7 +17,7 @@ export default async (id: string) => {
     const record = await dbbClient.query(params)
     return record.Items ?? []
   } catch (error) {
-    /* istanbul ignore next */
-    throw new CustomError(500, `Internal Server Error.`)
+    logger.error('Error update user details: ' + error)
+    throw new CustomError(500, 'Internal Server Error.')
   }
 }

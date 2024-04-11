@@ -1,12 +1,13 @@
 import dbbClient from '../../db/ddbClient.js'
+import logger from '../../../utils/logger.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { TestnetDealRecords } from '../../../types/filecoin.js'
+import { FilecoinTestnetTableName } from '../../../config/constants.js'
 
-import { TestnetTableName } from '../../../config/constants.js'
-
-export default async (dealId: string) => {
+export default async (dealId: string): Promise<TestnetDealRecords[]> => {
   try {
     const params = {
-      TableName: TestnetTableName.DEAL_RECORD_TABLE,
+      TableName: FilecoinTestnetTableName.DEAL_RECORD_TABLE,
       IndexName: 'chainDealID-index',
       KeyConditionExpression: 'chainDealID = :d',
       ExpressionAttributeValues: {
@@ -15,10 +16,9 @@ export default async (dealId: string) => {
     }
 
     const record = await dbbClient.query(params)
-    return record.Items ?? []
+    return record.Items as TestnetDealRecords[]
   } catch (error) {
-    /* istanbul ignore next */
-    console.error('Error getting deal record', error)
-    throw new CustomError(500, `Internal Server Error.`)
+    logger.error('Error update user details: ' + error)
+    throw new CustomError(500, 'Internal Server Error.')
   }
 }

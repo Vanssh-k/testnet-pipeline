@@ -5,6 +5,9 @@ const jwtAlgo = 'HS256'
 const jwtExpire = '12h'
 
 const filesPageSize = 1000
+const freeDataLimitInBytes = 1073741824
+const messageString = 'Please prove you are the owner of this wallet by signing this message, nonce='
+
 const userTable = 'user-record'
 const fileTable = 'files'
 const userAuthTable = 'user-auth'
@@ -15,30 +18,43 @@ const migrationRequestTable = 'migrationRequestTable'
 const ProposalTable = 'ProposalTable'
 const userTransactions = 'userTransactions'
 const subscriptionPlans = 'subscriptionPlans'
-const messageString = 'Please prove you are the owner of this wallet by signing this message, nonce='
-const freeDataLimitInBytes = 1073741824
+
 const filecoinDealRecords = 'filecoin-deals'
-const carBundleRecords = 'aggregate-records'
-const fileBundleRecords = 'file-aggregate-info'
 const ipnsTable = 'user-ipns-records'
 const fileTableEncryption = 'file-table-encryption'
 const filePODSI = 'file-podsi'
-const cacheClearTime = {
-  day: 86400,
-  week: 604800,
-  month: 2628000,
-}
+const endowmentTable = 'endownment-transactions'
 
-const TestnetTableName = {
+const V1TestnetTableName = {
   PODSI_TABLE: 'inclusion-proof',
   RAAS_TABLE: 'raas-testing',
   AGGREGATE_TABLE: 'aggregate-file-records',
   FILE_RECORD_TABLE: 'file-records',
   DEAL_RECORD_TABLE: 'deal-records',
 }
-const endowmentTable = 'endownment-transactions'
 
-const MainnetTableName = {
+const V1MainnetTableName = {
+  PODSI_TABLE: 'de-inclusion-proof',
+  RAAS_TABLE: 'de-raas',
+  AGGREGATE_TABLE: 'de-aggregate-info',
+  FILE_RECORD_TABLE: 'de-file-info',
+  DEAL_RECORD_TABLE: 'de-filecoin-deals',
+}
+
+const FilecoinLegacyTables = {
+  FILE_Bundle_Records: 'file-aggregate-info',
+  CAR_BUNDLE_RECORDS: 'aggregate-records',
+}
+
+const FilecoinTestnetTableName = {
+  PODSI_TABLE: 'inclusion-proof',
+  RAAS_TABLE: 'raas-testing',
+  AGGREGATE_TABLE: 'aggregate-file-records',
+  FILE_RECORD_TABLE: 'file-records',
+  DEAL_RECORD_TABLE: 'deal-records',
+}
+
+const FilecoinMainnetTableName = {
   PODSI_TABLE: 'de-inclusion-proof',
   RAAS_TABLE: 'de-raas',
   AGGREGATE_TABLE: 'de-aggregate-info',
@@ -64,14 +80,14 @@ export {
   subscriptionPlans,
   messageString,
   filecoinDealRecords,
-  carBundleRecords,
-  fileBundleRecords,
+  FilecoinLegacyTables,
   fileTableEncryption,
   ipnsTable,
   filePODSI,
-  cacheClearTime,
-  TestnetTableName,
-  MainnetTableName,
+  FilecoinTestnetTableName,
+  FilecoinMainnetTableName,
   endowmentTable,
   filesPageSize,
+  V1TestnetTableName,
+  V1MainnetTableName,
 }

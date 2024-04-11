@@ -1,5 +1,5 @@
-import { getDealInfo } from '../../databaseDataAccess/getDealInfo.js'
-import { DealInfoResponse } from '../../types/dbTypes/dealTypes.js'
+import { getDealInfo } from '../../../db/filecoin/v1/getDealInfo.js'
+import { DealInfoResponse } from '../../../types/v1/dealTypes.js'
 
 export const getDealInfoService = async (dealId: string, network: string): Promise<DealInfoResponse | null> => {
   const dealInfo = await getDealInfo(dealId, network)

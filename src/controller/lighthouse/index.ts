@@ -50,14 +50,7 @@ export const bundle_details = async (req: Request, res: Response, next: NextFunc
 
 export const get_proof = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let proof
-    if (req.query.network === 'testnet') {
-      console.log('testnet')
-      proof = await podsiTestnet(req.query.cid as string)
-      console.log(proof)
-    } else {
-      // proof = await podsi(req.query.cid as string)
-    }
+    const proof = await podsiTestnet(req.query.cid as string)
     res.status(200).json(proof)
   } catch (error) {
     console.log('error', error)
@@ -66,22 +59,16 @@ export const get_proof = async (req: Request, res: Response, next: NextFunction)
 }
 export const file_info_testnet = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let fileInfo
-    if (req.query.network === 'testnet') {
-      fileInfo = await fileInfoTestnet(req.query.cid as string)
-    }
+    const fileInfo = await fileInfoTestnet(req.query.cid as string)
     res.status(200).json(fileInfo)
   } catch (error) {
-    console.log(error)
     next(error)
   }
 }
+
 export const aggregate_info = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let proof
-    if (req.query.network === 'testnet') {
-      proof = await aggregateInfo(req.query.aggregateId as string)
-    }
+    const proof = await aggregateInfo(req.query.aggregateId as string)
     res.status(200).json(proof)
   } catch (error) {
     next(error)
@@ -193,24 +180,18 @@ export const file_info = async (req: Request, res: Response, next: NextFunction)
   }
 }
 
-export const raas_info = async (req: Request, res: Response, next: NextFunction) => {
+export const raas_info_testnet = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let raasInfo
-    if (req.query.network === 'testnet') {
-      raasInfo = await raasInfoTestnet(req.query.cid as string)
-    }
+    const raasInfo = await raasInfoTestnet(req.query.cid as string)
     res.status(200).json(raasInfo)
   } catch (error) {
     next(error)
   }
 }
 
-export const deal_id = async (req: Request, res: Response, next: NextFunction) => {
+export const deal_id_testnet = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let dealInfo
-    if (req.query.network === 'testnet') {
-      dealInfo = await dealInfoTestnet(req.query.dealId as string)
-    }
+    const dealInfo = await dealInfoTestnet(req.query.dealId as string)
     res.status(200).json(dealInfo)
   } catch (error) {
     next(error)

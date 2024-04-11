@@ -1,8 +1,8 @@
-import { getFileInfo } from '../../databaseDataAccess/getFileInfo.js'
-import { getRaasInfo } from '../../databaseDataAccess/getRaasInfo.js'
+import { getFileInfo } from '../../../db/filecoin/v1/getFileInfo.js'
+import { getRaasInfo } from '../../../db/filecoin/v1/getRaasInfo.js'
 import { getDealInfoService } from './getDealInfoService.js'
-import { FileInfoResponse } from '../../types/dbTypes/fileInfoTypes.js'
-import { DealInfoResponse } from '../../types/dbTypes/dealTypes.js'
+import { FileInfoResponse } from '../../../types/v1/fileInfoTypes.js'
+import { DealInfoResponse } from '../../../types/v1/dealTypes.js'
 
 export const getFileInfoService = async (cid: string, network: string): Promise<FileInfoResponse | null> => {
   const fileInfo = await getFileInfo(cid, network)

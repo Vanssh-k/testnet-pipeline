@@ -55,7 +55,7 @@ app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
 app.use('/api/instrumentation', InstrumentationRouter)
-app.use('/api/v1/lighthouse/', LighthouseV1Router)
+app.use('/api/v1/lighthouse', LighthouseV1Router)
 
 app.use(errorHandler)
 

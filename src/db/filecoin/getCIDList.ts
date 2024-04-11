@@ -1,9 +1,9 @@
 import dbbClient from '../db/ddbClient.js'
-import { fileBundleRecords } from '../../config/constants.js'
+import { FilecoinLegacyTables } from '../../config/constants.js'
 
 export default async (bundleId: string) => {
   const params = {
-    TableName: fileBundleRecords,
+    TableName: FilecoinLegacyTables.FILE_Bundle_Records,
     IndexName: 'bundledIn-index',
     KeyConditionExpression: 'bundledIn = :b',
     ExpressionAttributeValues: {

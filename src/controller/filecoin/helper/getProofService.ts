@@ -1,6 +1,6 @@
-import { getInclusionProof } from '../../databaseDataAccess/getInclusionProof.js'
-import { getRaasInfo } from '../../databaseDataAccess/getRaasInfo.js'
-import { ProofServiceResponse, DealArrayProofItem } from '../../types/dbTypes/inclusionProofTypes.js'
+import { getInclusionProof } from '../../../db/filecoin/v1/getInclusionProof.js'
+import { getRaasInfo } from '../../../db/filecoin/v1/getRaasInfo.js'
+import { ProofServiceResponse, DealArrayProofItem } from '../../../types/v1/inclusionProofTypes.js'
 
 export const getProofService = async (cid: string, network: string): Promise<ProofServiceResponse | null> => {
   const inclusionProof = await getInclusionProof(cid, network)

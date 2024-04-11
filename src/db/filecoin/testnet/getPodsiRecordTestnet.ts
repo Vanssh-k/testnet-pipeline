@@ -1,22 +1,22 @@
 import dbbClient from '../../db/ddbClient.js'
+import logger from '../../../utils/logger.js'
+import { TestnetPODSI } from '../../../types/filecoin.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { FilecoinTestnetTableName } from '../../../config/constants.js'
 
-import { TestnetTableName } from '../../../config/constants.js'
-
-export default async (cid: string) => {
+export default async (cid: string): Promise<TestnetPODSI | null> => {
   try {
     const params = {
-      TableName: TestnetTableName.PODSI_TABLE,
+      TableName: FilecoinTestnetTableName.PODSI_TABLE,
       Key: {
         cid: cid,
       },
     }
 
     const record = await dbbClient.get(params)
-    return record.Item ?? null
+    return (record.Item as TestnetPODSI) ?? null
   } catch (error) {
-    /* istanbul ignore next */
-    console.log('Error getting podsi record', error)
-    throw new CustomError(500, `Internal Server Error.`)
+    logger.error('Error update user details: ' + error)
+    throw new CustomError(500, 'Internal Server Error.')
   }
 }

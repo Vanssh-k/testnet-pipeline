@@ -1,12 +1,12 @@
 import dbbClient from '../../db/ddbClient.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { FilecoinDealsMainnet } from '../../../types/filecoin.js'
+import { FilecoinMainnetTableName } from '../../../config/constants.js'
 
-import { MainnetTableName } from '../../../config/constants.js'
-
-export default async (dealId: string) => {
+export default async (dealId: string): Promise<FilecoinDealsMainnet[]> => {
   try {
     const params = {
-      TableName: MainnetTableName.DEAL_RECORD_TABLE,
+      TableName: FilecoinMainnetTableName.DEAL_RECORD_TABLE,
       IndexName: 'chainDealID-index',
       KeyConditionExpression: 'chainDealID = :c',
       ExpressionAttributeValues: {
@@ -15,7 +15,7 @@ export default async (dealId: string) => {
     }
 
     const record = await dbbClient.query(params)
-    return record.Items ?? []
+    return record.Items as FilecoinDealsMainnet[]
   } catch (error) {
     /* istanbul ignore next */
     console.error('Error getting deal record', error)

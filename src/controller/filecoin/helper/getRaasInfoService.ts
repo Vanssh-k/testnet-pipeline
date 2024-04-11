@@ -1,5 +1,5 @@
-import { getRaasInfo } from '../../databaseDataAccess/getRaasInfo.js'
-import { RaasInfoResponse } from '../../types/dbTypes/raasTypes.js'
+import { getRaasInfo } from '../../../db/filecoin/v1/getRaasInfo.js'
+import { RaasInfoResponse } from '../../../types/v1/raasTypes.js'
 
 export const getRaasInfoService = async (cid: string, network: string): Promise<RaasInfoResponse | null> => {
   const raasInfo = await getRaasInfo(cid, network)
