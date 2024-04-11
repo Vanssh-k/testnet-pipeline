@@ -11,12 +11,12 @@ async function getVerificationMessage() {
   return JSON.parse(response.text)
 }
 
-async function getSignedMessage(verificationMessage) {
+async function getSignedMessage(verificationMessage: string) {
   const signer = new ethers.Wallet(testWalletPrivateKey)
   return signer.signMessage(verificationMessage)
 }
 
-async function getTokens(signedMessage) {
+async function getTokens(signedMessage: string) {
   const data = {
     publicKey,
     signedMessage,
@@ -25,12 +25,12 @@ async function getTokens(signedMessage) {
   return JSON.parse(response.text)
 }
 
-async function verifyToken(token) {
+async function verifyToken(token: string) {
   const response = await supertest(app).get('/api/auth/verify_access_token').set('Authorization', `Bearer ${token}`)
   return JSON.parse(response.text)
 }
 
-async function refreshAccessToken(refreshToken) {
+async function refreshAccessToken(refreshToken: string) {
   const response = await supertest(app)
     .get('/api/auth/refresh_access_token')
     .set('Authorization', `Bearer ${refreshToken}`)

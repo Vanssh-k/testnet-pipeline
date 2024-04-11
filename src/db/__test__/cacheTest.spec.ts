@@ -1,4 +1,4 @@
-import { setExCache, getCache, cacheFunction, removeCache } from '../db/cacheClient'
+import { setExCache, getCache, cacheFunction, removeCache } from '../db/cacheClient.js'
 import { v4 } from 'uuid'
 
 const message = {

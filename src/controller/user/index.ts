@@ -8,7 +8,7 @@ import {
 import { NextFunction, Request, Response } from 'express'
 import updateEmail from '../../db/user/updateEmail.js'
 import { generateTokenAndSendMail, verifyEmailToken } from './helper/verifyEmail.js'
-import CustomError from 'src/middlewares/error/customError.js'
+import CustomError from '../../middlewares/error/customError.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction) => {
   try {

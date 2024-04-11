@@ -1,6 +1,6 @@
 import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 test('CID TAG Test', async () => {
   const apiKey = config.test_wallet7_api_key

@@ -1,9 +1,9 @@
-import chalk from 'chalk'
 import dbbClient from '../db/ddbClient.js'
+import { MigrationRequestSchema } from '../../types/migration.js'
 import { migrationRequestTable } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export default async (requestId: string) => {
+export default async (requestId: string): Promise<MigrationRequestSchema> => {
   try {
     const params = {
       TableName: migrationRequestTable,
@@ -13,9 +13,8 @@ export default async (requestId: string) => {
     }
 
     const record = await dbbClient.get(params)
-    return record.Item
+    return record.Item as MigrationRequestSchema
   } catch (error: any) {
-    console.log(chalk.yellow('User Detail Fetch Error: ') + chalk.red(error?.message))
     throw new CustomError(500, `Internal Server Error.`)
   }
 }

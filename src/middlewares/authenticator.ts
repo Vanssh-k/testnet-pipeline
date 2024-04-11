@@ -1,7 +1,7 @@
 import config from '../config/index.js'
 import cjs from 'crypto-js'
 import userDetails from '../db/user/userDetails.js'
-import getMigrationRequestInfo from '../db/migration/migrationRequestInfo.js'
+import getMigrationRequestInfo from '../db/migration/getMigrationRequestInfo.js'
 import verifySignature from '../utils/verifySignature.js'
 import { messageString } from '../config/constants.js'
 import CustomError from './error/customError.js'
@@ -78,8 +78,8 @@ export default (rule: string, clauses: string[] = []) => {
           if (!requestInfo) {
             throw new CustomError(404, 'User Not Found.')
           }
-          const networkMigrationBlock = getNetwork(requestInfo['publicKey'])
-          const recordMigrationBlock = await userDetails(requestInfo['publicKey'], networkMigrationBlock)
+          const networkMigrationBlock = getNetwork(requestInfo.publicKey)
+          const recordMigrationBlock = await userDetails(requestInfo.publicKey, networkMigrationBlock)
           if (!recordMigrationBlock) {
             throw new CustomError(404, 'User Not Found.')
           }

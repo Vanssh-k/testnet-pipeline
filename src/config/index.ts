@@ -13,6 +13,8 @@ const baseConfig = {
   smtp_email_id: process.env.SMTP_EMAIL_ID,
   smtp_emai_password: process.env.SMTP_EMAIL_PASSWORD,
 
+  redis_url: process.env.REDIS_URL,
+
   lighthouse_ipfs_node: 'https://node.lighthouse.storage',
   lighthouse_auth_enc_node: 'https://encryption.lighthouse.storage',
   lighthouse_encryption_nodes: [

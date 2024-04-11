@@ -2,7 +2,7 @@ import { Redis } from 'ioredis'
 import config from '../../config/index.js'
 import logger from '../../utils/logger.js'
 
-const client = new Redis(config.redis_url)
+const client = new Redis(config.redis_url!)
 
 client.on('error', (err: any) => {
   if (err.code === 'ECONNREFUSED') {

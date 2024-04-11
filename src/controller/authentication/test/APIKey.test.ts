@@ -1,15 +1,15 @@
 import { ethers } from 'ethers'
 import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 describe('APIkey Test', () => {
   const signer = new ethers.Wallet(config.test_wallet1_private_key)
   const publicKey = '0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1'
   const testUrl = '/api/auth'
 
-  const getResponseText = async (request) => JSON.parse((await request).text)
-  const verifyType = (data, type) => expect(typeof data).toBe(type)
+  const getResponseText = async (request: any) => JSON.parse((await request).text)
+  const verifyType = (data: any, type: any) => expect(typeof data).toBe(type)
 
   test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () => {
     const verificationMessage = await getResponseText(
