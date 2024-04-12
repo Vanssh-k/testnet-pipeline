@@ -17,5 +17,13 @@ export interface FileInfoResponse {
   pieceCid: string
   fileSize: number
   carSize: number
+}
+
+export interface FileDetailsResponse {
+  cid: string
+  cidV1: string
+  pieceCid: string
+  fileSize: number
+  carSize: number
   deals: DealInfoResponse[]
 }
