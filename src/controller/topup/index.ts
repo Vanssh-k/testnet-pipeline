@@ -44,7 +44,7 @@ export const record_transaction = async (req: Request, res: Response, next: Next
 
 export const get_user_transactions = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const record = await getUserTransactionDetails(req.body.user.publicKey as string)
+    const record = await getUserTransactionDetails(req.body.publicKey as string)
     res.status(200).json(record)
   } catch (error) {
     next(error)
