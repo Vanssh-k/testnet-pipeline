@@ -4,7 +4,7 @@ import { getDealInfoService } from './getDealInfoService.js'
 import { FileDetailsResponse } from '../../../types/v1/fileInfoTypes.js'
 import { DealInfoResponse } from '../../../types/v1/dealTypes.js'
 
-export const getFileInfoService = async (cid: string, network: string): Promise<FileDetailsResponse | null> => {
+export const getFileDetailsService = async (cid: string, network: string): Promise<FileDetailsResponse | null> => {
   const fileInfo = await getFileInfo(cid, network)
   const raasInfo = await getRaasInfo(cid, network)
 

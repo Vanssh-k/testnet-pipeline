@@ -41,6 +41,8 @@ const V1MainnetTableName = {
   DEAL_RECORD_TABLE: 'de-filecoin-deals',
 }
 
+const V1CacheTime = 300 // 5 minutes
+
 const FilecoinLegacyTables = {
   FILE_Bundle_Records: 'file-aggregate-info',
   CAR_BUNDLE_RECORDS: 'aggregate-records',
@@ -90,4 +92,5 @@ export {
   filesPageSize,
   V1TestnetTableName,
   V1MainnetTableName,
+  V1CacheTime,
 }
