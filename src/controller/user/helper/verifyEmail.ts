@@ -8,7 +8,7 @@ export const generateTokenAndSendMail = async (address: string, email: string) =
   const token = v4().split('-').join('')
 
   const lastMailByUser: any = getCache(`lastMailByUser/${address}`)
-  if (lastMailByUser) {
+  if (!lastMailByUser) {
     throw new CustomError(400, 'Wait for two min before sending another mail.')
   }
 
@@ -26,7 +26,7 @@ export const generateTokenAndSendMail = async (address: string, email: string) =
 }
 
 export const verifyEmailToken = async (token: string) => {
-  const data: any = getCache(`verifytoken/${token}`)
+  const data: any = await getCache(`verifytoken/${token}`)
   if (!data) {
     throw new Error('This Token is expired')
   }
