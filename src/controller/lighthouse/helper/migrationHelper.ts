@@ -14,7 +14,7 @@ const addCIDToRAASTestnet = async (cid: string, fileID: string) => {
   const __ = await axios.get(`https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`)
 }
 
-export const pinCID = async (record: any, cid: string, fileName: string, raas: any) => {
+export const pinCID = async (publicKey: any, cid: string, fileName: string, raas: any) => {
   // Verify CID's
   if (!isIPFS.cid(cid)) {
     throw new CustomError(400, `Invalid CID`)
@@ -25,7 +25,7 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
   const requestID = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
-    publicKey: record.publicKey,
+    publicKey: publicKey,
     totalCID: 1,
     migrationStatus: MigrationStatus.Queued,
     enterprise: 'lighthouse',

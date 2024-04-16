@@ -78,12 +78,12 @@ export const aggregate_info = async (req: Request, res: Response, next: NextFunc
 export const pin_cid = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const requestID = await pinCID(
-      req.body.user,
+      req.body.publicKey,
       req.body.cid,
       req.body.fileName ? req.body.fileName : 'pinned-file',
       req.body.raas,
     )
-    await removeCache(`migration-requests-${req.body.user.publicKey}`)
+    await removeCache(`migration-requests-${req.body.publicKey}`)
     res.status(200).json({ requestID })
   } catch (error) {
     next(error)
