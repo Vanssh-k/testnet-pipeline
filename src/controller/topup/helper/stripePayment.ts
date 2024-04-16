@@ -1,14 +1,11 @@
 import Stripe from 'stripe'
-import config from '../../../config'
-import { CustomError } from '../../../errors'
-import { paymentPlans } from '../../libs/paymentPlans'
+import config from '../../../config/index.js'
+import CustomError from '../../../middlewares/error/customError.js'
+import { paymentPlans } from '../../../config/paymentPlans.js'
 
 const stripe = new Stripe(config.stripe_key)
 
-async function upsertCustomer(
-  walletAddress: string,
-  email: string | undefined = undefined
-) {
+async function upsertCustomer(walletAddress: string, email: string | undefined = undefined) {
   // Search for customers with the given userId in metadata
   const existingCustomers = await stripe.customers.list({
     email: email,
@@ -45,21 +42,13 @@ export const setup_card_stripe = async (address: string) => {
   return { url: session.url }
 }
 
-export const create_session_order = async (
-  address: string,
-  subID: number,
-  emailId: string | undefined
-) => {
+export const create_session_order = async (address: string, subID: number, emailId: string | undefined) => {
   if (emailId === undefined) {
-    throw new CustomError('Forbidden', 403, 'Email not updated in profile')
+    throw new CustomError(403, 'Email not updated in profile')
   }
   const plan = paymentPlans.find((elem) => elem.index === subID)
   if (!plan) {
-    throw new CustomError(
-      'InvalidPlanID',
-      406,
-      `No active Plan matches id:${subID}`
-    )
+    throw new CustomError(406, `No active Plan matches id:${subID}`)
   }
   const customer = await upsertCustomer(address, emailId)
 

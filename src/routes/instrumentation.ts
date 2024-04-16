@@ -1,6 +1,6 @@
 import express from 'express'
-import validate from '../middlewares/validate'
-import validator from '../middlewares/validators'
+import validate from '../middlewares/validate.js'
+import validator from '../middlewares/validators/index.js'
 import {
   fundReceive_balance,
   endowment_balance,
@@ -9,23 +9,15 @@ import {
   net_withdrawl,
   iFil_balance,
   endowment_transactions,
-} from '../controller/instrumentation'
+} from '../controller/instrumentation/index.js'
 
 const router = express.Router()
 
 // pay-per-use balance in fundReceive Contract
-router.get(
-  '/fundReceive_balace',
-  validate(validator.tokenAddressSchema, { query: true }),
-  fundReceive_balance
-)
+router.get('/fundReceive_balace', validate(validator.tokenAddressSchema, { query: true }), fundReceive_balance)
 
 // endowment balance in endowment Contract
-router.get(
-  '/endowment_balance',
-  validate(validator.tokenAddressSchema, { query: true }),
-  endowment_balance
-)
+router.get('/endowment_balance', validate(validator.tokenAddressSchema, { query: true }), endowment_balance)
 
 // amount staked in glif + yield generated
 router.get('/accumulated_balance', accumulated_balance)

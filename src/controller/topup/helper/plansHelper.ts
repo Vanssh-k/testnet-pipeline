@@ -1,6 +1,6 @@
-import updateUserDataLimit from '../../../repository/user/updateUserDataLimit'
-import { getSubscriptionStatus } from './billing'
-import { paymentPlans } from '../../libs/paymentPlans'
+import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
+import { getSubscriptionStatus } from './billing.js'
+import { paymentPlans } from '../../../config/paymentPlans.js'
 
 const getActivePlanList = async () => {
   const filterPlans = []
@@ -68,15 +68,11 @@ const activatePlan = async (userRecord: any, subId: number) => {
       },
     }
   }
-  const dataCapPurchased =
-    parseInt(`${activePlan?.data?.planDetails?.dataCap ?? 0}`, 10) * 1073741824 //GB converted to bytes
-  
+  const dataCapPurchased = parseInt(`${activePlan?.data?.planDetails?.dataCap ?? 0}`, 10) * 1073741824 //GB converted to bytes
+
   // update datacap
   if (dataCapPurchased) {
-    const updateDataCapResponse = await updateUserDataLimit(
-      userRecord.publicKey,
-      dataCapPurchased
-    )
+    const updateDataCapResponse = await updateUserDataLimit(userRecord.publicKey, dataCapPurchased)
     console.log('plan updated')
   }
 

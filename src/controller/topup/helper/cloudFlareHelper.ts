@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 const addDNSRecord = async (name: string) => {
   try {
@@ -18,7 +18,7 @@ const addDNSRecord = async (name: string) => {
           'X-Auth-Email': 'ravish@lighthouse.storage',
           Authorization: `Bearer ${config.cloudflare_key ?? ''}`,
         },
-      }
+      },
     )
 
     return 'success'

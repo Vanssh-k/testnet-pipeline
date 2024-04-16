@@ -1,43 +1,37 @@
 import { ethers } from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 describe('APIkey Test', () => {
   const signer = new ethers.Wallet(config.test_wallet1_private_key)
   const publicKey = '0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1'
   const testUrl = '/api/auth'
 
-  const getResponseText = async (request) => JSON.parse((await request).text)
-  const verifyType = (data, type) => expect(typeof data).toBe(type)
+  const getResponseText = async (request: any) => JSON.parse((await request).text)
+  const verifyType = (data: any, type: any) => expect(typeof data).toBe(type)
 
   test('Api Key Get and Verify: POST /get_api_key, GET /verify_api_key', async () => {
     const verificationMessage = await getResponseText(
-      supertest(app).get(`${testUrl}/get_message?publicKey=${publicKey}`)
+      supertest(app).get(`${testUrl}/get_message?publicKey=${publicKey}`),
     )
     verifyType(verificationMessage, 'string')
 
     const signedMessage = await signer.signMessage(verificationMessage)
     const data = { publicKey, signedMessage }
 
-    const apiKey = await getResponseText(
-      supertest(app).post(`${testUrl}/get_api_key`).send(data)
-    )
+    const apiKey = await getResponseText(supertest(app).post(`${testUrl}/get_api_key`).send(data))
     verifyType(apiKey, 'string')
 
     // Verify API Key
     const verifyResponse = await getResponseText(
-      supertest(app)
-        .get(`${testUrl}/verify_api_key`)
-        .set('Authorization', `Bearer ${apiKey}`)
+      supertest(app).get(`${testUrl}/verify_api_key`).set('Authorization', `Bearer ${apiKey}`),
     )
     verifyType(verifyResponse.publicKey, 'string')
 
     // Get all keys
     const allKeys = await getResponseText(
-      supertest(app)
-        .get(`${testUrl}/get_user_keys`)
-        .set('Authorization', `Bearer ${apiKey}`)
+      supertest(app).get(`${testUrl}/get_user_keys`).set('Authorization', `Bearer ${apiKey}`),
     )
     verifyType(allKeys[0]['id'], 'string')
 
@@ -51,16 +45,14 @@ describe('APIkey Test', () => {
     const revokeResponse = await getResponseText(
       supertest(app)
         .delete(`${testUrl}/remove_api_key?keyId=${allKeys[0]['id']}`)
-        .set('Authorization', `Bearer ${apiKey}`)
+        .set('Authorization', `Bearer ${apiKey}`),
     )
     verifyType(revokeResponse.data, 'string')
   }, 10000)
 
   test('Api Key test on old key: GET /verify_api_key', async () => {
     const data = await getResponseText(
-      supertest(app)
-        .get(`${testUrl}/verify_api_key`)
-        .set('Authorization', `Bearer ${config.test_wallet7_api_key}`)
+      supertest(app).get(`${testUrl}/verify_api_key`).set('Authorization', `Bearer ${config.test_wallet7_api_key}`),
     )
     verifyType(data.publicKey, 'string')
   }, 10000)

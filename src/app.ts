@@ -1,30 +1,24 @@
-import fs from 'fs'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import cron from 'node-cron'
 import bodyParser from 'body-parser'
 import expressWinston from 'express-winston'
 
-import config from './config'
-import logger from './utils/logger'
-import swaggerDocs from './docs/swagger'
-import { requestFilter, responseFilter } from './utils/loggerFilters'
-import { exportAndClearLogs } from './controller/log'
-import errorHandler from './middlewares/error-handler'
-import * as prometheusMetrics from './middlewares/prometheus'
+import logger from './utils/logger.js'
+import errorHandler from './middlewares/error/index.js'
+import * as prometheusMetrics from './middlewares/prometheus.js'
 
-import AuthRouter from './routes/auth'
-import UserRouter from './routes/user'
-import IPNSRouter from './routes/ipns'
-import TopUpRouter from './routes/topup'
-import GovernanceRouter from './routes/governance'
-import LighthouseRouter from './routes/lighthouse'
-import WebhookRouter from './routes/stripeWebhook'
-import InstrumentationRouter from './routes/instrumentation'
+import AuthRouter from './routes/auth.js'
+import UserRouter from './routes/user.js'
+import IPNSRouter from './routes/ipns.js'
+import TopUpRouter from './routes/topup.js'
+import GovernanceRouter from './routes/governance.js'
+import LighthouseRouter from './routes/lighthouse.js'
+import WebhookRouter from './routes/stripeWebhook.js'
+import InstrumentationRouter from './routes/instrumentation.js'
+import LighthouseV1Router from './routes/v1/lighthouse.js'
 
 const app = express()
-
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/api/webhook', WebhookRouter)
@@ -40,17 +34,13 @@ app.get('/metrics', async (req: Request, res: Response) => {
 app.use(bodyParser.json())
 
 app.use(
-  expressWinston.logger({
-    winstonInstance: logger('info', 'combined'),
-    requestFilter: requestFilter,
-    responseFilter: responseFilter,
-  })
+  expressWinston.errorLogger({
+    winstonInstance: logger,
+  }),
 )
 
 app.use(morgan('dev'))
 app.use(cors())
-
-swaggerDocs(app)
 
 app.use(prometheusMetrics.middleware)
 
@@ -65,15 +55,8 @@ app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
 app.use('/api/instrumentation', InstrumentationRouter)
+app.use('/api/v1/lighthouse', LighthouseV1Router)
+
 app.use(errorHandler)
-
-if (!fs.existsSync(config.logPath)) {
-  fs.mkdirSync(config.logPath)
-}
-
-// cron.schedule('0 0 * * *', () => {
-//   console.log('Log CRON Started')
-//   exportAndClearLogs()
-// })
 
 export default app

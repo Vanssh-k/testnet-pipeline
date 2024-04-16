@@ -10,6 +10,14 @@ export const cidSchema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `cid not found`,
   }),
+  network: joi.string().optional(),
+})
+
+export const dealIdSchema = joi.object({
+  dealId: joi.string().required().messages({
+    'any.required': `deal ID not found`,
+  }),
+  network: joi.string().optional(),
 })
 
 export const bundleSchema = joi.object({

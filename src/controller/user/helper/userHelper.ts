@@ -1,67 +1,38 @@
-import getNetwork from '../../../middlewares/getNetwork'
-import userUploads from '../../../repository/file/userUploads'
-import migrationRequestInfo from '../../../repository/migration/migrationRequestInfo'
-import updateUserData from '../../../repository/user/updateUserData'
-import updateMigrationCIDRecord from '../../../repository/migration/updateMigrationCIDRecord'
-import NotFoundError from '../../../errors/not-found-error'
-import { cacheFunction } from '../../../repository/db/cacheClient'
-import { cacheClearTime } from '../../libs/constants'
-import userDetails from '../../../repository/user/userDetails'
-import createTag from '../../../repository/user/tag/createTag'
-import getTagData from '../../../repository/user/tag/getTagData'
-import getAllTags from '../../../repository/user/tag/getAllTags'
-import removeTag from '../../../repository/user/tag/removeTag'
+import userUploads from '../../../db/file/userUploads.js'
+import createTag from '../../../db/user/tag/createTag.js'
+import getTagData from '../../../db/user/tag/getTagData.js'
+import getAllTags from '../../../db/user/tag/getAllTags.js'
+import removeTag from '../../../db/user/tag/removeTag.js'
+import getFileByID from '../../../db/file/getFileByID.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
-export const getUserFiles = async (publicKey: string, pageNo: number) => {
-  const network = getNetwork(publicKey)
-  if (network === 'evm') {
-    publicKey = publicKey.toLowerCase()
+export const getUploads = async (publicKey: string, lastKey: string | undefined) => {
+  let exclusiveStartKey = undefined
+  if (lastKey) {
+    const fileInfo = await getFileByID(lastKey)
+    if (fileInfo) {
+      exclusiveStartKey = {
+        id: fileInfo.id,
+        createdAt: fileInfo.createdAt,
+        publicKey: publicKey,
+      }
+    }
   }
-  const userInfo = await userDetails(publicKey, network)
-
-  // Only cache first page
-  // let fileList = []
-  // if (pageNo === 1) {
-  //   fileList = await cacheFunction(
-  //     async () => userUploads(publicKey, pageNo),
-  //     `getUpload-${publicKey}-page-${pageNo}`,
-  //     cacheClearTime.day
-  //   )
-  // } else {
-  // fileList = await userUploads(publicKey, pageNo)
-  // }
-  const fileList = await userUploads(publicKey, pageNo)
-
-  return {
-    fileList: fileList,
-    totalFiles: userInfo ? userInfo.fileCount : 0,
-  }
-}
-
-export const getUploads = async (publicKey: string, pageNo: number) => {
-  const network = getNetwork(publicKey)
-  if (network === 'evm') {
-    publicKey = publicKey.toLowerCase()
-  }
-
-  const fileList = await userUploads(publicKey, pageNo)
-
+  const fileList = await userUploads(publicKey, exclusiveStartKey)
   return fileList
 }
 
-export const createTagHelper = async (
-  tag: string,
-  cid: string,
-  publicKey: string
-) => {
-  const saveResponse = await createTag({
+export const createTagHelper = async (tag: string, cid: string, publicKey: string): Promise<void> => {
+  if (tag.includes(' ')) {
+    throw new CustomError(400, 'tag cannot contain spaces')
+  }
+  await createTag({
     id: publicKey + '-' + tag,
     tag: tag,
     cid: cid,
     publicKey: publicKey,
     lastUpdate: Date.now(),
   })
-  return saveResponse
 }
 
 export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
@@ -74,7 +45,6 @@ export const getAllTagsHelper = async (publicKey: string) => {
   return tags
 }
 
-export const removeTagHelper = async (tag: string, publicKey: string) => {
-  const tagDetails = await removeTag(publicKey + '-' + tag)
-  return 'Success'
+export const removeTagHelper = async (tag: string, publicKey: string): Promise<void> => {
+  await removeTag(publicKey + '-' + tag)
 }

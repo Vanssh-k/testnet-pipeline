@@ -1,6 +1,6 @@
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 // get_uploads
 describe('user', () => {
@@ -37,9 +37,7 @@ describe('user', () => {
   // user_data_usage
   test('User Data Usage: GET /user_data_usage', async () => {
     await supertest(app)
-      .get(
-        '/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD'
-      )
+      .get('/api/user/user_data_usage?publicKey=0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD')
       .expect(200)
       .then((response) => {
         const usage = JSON.parse(response.text)
@@ -51,9 +49,6 @@ describe('user', () => {
   // faucet_status
   test('Faucet Status: GET /faucet_status', async () => {
     const apiKey = config.test_wallet7_api_key
-    await supertest(app)
-      .get('/api/user/faucet_status')
-      .set('Authorization', `Bearer ${apiKey}`)
-      .expect(200)
+    await supertest(app).get('/api/user/faucet_status').set('Authorization', `Bearer ${apiKey}`).expect(200)
   }, 10000)
 })

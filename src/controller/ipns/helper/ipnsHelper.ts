@@ -1,19 +1,19 @@
 import { v4 } from 'uuid'
 import axios from 'axios'
-import config from '../../../config'
-import { ForbiddenError, CustomError } from '../../../errors'
-import addIPNSRecord from '../../../repository/ipns/addIPNSRecord'
-import getIPNSRecord from '../../../repository/ipns/getIPNSRecord'
-import updateIPNSRecord from '../../../repository/ipns/updateIPNSRecord'
-import removeIPNSRecord from '../../../repository/ipns/removeIPNSRecord'
-import getIPNSRecordById from '../../../repository/ipns/getIPNSRecordById'
+import config from '../../../config/index.js'
+import CustomError from '../../../middlewares/error/customError.js'
+import addIPNSRecord from '../../../db/ipns/addIPNSRecord.js'
+import getIPNSRecord from '../../../db/ipns/getIPNSRecord.js'
+import updateIPNSRecord from '../../../db/ipns/updateIPNSRecord.js'
+import removeIPNSRecord from '../../../db/ipns/removeIPNSRecord.js'
+import getIPNSRecordById from '../../../db/ipns/getIPNSRecordById.js'
 
 export const generateKey = async (publicKey: string) => {
   // Check total keys of user
   const ipnsRecords = await getIPNSRecord(publicKey)
   /* istanbul ignore next */
   if (ipnsRecords.length > 500) {
-    throw new ForbiddenError('IPNS name limit reached!!!')
+    throw new CustomError(403, 'IPNS name limit reached.')
   }
 
   // Generate key
@@ -25,7 +25,7 @@ export const generateKey = async (publicKey: string) => {
       headers: {
         Authorization: `Bearer ${config.route_access_token}`,
       },
-    }
+    },
   )
 
   // Add record to database
@@ -49,14 +49,10 @@ export const getUserIPNSRecords = async (publicKey: string) => {
   return ipnsRecords
 }
 
-export const publishRecord = async (
-  cid: string,
-  id: string,
-  publicKey: string
-) => {
+export const publishRecord = async (cid: string, id: string, publicKey: string) => {
   const keyRecord: any = await getIPNSRecordById(id)
   if (keyRecord.publicKey !== publicKey) {
-    throw new ForbiddenError()
+    throw new CustomError(403, 'Forbidden.')
   }
 
   const publishResponse = await axios.post(
@@ -66,17 +62,13 @@ export const publishRecord = async (
       headers: {
         Authorization: `Bearer ${config.route_access_token}`,
       },
-    }
+    },
   )
 
   // Update cid
   /* istanbul ignore next */
   if (!publishResponse.data.Value) {
-    throw new CustomError(
-      'Internal Server Error',
-      500,
-      'Unable to process request'
-    )
+    throw new CustomError(500, 'Internal Server Error.')
   }
   const updateCid = await updateIPNSRecord(id, cid)
   return publishResponse.data
@@ -85,7 +77,7 @@ export const publishRecord = async (
 export const removeKey = async (keyName: string, publicKey: string) => {
   const keyRecord: any = await getIPNSRecordById(keyName)
   if (keyRecord.publicKey !== publicKey) {
-    throw new ForbiddenError()
+    throw new CustomError(403, 'Forbidden.')
   }
 
   const removeResponse = await axios.post(
@@ -95,17 +87,13 @@ export const removeKey = async (keyName: string, publicKey: string) => {
       headers: {
         Authorization: `Bearer ${config.route_access_token}`,
       },
-    }
+    },
   )
 
   // remove record
   /* istanbul ignore next */
   if (!removeResponse.data.Keys[0]['Id']) {
-    throw new CustomError(
-      'Internal Server Error',
-      500,
-      'Unable to process request'
-    )
+    throw new CustomError(500, 'Internal Server Error.')
   }
   const removeRecord = await removeIPNSRecord(keyName)
   return removeResponse.data

@@ -1,42 +1,36 @@
 import { ethers } from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 import supertest from 'supertest'
-import config from '../../../config'
+import config from '../../../config/index.js'
 
 const publicKey = '0x487fc2fE07c593EAb555729c3DD6dF85020B5160'
 const testWalletPrivateKey = config.test_wallet2_private_key
 
 async function getVerificationMessage() {
-  const response = await supertest(app).get(
-    `/api/auth/get_message?publicKey=${publicKey}`
-  )
+  const response = await supertest(app).get(`/api/auth/get_message?publicKey=${publicKey}`)
   return JSON.parse(response.text)
 }
 
-async function getSignedMessage(verificationMessage) {
+async function getSignedMessage(verificationMessage: string) {
   const signer = new ethers.Wallet(testWalletPrivateKey)
   return signer.signMessage(verificationMessage)
 }
 
-async function getTokens(signedMessage) {
+async function getTokens(signedMessage: string) {
   const data = {
     publicKey,
     signedMessage,
   }
-  const response = await supertest(app)
-    .post('/api/auth/verify_signer')
-    .send(data)
+  const response = await supertest(app).post('/api/auth/verify_signer').send(data)
   return JSON.parse(response.text)
 }
 
-async function verifyToken(token) {
-  const response = await supertest(app)
-    .get('/api/auth/verify_access_token')
-    .set('Authorization', `Bearer ${token}`)
+async function verifyToken(token: string) {
+  const response = await supertest(app).get('/api/auth/verify_access_token').set('Authorization', `Bearer ${token}`)
   return JSON.parse(response.text)
 }
 
-async function refreshAccessToken(refreshToken) {
+async function refreshAccessToken(refreshToken: string) {
   const response = await supertest(app)
     .get('/api/auth/refresh_access_token')
     .set('Authorization', `Bearer ${refreshToken}`)
@@ -68,10 +62,7 @@ test('Verify Signer Unauthorized Case: POST /verify_signer', async () => {
 }, 10000)
 
 test('Verify Access Token Unauthorized Case: POST /verify_access_token', async () => {
-  await supertest(app)
-    .get('/api/auth/verify_access_token')
-    .set('Authorization', 'Bearer blablabla')
-    .expect(401)
+  await supertest(app).get('/api/auth/verify_access_token').set('Authorization', 'Bearer blablabla').expect(401)
 }, 10000)
 
 test('Verify User Signature: POST /verify_user_signature', async () => {
@@ -81,9 +72,7 @@ test('Verify User Signature: POST /verify_user_signature', async () => {
     publicKey,
     signedMessage,
   }
-  const response = await supertest(app)
-    .post('/api/auth/verify_user_signature')
-    .send(data)
+  const response = await supertest(app).post('/api/auth/verify_user_signature').send(data)
   const jsonRes = JSON.parse(response.text)
   expect(typeof jsonRes.publicKey).toBe('string')
 }, 10000)

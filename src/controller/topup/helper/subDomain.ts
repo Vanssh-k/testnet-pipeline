@@ -1,24 +1,11 @@
 import { v4 } from 'uuid'
-import {
-  checkSubdomain,
-  getRecord,
-  updateSubDomain,
-} from '../../../repository/topup/subdomain'
-import { addDNSRecord } from './cloudFlareHelper'
+import { checkSubdomain, getRecord, updateSubDomain } from '../../../db/topup/subdomain.js'
+import { addDNSRecord } from './cloudFlareHelper.js'
 
-import ForbiddenError from '../../../errors/forbidden'
-import NotFoundError from '../../../errors/not-found-error'
+import CustomError from '../../../middlewares/error/customError.js'
 
 const subDomainExists = async (subDomain: string) => {
-  const restrictedNames = [
-    'api',
-    'gateway',
-    'testnet',
-    'mainnet',
-    'node',
-    'docs',
-    'encryption',
-  ]
+  const restrictedNames = ['api', 'gateway', 'testnet', 'mainnet', 'node', 'docs', 'encryption']
   if (restrictedNames.includes(subDomain) || /[^A-Za-z0-9]/.test(subDomain)) {
     return 'exist'
   }
@@ -34,7 +21,7 @@ const subDomainExists = async (subDomain: string) => {
 const getUserSubDomainDomain = async (publicKey: string) => {
   const record = await getRecord(publicKey)
   if (!record) {
-    throw new NotFoundError()
+    throw new CustomError(404, 'Record Not Found')
   }
 
   return record
@@ -45,7 +32,7 @@ const createSubDomain = async (publicKey: string, subDomain: string) => {
     // Does the sub domain exist
     const exists = await subDomainExists(subDomain)
     if (exists === 'exist') {
-      throw new ForbiddenError()
+      throw new CustomError(404, 'SubDomain Does Not Exist')
     }
 
     // has user subscribed to plan
@@ -56,19 +43,16 @@ const createSubDomain = async (publicKey: string, subDomain: string) => {
     } //await usersActivePlan(publicKey)
 
     if (data.status !== 200) {
-      throw new ForbiddenError()
+      throw new CustomError(403, 'Forbidden')
     }
 
     // Get plan details
-    const allowedSubDomainCount = parseInt(
-      `${data?.data?.planDetails?.dedicatedGateway ?? 0}`,
-      10
-    )
+    const allowedSubDomainCount = parseInt(`${data?.data?.planDetails?.dedicatedGateway ?? 0}`, 10)
 
     // Does user already have a sub domain
     const userDomainRecord = await getRecord(publicKey)
     if (userDomainRecord.length >= allowedSubDomainCount) {
-      throw new ForbiddenError('User already own gateway')
+      throw new CustomError(403, 'User already own gateway')
     }
 
     const _ = await updateSubDomain({
