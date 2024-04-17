@@ -28,7 +28,7 @@ router.post(
 router.post(
   '/create_api_key',
   validate(validator.apiKeyName, { query: true }),
-  authenticator('verifyToken', ['publicKeyOnly']),
+  authenticator('verifysignature'),
   create_api_key,
 )
 
