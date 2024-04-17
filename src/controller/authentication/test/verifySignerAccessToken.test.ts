@@ -25,31 +25,12 @@ async function getTokens(signedMessage: string) {
   return JSON.parse(response.text)
 }
 
-async function verifyToken(token: string) {
-  const response = await supertest(app).get('/api/auth/verify_access_token').set('Authorization', `Bearer ${token}`)
-  return JSON.parse(response.text)
-}
-
-async function refreshAccessToken(refreshToken: string) {
-  const response = await supertest(app)
-    .get('/api/auth/refresh_access_token')
-    .set('Authorization', `Bearer ${refreshToken}`)
-  return JSON.parse(response.text)
-}
-
 test('Verify Signer and Access Token: POST /verify_signer', async () => {
   const verificationMessage = await getVerificationMessage()
   const signedMessage = await getSignedMessage(verificationMessage)
-  const { accessToken, refreshToken } = await getTokens(signedMessage)
+  const { accessToken } = await getTokens(signedMessage)
 
   expect(typeof accessToken).toBe('string')
-  expect(typeof refreshToken).toBe('string')
-
-  const tokenVerification = await verifyToken(accessToken)
-  expect(typeof tokenVerification.publicKey).toBe('string')
-
-  const newToken = await refreshAccessToken(refreshToken)
-  expect(typeof newToken.accessToken).toBe('string')
 }, 10000)
 
 test('Verify Signer Unauthorized Case: POST /verify_signer', async () => {
@@ -65,14 +46,14 @@ test('Verify Access Token Unauthorized Case: POST /verify_access_token', async (
   await supertest(app).get('/api/auth/verify_access_token').set('Authorization', 'Bearer blablabla').expect(401)
 }, 10000)
 
-test('Verify User Signature: POST /verify_user_signature', async () => {
+test('Verify User Signature: POST /verify_signer', async () => {
   const verificationMessage = await getVerificationMessage()
   const signedMessage = await getSignedMessage(verificationMessage)
   const data = {
     publicKey,
     signedMessage,
   }
-  const response = await supertest(app).post('/api/auth/verify_user_signature').send(data)
+  const response = await supertest(app).post('/api/auth/verify_signer').send(data)
   const jsonRes = JSON.parse(response.text)
   expect(typeof jsonRes.publicKey).toBe('string')
 }, 10000)

@@ -31,12 +31,7 @@ router.get(
   files_uploaded,
 )
 
-router.get(
-  '/user_data_usage',
-  validate(validator.publicKeySchema, { query: true }),
-  authenticator('verifyToken'),
-  user_data_usage,
-)
+router.get('/user_data_usage', authenticator('verifyToken'), user_data_usage)
 
 router.get(
   '/send_verification_email',
