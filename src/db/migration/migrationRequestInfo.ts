@@ -3,7 +3,7 @@ import { MigrationCIDSchema } from '../../types/migration.js'
 import { migrationCIDs } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export default async (requestID: string): Promise<MigrationCIDSchema> => {
+export default async (requestID: string): Promise<MigrationCIDSchema[]> => {
   try {
     const params = {
       TableName: migrationCIDs,
@@ -16,7 +16,7 @@ export default async (requestID: string): Promise<MigrationCIDSchema> => {
 
     const record = await dbbClient.query(params)
     const Items = record.Items ?? []
-    return Items[0] as MigrationCIDSchema
+    return Items as MigrationCIDSchema[]
   } catch (error) {
     throw new CustomError(500, `Internal Server Error.`)
   }
