@@ -39,7 +39,7 @@ const paymentPlans = [
     filecoinDeals: 'yes',
   },
   {
-    index: 3,
+    index: 5,
     planName: 'Lite',
     amount: 99,
     storageInGB: 150,
@@ -52,7 +52,7 @@ const paymentPlans = [
     filecoinDeals: 'yes',
   },
   {
-    index: 4,
+    index: 6,
     planName: 'Premium',
     amount: 499,
     storageInGB: 1024,
