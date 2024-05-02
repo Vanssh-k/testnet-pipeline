@@ -37,6 +37,21 @@ export const get_profile = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+export const verify_access_token = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const record = req.body.user
+    res.status(200).json({
+      publicKey: record.publicKey,
+      dataLimit: record.dataLimit,
+      dataUsed: record.dataUsed,
+      email: record.email,
+    })
+  } catch (error) {
+    /* istanbul ignore next */
+    next(error)
+  }
+}
+
 export const create_api_key = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const keyName = req.query.keyName as string
