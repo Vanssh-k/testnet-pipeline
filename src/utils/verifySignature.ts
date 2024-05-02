@@ -30,7 +30,7 @@ export default async (
       )
       return verified
     }
-    if (network === 'coreum') {
+    if (network === 'cosmos') {
       const messageBuffer = Buffer.from(originalMessage, 'utf8')
       const hash = crypto.createHash('sha256').update(messageBuffer).digest()
       const formattedSignature = hexToUint8Array(signedMessage)

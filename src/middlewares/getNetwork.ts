@@ -34,7 +34,7 @@ export default (value: string) => {
     } else if (checkSolana(value)) {
       return 'solana'
     } else if (checkCoreum(value)) {
-      return 'coreum'
+      return 'cosmos'
     }
 
     throw new CustomError(400, 'Invalid Address')
