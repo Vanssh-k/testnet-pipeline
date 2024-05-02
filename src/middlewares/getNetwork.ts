@@ -10,6 +10,7 @@ function hexToUint8Array(hexString: string): Uint8Array {
 function checkEVM(value: string): boolean {
   return ethers.isAddress(value?.toLowerCase())
 }
+
 function checkSolana(value: string): boolean {
   try {
     const pub = new PublicKey(value)
@@ -18,7 +19,8 @@ function checkSolana(value: string): boolean {
     return false
   }
 }
-function checkCoreum(value: string): boolean {
+
+function checkCosmos(value: string): boolean {
   try {
     const formattedPubkey = hexToUint8Array(value)
     return secp256k1.publicKeyVerify(formattedPubkey)
@@ -33,7 +35,7 @@ export default (value: string) => {
       return 'evm'
     } else if (checkSolana(value)) {
       return 'solana'
-    } else if (checkCoreum(value)) {
+    } else if (checkCosmos(value)) {
       return 'cosmos'
     }
 
