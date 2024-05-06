@@ -7,6 +7,7 @@ import {
   create_api_key,
   get_user_keys,
   get_profile,
+  verify_access_token,
 } from '../controller/authentication/index.js'
 import validator from '../middlewares/validators/index.js'
 import validate from '../middlewares/validate.js'
@@ -38,6 +39,8 @@ router.get(
   authenticator('verifyToken', ['publicKeyOnly']),
   create_api_key,
 )
+
+router.get('/verify_access_token', authenticator('verifyToken'), verify_access_token)
 
 router.get('/verify_api_key', authenticator('verifyToken'), verify_api_key)
 
