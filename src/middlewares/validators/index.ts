@@ -7,6 +7,7 @@ import {
   emailSchema,
   verificationTokenSchema,
   web3authEmailVerificationSchema,
+  referralSchema,
 } from './user.js'
 import {
   symbolSchema,
@@ -64,5 +65,6 @@ export default {
   emailSchema,
   verificationTokenSchema,
   web3authEmailVerificationSchema,
+  referralSchema,
   tokenAddressSchema,
 }

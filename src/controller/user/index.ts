@@ -8,6 +8,8 @@ import {
 import { NextFunction, Request, Response } from 'express'
 import updateEmail from '../../db/user/updateEmail.js'
 import { generateTokenAndSendMail, verifyEmailToken } from './helper/verifyEmail.js'
+import createReferralRecord from '../../db/user/referral/createReferralRecord.js'
+import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction) => {
@@ -107,6 +109,28 @@ export const get_all_tags = async (req: Request, res: Response, next: NextFuncti
 export const remove_tag = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await removeTagHelper(req.query.tag as string, req.body.publicKey)
+    return res.status(200).json('Success')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const create_referral = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const details = {
+      publicKey: req.body.publicKey,
+      referredBy: req.query.referredBy as string,
+    }
+    await createReferralRecord(details)
+    return res.status(200).json('Success')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const get_referral = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await getReferral(req.body.publicKey)
     return res.status(200).json('Success')
   } catch (error) {
     next(error)

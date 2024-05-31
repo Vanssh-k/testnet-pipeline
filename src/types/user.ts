@@ -19,3 +19,8 @@ export type UserAuthDetails = {
   scope: string
   lastUpdate: number
 }
+
+export type Referral = {
+  publicKey: string
+  referredBy: string
+}

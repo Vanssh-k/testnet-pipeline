@@ -9,6 +9,7 @@ const freeDataLimitInBytes = 1073741824
 const messageString = 'Please prove you are the owner of this wallet by signing this message, nonce='
 
 const userTable = 'user-record'
+const referralTable = 'referral'
 const fileTable = 'files'
 const userAuthTable = 'user-auth'
 const cidTagTable = 'cid-tag-table'
@@ -70,6 +71,7 @@ export {
   jwtAlgo,
   jwtExpire,
   userTable,
+  referralTable,
   userAuthTable,
   fileTable,
   cidTagTable,

@@ -10,6 +10,8 @@ import {
   send_email_verification_mail,
   verify_email_token,
   verify_web3auth_email,
+  create_referral,
+  get_referral,
 } from '../controller/user/index.js'
 import authenticator from '../middlewares/authenticator.js'
 import validate from '../middlewares/validate.js'
@@ -71,5 +73,14 @@ router.delete(
   authenticator('verifyToken', ['publicKeyOnly']),
   remove_tag,
 )
+
+router.get(
+  '/create_referral',
+  validate(validator.referralSchema, { query: true }),
+  authenticator('verifyToken', ['publicKeyOnly']),
+  create_referral,
+)
+
+router.get('/get_referral', authenticator('verifyToken', ['publicKeyOnly']), get_referral)
 
 export default router

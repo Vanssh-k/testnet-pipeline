@@ -57,3 +57,9 @@ export const web3authEmailVerificationSchema = joi.object({
     'any.required': `email not found`,
   }),
 })
+
+export const referralSchema = joi.object({
+  referredBy: joi.string().required().messages({
+    'any.required': `idToken not found`,
+  }),
+})
