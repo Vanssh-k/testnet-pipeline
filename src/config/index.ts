@@ -15,6 +15,7 @@ const baseConfig = {
 
   redis_url: process.env.REDIS_URL,
 
+  lighthouse_migration_node: 'http://13.234.117.78',
   lighthouse_ipfs_node: 'https://node.lighthouse.storage',
   lighthouse_auth_enc_node: 'https://encryption.lighthouse.storage',
   lighthouse_encryption_nodes: [

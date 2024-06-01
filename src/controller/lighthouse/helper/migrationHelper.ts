@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
+import config from '../../../config/index.js'
 import * as isIPFS from 'is-ipfs'
 import { MigrationStatus } from '../../../types/status.js'
 import processDealParam from './processDealParameters.js'
@@ -56,7 +57,7 @@ export const pinCID = async (publicKey: any, cid: string, fileName: string, raas
     const addCIDToTestnet = addCIDToRAASTestnet(cid, id)
   }
 
-  const startMigration = axios.get(`http://13.233.245.27/api?requestId=${requestID}`)
+  const startMigration = axios.get(`${config.lighthouse_migration_node}/api?requestId=${requestID}`)
 
   return requestID
 }
@@ -104,7 +105,7 @@ export const migrationRequest = async (publicKey: any, bodyData: string) => {
     })
   }
 
-  const startMigration = axios.get(`http://13.233.245.27/api?requestId=${requestID}`)
+  const startMigration = axios.get(`${config.lighthouse_migration_node}/api?requestId=${requestID}`)
   return requestID
 }
 
@@ -151,6 +152,6 @@ export const migrationRequestEnt = async (publicKey: string, bodyData: string, e
     })
   }
 
-  const startMigration = axios.get(`http://13.233.245.27/api?requestId=${requestID}`)
+  const startMigration = axios.get(`${config.lighthouse_migration_node}/api?requestId=${requestID}`)
   return requestID
 }
