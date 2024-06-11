@@ -2,7 +2,9 @@ import bs58 from 'bs58'
 import { ethers } from 'ethers'
 import nacl from 'tweetnacl'
 import crypto from 'crypto'
-import secp256k1 from 'secp256k1'
+import { makeSignDoc as makeSignDocAmino, serializeSignDoc } from '@cosmjs/amino'
+import { Secp256k1, Secp256k1Signature, sha256 } from '@cosmjs/crypto'
+import { fromBase64, toBase64 } from '@cosmjs/encoding'
 
 function hexToUint8Array(hexString: string): Uint8Array {
   return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
@@ -31,11 +33,29 @@ export default async (
       return verified
     }
     if (network === 'cosmos') {
-      const messageBuffer = Buffer.from(originalMessage, 'utf8')
-      const hash = crypto.createHash('sha256').update(messageBuffer).digest()
-      const formattedSignature = hexToUint8Array(signedMessage)
-      const formatedPubkey = hexToUint8Array(usersPublicKey)
-      const isVerified = secp256k1.ecdsaVerify(formattedSignature, hash, formatedPubkey)
+      const msg = {
+        type: 'sign/MsgSignData',
+        value: {
+          data: originalMessage,
+        },
+      }
+      const secpSignature = Secp256k1Signature.fromFixedLength(fromBase64(signedMessage))
+      const signBytes = serializeSignDoc(
+        makeSignDocAmino(
+          [msg],
+          {
+            gas: '0',
+            amount: [],
+          },
+          'coreum-mainnet-1',
+          '',
+          0,
+          0,
+        ),
+      )
+      const prehashed = sha256(signBytes)
+      const rawSecp256k1Pubkey = hexToUint8Array(usersPublicKey)
+      const isVerified = await Secp256k1.verifySignature(secpSignature, prehashed, rawSecp256k1Pubkey)
       return isVerified
     }
     return false
