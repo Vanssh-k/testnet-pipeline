@@ -51,7 +51,26 @@ export const create_session_order = async (address: string, subID: number, email
     throw new CustomError(406, `No active Plan matches id:${subID}`)
   }
   const customer = await upsertCustomer(address, emailId)
-
+  const mode = subID === 3 || subID === 4 ? 'subscription' : 'payment'
+  const priceDataObject: any = {
+    currency: 'usd',
+    product_data: {
+      name: `Lighthouse Plan: ${plan.planName}`,
+      description: `Lighthouse Topup storage: ${plan.storageInGB}GB`,
+      metadata: {
+        planID: plan.index,
+        storageInGB: plan.storageInGB,
+        amount: plan.amount,
+      },
+    },
+    unit_amount: plan.amount * 100,
+  }
+  if (mode === 'subscription') {
+    const frequency = 'year'
+    priceDataObject.recurring = {
+      interval: frequency,
+    }
+  }
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     phone_number_collection: {
@@ -70,23 +89,11 @@ export const create_session_order = async (address: string, subID: number, email
     },
     line_items: [
       {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: `Lighthouse Plan: ${plan.planName}`,
-            description: `Lighthouse Topup storage: ${plan.storageInGB}GB`,
-            metadata: {
-              planID: plan.index,
-              storageInGB: plan.storageInGB,
-              amount: plan.amount,
-            },
-          },
-          unit_amount: plan.amount * 100,
-        },
+        price_data: priceDataObject,
         quantity: 1,
       },
     ],
-    mode: 'payment',
+    mode: mode,
     customer: customer.id,
     success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
     cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
