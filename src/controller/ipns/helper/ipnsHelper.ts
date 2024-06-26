@@ -13,7 +13,13 @@ export const generateKey = async (publicKey: string) => {
   const ipnsRecords = await getIPNSRecord(publicKey)
   /* istanbul ignore next */
   if (ipnsRecords.length > 500) {
-    throw new CustomError(403, 'IPNS name limit reached.')
+    // Adding one client exception till IPNS plans are up
+    if (
+      publicKey !== '0x8b7254cca55d2ca12c03f3e368bd681e413dd455' &&
+      publicKey !== '0x25d19abaebb32ca0081bac5b12dce361a89c2bd7'
+    ) {
+      throw new CustomError(403, 'IPNS name limit reached.')
+    }
   }
 
   // Generate key
