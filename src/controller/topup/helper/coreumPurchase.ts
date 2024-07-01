@@ -24,7 +24,7 @@ const validatePayment = async (req: Request) => {
   if (
     amountFromTx == req.body.amount &&
     fromAddress == req.body.address &&
-    toAddress == process.env.LIGHTHOUSE_COREUM_ADDRESS &&
+    toAddress == config.lighthouse_coreum_address &&
     !txnExist
   ) {
     await recordTransactions({

@@ -68,6 +68,7 @@ const baseConfig = {
     process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0xfaf011f515e558ad29aE4D2b13A0b2fBBD7c9C54',
   lighthouse_glifYield_address:
     process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0xa45cEA9F88eA50310744483b989E759b3d091ea8',
+  lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core1r8dccyl65eqnetfpeuea6z02lr8tusxq00r9rw',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,
