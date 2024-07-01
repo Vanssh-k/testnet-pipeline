@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { Request } from 'express'
 import { v4 } from 'uuid'
-import updateUserDataLimit from 'src/db/user/updateUserDataLimit.js'
+import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getUserTransactionDetails } from './transactionHelper.js'
-import { recordTransactions } from 'src/db/topup/userTransactions.js'
+import { recordTransactions } from '../../../db/topup/userTransactions.js'
 import config from '../../../config/index.js'
 
 const checkTxnExists = async (address: string, transactionHash: string) => {
