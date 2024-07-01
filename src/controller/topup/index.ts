@@ -92,7 +92,7 @@ export const webhook_stripe = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export const verify_Coreumtxn_And_Updatecap = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await checkCoreumTxnUpdateCap(req)
     res.status(200).json('Success')
