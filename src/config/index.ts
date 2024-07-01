@@ -25,6 +25,7 @@ const baseConfig = {
     'https://encryption.lighthouse.storage/api/auth-message/4',
     'https://encryption.lighthouse.storage/api/auth-message/5',
   ],
+  coreum_api_url: 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs',
   lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
   lighthouse_ipns_node: process.env.LIGHTHOUSE_IPNS_NODE ?? 'http://10.0.9.53',
   est_api_key: process.env.EST_API_KEY ?? '',
