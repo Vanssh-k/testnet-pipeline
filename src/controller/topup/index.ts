@@ -4,6 +4,7 @@ import { handleStripeWebhook } from './helper/stripeWebhook.js'
 import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
 import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
+import { verifyAndUpdate } from './helper/coreumPurchase.js'
 
 export const create_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -85,6 +86,15 @@ export const create_stripe_order = async (req: Request, res: Response, next: Nex
 export const webhook_stripe = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await handleStripeWebhook(req)
+    res.status(200).json({})
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const verify_and_update = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await verifyAndUpdate(req)
     res.status(200).json({})
   } catch (error) {
     next(error)

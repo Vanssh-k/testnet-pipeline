@@ -64,6 +64,7 @@ const FilecoinMainnetTableName = {
   FILE_RECORD_TABLE: 'de-file-info',
   DEAL_RECORD_TABLE: 'de-filecoin-deals',
 }
+const coreumApiUrl = 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs'
 
 export {
   service,
@@ -95,4 +96,5 @@ export {
   V1TestnetTableName,
   V1MainnetTableName,
   V1CacheTime,
+  coreumApiUrl,
 }

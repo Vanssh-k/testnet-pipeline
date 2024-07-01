@@ -8,6 +8,7 @@ import {
   get_user_transactions,
   plan_details_by_id,
   create_stripe_order,
+  verify_and_update,
 } from '../controller/topup/index.js'
 import validate from '../middlewares/validate.js'
 import validator from '../middlewares/validators/index.js'
@@ -44,6 +45,12 @@ router.get(
   validate(validator.subscriptionIdSchema, { query: true }),
   authenticator('verifyToken'),
   create_stripe_order,
+)
+router.post(
+  '/purchase_plan_via_coreum',
+  validate(validator.subscriptionIdSchema, { query: true }),
+  authenticator('verifyToken'),
+  verify_and_update,
 )
 
 export default router
