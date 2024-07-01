@@ -48,7 +48,7 @@ router.get(
 )
 router.post(
   '/purchase_plan_via_coreum',
-  validate(validator.subscriptionIdSchema, { query: true }),
+  validate(validator.coreumPurchaseSchema, { query: true }),
   authenticator('verifyToken'),
   verify_coreumtxn_and_updatecap,
 )
