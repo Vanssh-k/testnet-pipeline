@@ -5,6 +5,8 @@ import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getUserTransactionDetails } from './transactionHelper.js'
 import { recordTransactions } from '../../../db/topup/userTransactions.js'
 import config from '../../../config/index.js'
+import { paymentPlans } from 'src/config/paymentPlans.js'
+import CustomError from 'src/middlewares/error/customError.js'
 
 const checkTxnExists = async (address: string, transactionHash: string) => {
   const userTxns = await getUserTransactionDetails(address)
@@ -37,15 +39,19 @@ const validatePayment = async (req: Request) => {
       network: 'coreum',
       createdAt: Date.now(),
     })
-    return true
+    const paymentPlan = paymentPlans.find((plan) => plan.index === req.body.subscriptionId)
+    const dataCapPurchased = paymentPlan ? paymentPlan.storageInGB : 0
+
+    return dataCapPurchased
   }
-  return false
+  return 0
 }
 
 export const checkCoreumTxnUpdateCap = async (req: Request) => {
   const value = await validatePayment(req)
   if (value) {
-    // await updateUserDataLimit(req.body.address, req.body.dataCapPurchased)
-    console.log('updating package')
+    await updateUserDataLimit(req.body.address, value)
+  } else {
+    throw new CustomError(401, 'Failed.')
   }
 }
