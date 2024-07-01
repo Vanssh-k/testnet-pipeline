@@ -5,8 +5,8 @@ import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getUserTransactionDetails } from './transactionHelper.js'
 import { recordTransactions } from '../../../db/topup/userTransactions.js'
 import config from '../../../config/index.js'
-import { paymentPlans } from 'src/config/paymentPlans.js'
-import CustomError from 'src/middlewares/error/customError.js'
+import { paymentPlans } from '../../../config/paymentPlans.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
 const checkTxnExists = async (address: string, transactionHash: string) => {
   const userTxns = await getUserTransactionDetails(address)
