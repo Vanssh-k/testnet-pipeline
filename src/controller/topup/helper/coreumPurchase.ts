@@ -32,7 +32,7 @@ const validatePayment = async (req: Request) => {
       txHash: req.body.transactionHash,
       publicKey: fromAddress,
       tokenAddress: 'Coreum Payment',
-      subscriptionID: req.body.subscriptionID,
+      subscriptionID: req.body.subscriptionId,
       amount: req.body.amount,
       network: 'coreum',
       createdAt: Date.now(),
