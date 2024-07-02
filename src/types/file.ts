@@ -7,7 +7,7 @@ export type FileSchema = {
   mimeType: string
   publicKey: string
   status: string
-  txHash: string
+  sentForDeal: string
   lastUpdate: number
   createdAt: number
 }
