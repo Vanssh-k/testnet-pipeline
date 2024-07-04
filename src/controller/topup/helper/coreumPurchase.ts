@@ -8,8 +8,8 @@ import config from '../../../config/index.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-const checkTxnExists = async (address: string, transactionHash: string) => {
-  const userTxns = await getUserTransactionDetails(address)
+const checkTxnExists = async (pubKey: string, transactionHash: string) => {
+  const userTxns = await getUserTransactionDetails(pubKey)
   const userTxn = userTxns.find((item) => item.txHash === transactionHash)
   if (userTxn) {
     return true
@@ -22,7 +22,8 @@ const validatePayment = async (req: Request) => {
   const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(2)
   const fromAddress = response.data.tx.body.messages[0].from_address
   const toAddress = response.data.tx.body.messages[0].to_address
-  const txnExist = await checkTxnExists(req.body.address, req.body.transactionHash)
+  const pubKey = req.body.publicKey
+  const txnExist = await checkTxnExists(pubKey, req.body.transactionHash)
   if (
     amountFromTx == req.body.amount &&
     fromAddress == req.body.address &&
@@ -32,7 +33,7 @@ const validatePayment = async (req: Request) => {
     await recordTransactions({
       id: v4().toString(),
       txHash: req.body.transactionHash,
-      publicKey: fromAddress,
+      publicKey: pubKey,
       tokenAddress: 'Coreum Payment',
       subscriptionID: req.body.subscriptionId,
       amount: req.body.amount,
@@ -50,7 +51,7 @@ const validatePayment = async (req: Request) => {
 export const checkCoreumTxnUpdateCap = async (req: Request) => {
   const value = await validatePayment(req)
   if (value) {
-    await updateUserDataLimit(req.body.address, value)
+    await updateUserDataLimit(req.body.publicKey, value)
   } else {
     throw new CustomError(401, 'Failed.')
   }
