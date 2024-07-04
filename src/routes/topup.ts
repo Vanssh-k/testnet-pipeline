@@ -49,7 +49,7 @@ router.get(
 router.post(
   '/purchase_plan_via_coreum',
   validate(validator.coreumPurchaseSchema, { body: true }),
-  authenticator('verifyToken'),
+  authenticator('verifyToken', ['publicKeyOnly']),
   verify_coreumtxn_and_updatecap,
 )
 
