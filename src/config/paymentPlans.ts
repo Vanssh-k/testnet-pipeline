@@ -50,6 +50,7 @@ const paymentPlans = [
     imageResize: 'yes',
     payInCrypto: 'yes',
     filecoinDeals: 'yes',
+    priceID: '',
   },
   {
     index: 6,
@@ -63,6 +64,7 @@ const paymentPlans = [
     imageResize: 'yes',
     payInCrypto: 'yes',
     filecoinDeals: 'yes',
+    priceID: '',
   },
 ]
 
