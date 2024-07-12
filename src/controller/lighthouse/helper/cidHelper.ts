@@ -1,3 +1,4 @@
+import { CID } from 'multiformats/cid'
 import filecoinDeal from '../../../db/filecoin/filecoinDeal.js'
 import getCIDRecord from '../../../db/filecoin/legacy/getCIDRecord.js'
 import getBundleRecord from '../../../db/filecoin/legacy/getBundleRecord.js'
@@ -18,7 +19,11 @@ import CustomError from '../../../middlewares/error/customError.js'
 
 export const cidDealStatus = async (cid: string) => {
   try {
-    const raasInfo = await getRaasInfo(cid)
+    let raasInfo = await getRaasInfo(cid)
+    if (!raasInfo && CID.parse(cid).version === 0) {
+      const cidV1 = CID.parse(cid).toV1().toString()
+      raasInfo = await getRaasInfo(cidV1)
+    }
     if (!raasInfo) {
       throw new CustomError(404, 'Record not found.')
     }

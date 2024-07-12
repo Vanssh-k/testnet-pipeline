@@ -4,6 +4,7 @@ import { handleStripeWebhook } from './helper/stripeWebhook.js'
 import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
 import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
+import { checkCoreumTxnUpdateCap } from './helper/coreumPurchase.js'
 
 export const create_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -86,6 +87,15 @@ export const webhook_stripe = async (req: Request, res: Response, next: NextFunc
   try {
     await handleStripeWebhook(req)
     res.status(200).json({})
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await checkCoreumTxnUpdateCap(req)
+    res.status(200).json('Success')
   } catch (error) {
     next(error)
   }

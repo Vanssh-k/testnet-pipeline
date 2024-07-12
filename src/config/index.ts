@@ -25,6 +25,7 @@ const baseConfig = {
     'https://encryption.lighthouse.storage/api/auth-message/4',
     'https://encryption.lighthouse.storage/api/auth-message/5',
   ],
+  coreum_api_url: 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs',
   lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
   lighthouse_ipns_node: process.env.LIGHTHOUSE_IPNS_NODE ?? 'http://10.0.9.53',
   est_api_key: process.env.EST_API_KEY ?? '',
@@ -67,6 +68,7 @@ const baseConfig = {
     process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0xfaf011f515e558ad29aE4D2b13A0b2fBBD7c9C54',
   lighthouse_glifYield_address:
     process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0xa45cEA9F88eA50310744483b989E759b3d091ea8',
+  lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core1r8dccyl65eqnetfpeuea6z02lr8tusxq00r9rw',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,
