@@ -6,7 +6,6 @@ export type FileSchema = {
   fileSizeInBytes: number
   mimeType: string
   publicKey: string
-  status: string
   sentForDeal: string
   lastUpdate: number
   createdAt: number
