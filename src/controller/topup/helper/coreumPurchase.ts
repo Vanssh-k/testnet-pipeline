@@ -43,7 +43,7 @@ const validatePayment = async (req: Request) => {
       createdAt: Date.now(),
     })
     const paymentPlan = paymentPlans.find((plan) => plan.index === Number(req.body.subscriptionId))
-    const dataCapPurchased = paymentPlan ? paymentPlan.storageInGB : 0
+    const dataCapPurchased = (paymentPlan ? paymentPlan.storageInGB : 0) * 1073741824
 
     return dataCapPurchased
   }
