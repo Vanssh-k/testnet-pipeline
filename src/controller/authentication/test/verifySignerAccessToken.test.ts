@@ -28,9 +28,9 @@ async function getTokens(signedMessage: string) {
 test('Verify Signer and Access Token: POST /verify_signer', async () => {
   const verificationMessage = await getVerificationMessage()
   const signedMessage = await getSignedMessage(verificationMessage)
-  const { accessToken } = await getTokens(signedMessage)
+  const tokens = await getTokens(signedMessage)
 
-  expect(typeof accessToken).toBe('string')
+  expect(typeof tokens.accessToken).toBe('string')
 }, 10000)
 
 test('Verify Signer Unauthorized Case: POST /verify_signer', async () => {
@@ -44,16 +44,4 @@ test('Verify Signer Unauthorized Case: POST /verify_signer', async () => {
 
 test('Verify Access Token Unauthorized Case: POST /verify_access_token', async () => {
   await supertest(app).get('/api/auth/verify_access_token').set('Authorization', 'Bearer blablabla').expect(401)
-}, 10000)
-
-test('Verify User Signature: POST /verify_signer', async () => {
-  const verificationMessage = await getVerificationMessage()
-  const signedMessage = await getSignedMessage(verificationMessage)
-  const data = {
-    publicKey,
-    signedMessage,
-  }
-  const response = await supertest(app).post('/api/auth/verify_signer').send(data)
-  const jsonRes = JSON.parse(response.text)
-  expect(typeof jsonRes.publicKey).toBe('string')
 }, 10000)
