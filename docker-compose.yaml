@@ -5,6 +5,7 @@ services:
     build: 
       context: .
       args:
+        - PORT={{ PORT }}
         - COVALENT_API_KEY={{ COVALENT_API_KEY }}
         - NODE_ENV={{ NODE_ENV }}
         - AWS_ACCESS_KEY_ID={{ AWS_ACCESS_KEY_ID }}
