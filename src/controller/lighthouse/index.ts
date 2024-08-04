@@ -5,7 +5,6 @@ import { NextFunction, Response, Request } from 'express'
 import {
   cidDealStatus,
   bundleDetails,
-  podsi,
   podsiTestnet,
   aggregateInfo,
   fileInfoTestnet,
