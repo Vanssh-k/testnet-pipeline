@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { getNativeBalance, getTokenBalance } from './helper/fundReceive.js'
-import { getPoolBalance, getAccumulatedBalance } from './helper/endowment.js'
 import { getNetDeposit, getNetWithdrawl, getiFILBalance } from './helper/glifYield.js'
-import { getTransactions } from './helper/endowment.js'
 
 export const fundReceive_balance = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,25 +11,6 @@ export const fundReceive_balance = async (req: Request, res: Response, next: Nex
     } else {
       value = await getTokenBalance(tokenAddress as string)
     }
-    res.status(200).json({ value })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const endowment_balance = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const tokenAddress = req.query.tokenAddress
-    const value = await getPoolBalance(tokenAddress as string)
-    res.status(200).json({ value })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const accumulated_balance = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const value = await getAccumulatedBalance()
     res.status(200).json({ value })
   } catch (error) {
     next(error)
@@ -60,15 +39,6 @@ export const iFil_balance = async (req: Request, res: Response, next: NextFuncti
   try {
     const value = await getiFILBalance()
     res.status(200).json({ value })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const endowment_transactions = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const record = await getTransactions()
-    res.status(200).json(record)
   } catch (error) {
     next(error)
   }
