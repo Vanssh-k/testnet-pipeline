@@ -46,6 +46,6 @@ ARG STRIPE_WEBHOOK
 ARG LIGHTHOUSE_COREUM_ADDRESS
 
 # Expose the necessary port
-EXPOSE PORT
+EXPOSE $PORT
 
 CMD npm run build && npm start
