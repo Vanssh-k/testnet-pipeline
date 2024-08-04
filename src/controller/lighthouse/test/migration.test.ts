@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import supertest from 'supertest'
 import app from '../../../app.js'
 import config from '../../../config/index.js'

@@ -19,7 +19,7 @@ const checkTxnExists = async (pubKey: string, transactionHash: string) => {
 
 const validatePayment = async (req: Request) => {
   const response = await axios.get(`${config.coreum_api_url}/${req.body.transactionHash}`)
-  const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(2)
+  const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(1)
   const fromAddress = response.data.tx.body.messages[0].from_address
   const toAddress = response.data.tx.body.messages[0].to_address
   const pubKey = req.body.publicKey
@@ -30,7 +30,7 @@ const validatePayment = async (req: Request) => {
     toAddress == config.lighthouse_coreum_address &&
     !txnExist
   ) {
-    await recordTransactions({
+    const data = {
       id: v4().toString(),
       txHash: req.body.transactionHash,
       publicKey: pubKey,
@@ -39,10 +39,10 @@ const validatePayment = async (req: Request) => {
       amount: req.body.amount,
       network: 'coreum',
       createdAt: Date.now(),
-    })
-    const paymentPlan = paymentPlans.find((plan) => plan.index === req.body.subscriptionId)
+    }
+    await recordTransactions(data)
+    const paymentPlan = paymentPlans.find((plan) => plan.index === Number(req.body.subscriptionId))
     const dataCapPurchased = paymentPlan ? paymentPlan.storageInGB : 0
-
     return dataCapPurchased
   }
   return 0
