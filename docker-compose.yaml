@@ -44,3 +44,15 @@ services:
         - LIGHTHOUSE_COREUM_ADDRESS={{ LIGHTHOUSE_COREUM_ADDRESS }}
     ports:
       - "13001:13001"
+    depends_on:
+      - redis
+  redis:
+    image: redis:6
+    container_name: lighthouse-redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+volumes:
+  redis_data:
