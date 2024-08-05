@@ -24,8 +24,10 @@ const validatePayment = async (req: Request) => {
   const toAddress = response.data.tx.body.messages[0].to_address
   const pubKey = req.body.publicKey
   const txnExist = await checkTxnExists(pubKey, req.body.transactionHash)
+  const requestAmount = parseFloat(req.body.amount).toFixed(2)
+  const txAmount = parseFloat(amountFromTx).toFixed(2)
   if (
-    amountFromTx == req.body.amount &&
+    txAmount == requestAmount &&
     fromAddress == req.body.address &&
     toAddress == config.lighthouse_coreum_address &&
     !txnExist
@@ -36,13 +38,12 @@ const validatePayment = async (req: Request) => {
       publicKey: pubKey,
       tokenAddress: 'Coreum Payment',
       subscriptionID: req.body.subscriptionId,
-      amount: req.body.amount,
+      amount: requestAmount,
       network: 'coreum',
       createdAt: Date.now(),
-    }
-    await recordTransactions(data)
+    })
     const paymentPlan = paymentPlans.find((plan) => plan.index === Number(req.body.subscriptionId))
-    const dataCapPurchased = paymentPlan ? paymentPlan.storageInGB : 0
+    const dataCapPurchased = (paymentPlan ? paymentPlan.storageInGB : 0) * 1073741824
     return dataCapPurchased
   }
   return 0
