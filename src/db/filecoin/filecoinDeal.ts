@@ -1,11 +1,11 @@
 import dbbClient from '../db/ddbClient.js'
 import CustomError from '../../middlewares/error/customError.js'
-import { filecoinDealRecords } from '../../config/constants.js'
+import { FilecoinLegacyTables } from '../../config/constants.js'
 
 export default async (aggregateIn: string) => {
   try {
     const params = {
-      TableName: filecoinDealRecords,
+      TableName: FilecoinLegacyTables.FILECOIN_DEAL_RECORDS,
       IndexName: 'aggregateIn-index',
       KeyConditionExpression: 'aggregateIn = :a',
       ExpressionAttributeValues: {

@@ -1,10 +1,11 @@
 import axios from 'axios'
+import { lighthouse_encryption_nodes } from '../../../config/constants.js'
 import config from '../../../config/index.js'
 import logger from '../../../utils/logger.js'
 
 export const sendMessageToEnc = async (publicKey: string, message: string) => {
   const data = await Promise.all(
-    config.lighthouse_encryption_nodes.map((url, index) =>
+    lighthouse_encryption_nodes.map((url, index) =>
       axios({
         url,
         method: 'POST',

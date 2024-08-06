@@ -14,17 +14,6 @@ const baseConfig = {
   smtp_emai_password: process.env.SMTP_EMAIL_PASSWORD,
 
   redis_url: process.env.REDIS_URL,
-
-  lighthouse_migration_node: 'http://13.234.117.78',
-  lighthouse_ipfs_node: 'https://node.lighthouse.storage',
-  lighthouse_auth_enc_node: 'https://encryption.lighthouse.storage',
-  lighthouse_encryption_nodes: [
-    'https://encryption.lighthouse.storage/api/auth-message/1',
-    'https://encryption.lighthouse.storage/api/auth-message/2',
-    'https://encryption.lighthouse.storage/api/auth-message/3',
-    'https://encryption.lighthouse.storage/api/auth-message/4',
-    'https://encryption.lighthouse.storage/api/auth-message/5',
-  ],
   coreum_api_url: 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs',
   lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
   lighthouse_ipns_node: process.env.LIGHTHOUSE_IPNS_NODE ?? 'http://10.0.9.53',
@@ -32,6 +21,7 @@ const baseConfig = {
   covalent_api_key: process.env.COVALENT_API_KEY ?? '',
   aws_access_key_id: process.env.AWS_ACCESS_KEY_ID ?? '',
   aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY ?? '',
+  aws_region: process.env.AWS_REGION ?? 'ap-south-1',
   log_storage_bucket: 'lighthouse-logs-store',
   cloudflare_key: process.env.CLOUDFLARE_KEY ?? '',
   data_dog_key: process.env.DATADOG_KEY ?? '',
@@ -61,6 +51,7 @@ const baseConfig = {
   stripe_webhook: process.env.STRIPE_WEBHOOK ?? '',
   payment_url: process.env.PAYMENT_URL ?? '',
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02', // Wallet in use: 0x5129b1153f4f9f321f41cba831899336cb4134c7
+  test_wallet7_api_key_development: process.env.TEST_WALLET7_API_KEY_DEVELOPMENT ?? '0x02',
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
   lighthouse_fundReceive_address:
     process.env.LIGHTHOUSE_FUNDRECEIVE_ADDRESS ?? '0x6c73096F924D60af951A2CA345b435958387BC3f',
@@ -68,7 +59,7 @@ const baseConfig = {
     process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0xfaf011f515e558ad29aE4D2b13A0b2fBBD7c9C54',
   lighthouse_glifYield_address:
     process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0xa45cEA9F88eA50310744483b989E759b3d091ea8',
-  lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core1r8dccyl65eqnetfpeuea6z02lr8tusxq00r9rw',
+  lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core145f5j80zfr730kndlx7ek55pt6ya0kcnr6d9ha',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,

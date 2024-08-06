@@ -3,7 +3,8 @@ import supertest from 'supertest'
 import config from '../../../config/index.js'
 
 test('CID TAG Test', async () => {
-  const apiKey = config.test_wallet7_api_key
+  const apiKey =
+    config.environment === 'development' ? config.test_wallet7_api_key_development : config.test_wallet7_api_key
 
   // Create Tag
   const tag = '0xb2126d4b177d4b063344e07080f967dbac8076884375fd8adcb557c5f29746b2'

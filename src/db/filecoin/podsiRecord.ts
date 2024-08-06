@@ -1,11 +1,11 @@
 import dbbClient from '../db/ddbClient.js'
 import CustomError from '../../middlewares/error/customError.js'
-import { filePODSI } from '../../config/constants.js'
+import { FilecoinLegacyTables } from '../../config/constants.js'
 
 export default async (pieceCID: string) => {
   try {
     const params = {
-      TableName: filePODSI,
+      TableName: FilecoinLegacyTables.FILE_POSDI,
       IndexName: 'pieceCID-index',
       KeyConditionExpression: 'pieceCID = :p',
       ExpressionAttributeValues: {

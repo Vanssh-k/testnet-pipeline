@@ -29,10 +29,14 @@ export default (rule: string, clauses: string[] = []) => {
           let usersPublicKey = req.body.publicKey || req.query.publicKey
           const network = getNetwork(usersPublicKey)
           network === 'evm' ? (usersPublicKey = usersPublicKey.toLowerCase()) : null
-          console.log(usersPublicKey)
           const message = await getCache(`message-${usersPublicKey}`)
-          console.log(message)
-          const authentic = verifySignature(usersPublicKey, messageString + message, req.body.signedMessage, network)
+          const authentic = await verifySignature(
+            usersPublicKey,
+            messageString + message,
+            req.body.signedMessage,
+            network,
+          )
+          console.log(authentic)
           if (!authentic) {
             throw new CustomError(401, 'Authentication Failed.')
           }

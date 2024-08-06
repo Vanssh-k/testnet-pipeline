@@ -68,6 +68,8 @@ export const createApiKey = async (publicKey: string, keyName: string) => {
 
 export const revokeApiKey = async (id: string, publicKey: string) => {
   const apiRecord: any = await getApiRecordById(id)
+  console.log(apiRecord.publicKey)
+  console.log(publicKey)
   if (apiRecord.publicKey !== publicKey) {
     throw new CustomError(403, 'Forbidden')
   }
