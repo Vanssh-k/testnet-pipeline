@@ -29,6 +29,7 @@ import {
   subscriptionIdSchema,
   recordTransactionSchema,
   tokenAddressSchema,
+  userAddressSchema,
   coreumPurchaseSchema,
 } from './topup.js'
 import { apiKeyName, verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth.js'
@@ -68,5 +69,6 @@ export default {
   web3authEmailVerificationSchema,
   referralSchema,
   tokenAddressSchema,
+  userAddressSchema,
   coreumPurchaseSchema,
 }
