@@ -51,7 +51,37 @@ export const create_session_order = async (address: string, subID: number, email
     throw new CustomError(406, `No active Plan matches id:${subID}`)
   }
   const customer = await upsertCustomer(address, emailId)
-
+  const mode = subID === 5 || subID === 6 ? 'subscription' : 'payment'
+  const priceDataObject: any = {
+    currency: 'usd',
+    product_data: {
+      name: `Lighthouse Plan: ${plan.planName}`,
+      description: `Lighthouse Topup storage: ${plan.storageInGB}GB`,
+      metadata: {
+        planID: plan.index,
+        storageInGB: plan.storageInGB,
+        amount: plan.amount,
+      },
+    },
+    unit_amount: plan.amount * 100,
+  }
+  let lineItems
+  if (mode === 'subscription') {
+    const priceId = plan.priceID
+    lineItems = [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ]
+  } else {
+    lineItems = [
+      {
+        price_data: priceDataObject,
+        quantity: 1,
+      },
+    ]
+  }
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     phone_number_collection: {
@@ -68,28 +98,36 @@ export const create_session_order = async (address: string, subID: number, email
         },
       },
     },
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: `Lighthouse Plan: ${plan.planName}`,
-            description: `Lighthouse Topup storage: ${plan.storageInGB}GB`,
-            metadata: {
-              planID: plan.index,
-              storageInGB: plan.storageInGB,
-              amount: plan.amount,
-            },
-          },
-          unit_amount: plan.amount * 100,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
+    line_items: lineItems,
+    mode: mode,
     customer: customer.id,
     success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
     cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
   })
   return { url: session.url }
+}
+
+export const cancel_subscription_order = async (stripePlanId: number, emailId: string | undefined) => {
+  if (emailId === undefined) {
+    throw new CustomError(403, 'Email not updated in profile')
+  }
+
+  const deletedSubscription = await stripe.subscriptions.cancel(stripePlanId.toString())
+  return { message: 'Subscription canceled successfully', deletedSubscription }
+}
+
+export const get_subscriptions_orders = async (customerId: string | undefined, emailId: string | undefined) => {
+  if (emailId === undefined) {
+    throw new CustomError(403, 'Email not updated in profile')
+  }
+  if (customerId === undefined) {
+    throw new CustomError(403, 'customerId not updated in profile')
+  }
+  const subscriptions = await stripe.subscriptions.list({ customer: customerId })
+  const subscriptionDetails = subscriptions.data.map((sub) => ({
+    id: sub.id,
+    status: sub.status,
+    nextBillingDate: sub.current_period_end,
+  }))
+  return subscriptionDetails
 }

@@ -9,6 +9,8 @@ import {
   plan_details_by_id,
   create_stripe_order,
   verify_coreumtxn_and_updatecap,
+  cancel_user_subscription,
+  get_user_subscriptions,
 } from '../controller/topup/index.js'
 import validate from '../middlewares/validate.js'
 import validator from '../middlewares/validators/index.js'
@@ -39,6 +41,10 @@ router.get('/plan_details_by_id', validate(validator.subscriptionIdSchema, { que
 router.get('/get_user_transactions', authenticator('verifyToken', ['publicKeyOnly']), get_user_transactions)
 
 router.get('/get_active_plan_list', get_active_plan_list)
+
+router.post('/cancel_user_subscription', authenticator('verifyToken', ['publicKeyOnly']), cancel_user_subscription)
+
+router.post('/get_user_subscriptions', authenticator('verifyToken', ['publicKeyOnly']), get_user_subscriptions)
 
 router.get(
   '/purchase_plan_via_stripe',

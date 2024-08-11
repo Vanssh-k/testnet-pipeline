@@ -30,12 +30,33 @@ const validateStripePayload = async (req: Request) => {
   }
 }
 
+const createAdditionalSubscription = async (customerId: string) => {
+  const subscriptionParams = {
+    customer: customerId,
+    items: [
+      {
+        price: 'price_1PTJiJRt62OgkTYOuoKsvFA9', // Replace with overage plan price ID
+      },
+    ],
+  }
+  try {
+    const subscription = await stripe.subscriptions.create(subscriptionParams)
+    return subscription
+  } catch (error) {
+    console.error('Error creating additional subscription:', error)
+    throw error
+  }
+}
+
 const processStripePayment = async (data: any, eventType: any) => {
   switch (eventType) {
     case 'checkout.session.completed':
       try {
         const invoiceMetadata = data.invoice_creation.invoice_data.metadata
 
+        if (invoiceMetadata.planID == 5 || invoiceMetadata.planID == 6) {
+          await createAdditionalSubscription(data.customer)
+        }
         // Check type of wallet
         const network = getNetwork(invoiceMetadata.walletAddress)
         if (network === 'evm') {

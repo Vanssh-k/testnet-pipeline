@@ -1,4 +1,4 @@
-import { create_session_order } from './helper/stripePayment.js'
+import { cancel_subscription_order, create_session_order, get_subscriptions_orders } from './helper/stripePayment.js'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper.js'
 import { handleStripeWebhook } from './helper/stripeWebhook.js'
 import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
@@ -66,6 +66,29 @@ export const plan_details_by_id = async (req: Request, res: Response, next: Next
     const data = await getPlanDetails(req.query.subscriptionId as string)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
+    next(error)
+  }
+}
+
+export const cancel_user_subscription = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await cancel_subscription_order(
+      parseInt(req.query.subscriptionId as string),
+      req.body.user.email ?? undefined,
+    )
+    res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
+export const get_user_subscriptions = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await get_subscriptions_orders(req.body.customerId ?? undefined, req.body.user.email ?? undefined)
+    res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
     next(error)
   }
 }
