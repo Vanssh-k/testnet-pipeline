@@ -23,6 +23,10 @@ const migrationCIDs = isDevelopment ? 'tn-migration-cids' : 'migrationCIDs'
 const migrationRequestTable = isDevelopment ? 'tn-migration-request' : 'migrationRequestTable'
 const userTransactions = isDevelopment ? 'tn-user-transactions' : 'userTransactions'
 
+const ffUserRecord = isDevelopment ? 'tn-ff-user-record' : 'ff-user-record'
+const ffTransactions = isDevelopment ? 'tn-ff-transactions' : 'ff-transactions'
+const historicRecords = isDevelopment ? 'tn-historic-records' : 'historic-records'
+
 const ipnsTable = isDevelopment ? 'tn-user-ipns-records' : 'user-ipns-records'
 
 const fileTableEncryption = isDevelopment ? 'tn-file-table-encryption' : 'file-table-encryption'
@@ -80,6 +84,9 @@ const lighthouse_encryption_nodes = isDevelopment
     ]
 
 export {
+  ffUserRecord,
+  ffTransactions,
+  historicRecords,
   service,
   emailSender,
   jwtAlgo,

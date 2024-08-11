@@ -53,12 +53,11 @@ const baseConfig = {
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02', // Wallet in use: 0x5129b1153f4f9f321f41cba831899336cb4134c7
   test_wallet7_api_key_development: process.env.TEST_WALLET7_API_KEY_DEVELOPMENT ?? '0x02',
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
-  lighthouse_fundReceive_address:
-    process.env.LIGHTHOUSE_FUNDRECEIVE_ADDRESS ?? '0x6c73096F924D60af951A2CA345b435958387BC3f',
   lighthouse_endowment_address:
-    process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0xfaf011f515e558ad29aE4D2b13A0b2fBBD7c9C54',
+    process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0x520A3eb4Ce7e2827dD1C313683AEC11eD74C3322',
   lighthouse_glifYield_address:
-    process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0xa45cEA9F88eA50310744483b989E759b3d091ea8',
+    process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0x21C491Ea745D26aFC82E695849fEc27e95eD717D',
+  filecoin_usdc: process.env.FILECOIN_USDC ?? '0xA471B7936906fF810865e52AF86C12B9865C850A',
   lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core145f5j80zfr730kndlx7ek55pt6ya0kcnr6d9ha',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',

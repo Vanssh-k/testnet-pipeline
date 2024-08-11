@@ -53,7 +53,7 @@ app.use('/api/ipns', IPNSRouter)
 app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
-app.use('/api/instrumentation', InstrumentationRouter)
+app.use('/api/endowment', InstrumentationRouter)
 
 app.use(errorHandler)
 
