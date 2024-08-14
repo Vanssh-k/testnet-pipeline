@@ -3,6 +3,7 @@ import {
   verify_api_key,
   verify_signer,
   get_message,
+  signature_auth,
   remove_api_key,
   create_api_key,
   get_user_keys,
@@ -24,6 +25,13 @@ router.post(
   validate(validator.verifySignerSchema, { body: true }),
   authenticator('verifysignature'),
   verify_signer,
+)
+
+router.post(
+  '/signature_auth',
+  validate(validator.verifySignerSchema, { body: true }),
+  authenticator('verifysignature'),
+  signature_auth,
 )
 
 router.post(
