@@ -1,4 +1,4 @@
-import { getMessage, getUserKeys, createApiKey, revokeApiKey } from './helper/authHelper.js'
+import { getMessage, getUserKeys, signatureAuth, createApiKey, revokeApiKey } from './helper/authHelper.js'
 import { NextFunction, Response, Request } from 'express'
 import { getAccessToken } from './helper/jwt.js'
 
@@ -17,6 +17,20 @@ export const verify_signer = async (req: Request, res: Response, next: NextFunct
   try {
     const accessToken = getAccessToken(req.body.publicKey)
     res.status(200).json(accessToken)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const signature_auth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const response = await signatureAuth(req.body.publicKey)
+    res.status(200).json({
+      publicKey: response.publicKey,
+      dataLimit: response.dataLimit,
+      dataUsed: response.dataUsed,
+      email: response.email,
+    })
   } catch (error) {
     next(error)
   }
