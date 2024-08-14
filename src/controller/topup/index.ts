@@ -1,148 +1,125 @@
-import { create_session_order } from './helper/stripePayment'
-import { getActivePlanList, getPlanDetails } from './helper/plansHelper'
-import { handleStripeWebhook } from './helper/stripeWebhook'
-import {
-  createSubDomain,
-  subDomainExists,
-  getUserSubDomainDomain,
-} from './helper/subDomain'
-import {
-  recordUserTransaction,
-  getUserTransactionDetails,
-} from './helper/transactionHelper'
+import { cancel_subscription_order, create_session_order, get_subscriptions_orders } from './helper/stripePayment.js'
+import { getActivePlanList, getPlanDetails } from './helper/plansHelper.js'
+import { handleStripeWebhook } from './helper/stripeWebhook.js'
+import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
+import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
+import { checkCoreumTxnUpdateCap } from './helper/coreumPurchase.js'
 
-export const create_subdomain = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const create_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await createSubDomain(req.body.publicKey, req.body.subDomain)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const check_subdomain = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const check_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const exists = await subDomainExists(req.query['subDomain'] as string)
     res.status(200).json(exists)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const get_subdomain = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const records = await getUserSubDomainDomain(req.query.publicKey as string)
     res.status(200).json(records)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const record_transaction = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const record_transaction = async (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.body
   try {
     const data = await recordUserTransaction(req.body, user)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const get_user_transactions = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_user_transactions = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const record = await getUserTransactionDetails(
-      req.body.user.publicKey as string
-    )
+    const record = await getUserTransactionDetails(req.body.publicKey as string)
     res.status(200).json(record)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const get_active_plan_list = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_active_plan_list = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const planList = await getActivePlanList()
     res.status(200).send(planList)
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const plan_details_by_id = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const plan_details_by_id = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await getPlanDetails(req.query.subscriptionId as string)
     res.status(data.status).json({ data: data.data })
   } catch (error) {
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const create_stripe_order = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const cancel_user_subscription = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await create_session_order(
-      req.body.user.publicKey,
+    const data = await cancel_subscription_order(
       parseInt(req.query.subscriptionId as string),
-      req.body.user.email ?? undefined
+      req.body.user.email ?? undefined,
     )
     res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)
-    /* istanbul ignore next */
     next(error)
   }
 }
 
-export const webhook_stripe = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get_user_subscriptions = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await get_subscriptions_orders(req.body.customerId ?? undefined, req.body.user.email ?? undefined)
+    res.status(200).json({ ...data })
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
+export const create_stripe_order = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await create_session_order(
+      req.body.user.publicKey,
+      parseInt(req.query.subscriptionId as string),
+      req.body.user.email ?? undefined,
+    )
+    res.status(200).json({ ...data })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const webhook_stripe = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await handleStripeWebhook(req)
     res.status(200).json({})
   } catch (error) {
-    console.log(error)
-    /* istanbul ignore next */
+    next(error)
+  }
+}
+
+export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await checkCoreumTxnUpdateCap(req)
+    res.status(200).json('Success')
+  } catch (error) {
     next(error)
   }
 }

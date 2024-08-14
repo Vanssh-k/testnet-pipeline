@@ -14,8 +14,8 @@ export const messageSchema = joi.object({
 })
 
 export const getUploadsSchema = joi.object({
-  pageNo: joi.number().integer().messages({
-    'any.required': `pageNo not found`,
+  lastKey: joi.string().messages({
+    'any.required': `lastKey not found`,
   }),
 })
 
@@ -39,11 +39,13 @@ export const emailSchema = joi.object({
     'any.required': `email not found`,
   }),
 })
+
 export const verificationTokenSchema = joi.object({
   verification_token: joi.string().min(20).messages({
     'any.required': `email not found`,
   }),
 })
+
 export const web3authEmailVerificationSchema = joi.object({
   idToken: joi.string().required().messages({
     'any.required': `idToken not found`,
@@ -53,5 +55,11 @@ export const web3authEmailVerificationSchema = joi.object({
   }),
   email: joi.string().required().messages({
     'any.required': `email not found`,
+  }),
+})
+
+export const referralSchema = joi.object({
+  referredBy: joi.string().required().messages({
+    'any.required': `idToken not found`,
   }),
 })

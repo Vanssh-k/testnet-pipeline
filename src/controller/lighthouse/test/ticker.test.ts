@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-import app from '../../../app'
+import app from '../../../app.js'
 
 // get_ticker
 test('Polygon Ticker: GET /get_ticker', async () => {

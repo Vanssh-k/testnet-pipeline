@@ -43,7 +43,20 @@ export const subscriptionIdSchema = joi.object({
 })
 
 export const tokenAddressSchema = joi.object({
-  tokenAddress: joi
-    .string()
-    .default('0x0000000000000000000000000000000000000000'),
+  tokenAddress: joi.string().default('0x0000000000000000000000000000000000000000'),
+})
+
+export const userAddressSchema = joi.object({
+  userAddress: joi.string().required().messages({
+    'any.required': `userAddress not found`,
+  }),
+})
+
+export const coreumPurchaseSchema = joi.object({
+  subscriptionId: joi.string().required().messages({
+    'any.required': `subscriptionId not found`,
+  }),
+  transactionHash: joi.string().required(),
+  address: joi.string().required(),
+  amount: joi.string().required(),
 })

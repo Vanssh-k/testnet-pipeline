@@ -1,74 +1,48 @@
-// Third-party libraries
-import jwt from 'jsonwebtoken'
 import { v4 } from 'uuid'
-import SHA256 from 'crypto-js/sha256'
+import cjs from 'crypto-js'
 
-// Local constants
-import {
-  freeDataLimitInBytes,
-  messageString,
-  cacheClearTime,
-} from '../../libs/constants'
+import { freeDataLimitInBytes, messageString } from '../../../config/constants.js'
+import { setExCache, removeCache } from '../../../db/db/cacheClient.js'
 
-// Local errors
-import { ForbiddenError } from '../../../errors'
+import createApiKeyRecord from '../../../db/user/auth/createApiKeyRecord.js'
+import getApiRecordById from '../../../db/user/auth/getApiRecordById.js'
+import removeApiKey from '../../../db/user/auth/removeApiKey.js'
+import userKeysRecord from '../../../db/user/auth/userKeysRecord.js'
+import createNewUser from '../../../db/user/createNewUser.js'
+import userDetails from '../../../db/user/userDetails.js'
+import { sendMessageToEnc } from './encryption.js'
+import { UserDetails } from '../../../types/user.js'
+import getNetwork from '../../../middlewares/getNetwork.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
-// Local config
-import config from '../../../config'
-
-// Local DB
-import { cacheFunction } from '../../../repository/db/cacheClient'
-
-// Local user auth
-import createApiKeyRecord from '../../../repository/user/auth/createApiKeyRecord'
-import getApiRecordById from '../../../repository/user/auth/getApiRecordById'
-import removeApiKey from '../../../repository/user/auth/removeApiKey'
-import userKeysRecord from '../../../repository/user/auth/userKeysRecord'
-
-// Local user
-import refreshMessage from '../../../repository/user/refreshMessage'
-import createNewUser from '../../../repository/user/createNewUser'
-import _removeRefreshToken from '../../../repository/user/removeRefreshToken'
-
-// Local encryption
-import { sendMessageToEnc } from './encryption'
-
-// Types
-import { IUserDetails } from '../../../types/user'
-
-export const getMessage = async (
-  publicKey: string,
-  network: string,
-  record: IUserDetails | null,
-  encryption: string
-) => {
+export const getMessage = async (publicKey: string, encryption: string): Promise<string> => {
+  const network = getNetwork(publicKey)
   if (network === 'evm') {
     publicKey = publicKey.trim().toLowerCase()
   }
+
+  const record = await userDetails(publicKey, network)
   const timestamp = Date.now()
   const message = messageString + timestamp
 
   // New user
   if (!record) {
-    const userRecord = {
+    const userRecord: UserDetails = {
       publicKey,
       message: timestamp,
       dataLimit: freeDataLimitInBytes,
       dataUsed: 0,
       fileCount: 0,
-      faucet: {},
       network: network,
-      email: '',
-      profile: {},
+      email: 'null-' + v4(),
       createdAt: timestamp,
       updatedAt: timestamp,
     }
 
     await createNewUser(userRecord, network)
-  } else {
-    await refreshMessage(record.publicKey, timestamp)
   }
 
+  await setExCache(`message-${publicKey}`, 300, timestamp)
   if (`${encryption}`?.toLowerCase() === 'true') {
     await sendMessageToEnc(publicKey, message)
   }
@@ -76,56 +50,57 @@ export const getMessage = async (
   return message
 }
 
-export const verifySigner = async (record: IUserDetails) => {
-  // Change the message and return access token
-  refreshMessage(record.publicKey, Date.now())
-  const payLoad = { publicKey: record.publicKey }
-  const accessToken = jwt.sign(payLoad, config.jwt_secret, {
-    algorithm: 'HS256',
-    expiresIn: '12h',
-  })
-  const refreshToken = jwt.sign(payLoad, config.jwt_refresh_secret, {
-    algorithm: 'HS256',
-    expiresIn: '7d',
-  })
+export const signatureAuth = async (publicKey: string): Promise<UserDetails> => {
+  const network = getNetwork(publicKey)
+  if (network === 'evm') {
+    publicKey = publicKey.trim().toLowerCase()
+  }
 
-  return { accessToken, refreshToken }
+  const timestamp = Date.now()
+  let response: UserDetails = {
+    publicKey,
+    message: timestamp,
+    dataLimit: freeDataLimitInBytes,
+    dataUsed: 0,
+    fileCount: 0,
+    network: network,
+    email: 'null-' + v4(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
+  const record = await userDetails(publicKey, network)
+
+  if (!record) {
+    await createNewUser(response, network)
+  } else {
+    response = record
+  }
+
+  return response
 }
 
-export const refreshAccessToken = (record: IUserDetails) => {
-  const payLoad = { publicKey: record.publicKey }
-  const accessToken = jwt.sign(payLoad, config.jwt_secret, {
-    algorithm: 'HS256',
-    expiresIn: '12h',
-  })
-  const refreshToken = jwt.sign(payLoad, config.jwt_refresh_secret, {
-    algorithm: 'HS256',
-    expiresIn: '7d',
-  })
-
-  return { accessToken, refreshToken }
-}
-
-export const createApiKey = async (record: IUserDetails, keyName: string) => {
+export const createApiKey = async (publicKey: string, keyName: string) => {
   const prefix = v4().split('-')[0]
   const apiKey = prefix + '.' + v4().split('-').join('')
   const authDetails = {
     id: v4(),
     keyName: keyName,
-    publicKey: record.publicKey,
-    apiKey: SHA256(apiKey).toString(),
+    publicKey: publicKey,
+    apiKey: cjs.SHA256(apiKey).toString(),
     keyPrefix: prefix,
     scope: 'admin',
     lastUpdate: Date.now(),
   }
-  const createRecord = await createApiKeyRecord(authDetails)
+  await createApiKeyRecord(authDetails)
   return apiKey
 }
 
 export const revokeApiKey = async (id: string, publicKey: string) => {
   const apiRecord: any = await getApiRecordById(id)
+  console.log(apiRecord.publicKey)
+  console.log(publicKey)
   if (apiRecord.publicKey !== publicKey) {
-    throw new ForbiddenError()
+    throw new CustomError(403, 'Forbidden')
   }
   const status = await removeApiKey(id)
   return status

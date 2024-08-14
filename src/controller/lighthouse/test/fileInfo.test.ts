@@ -1,11 +1,9 @@
 import supertest from 'supertest'
-import app from '../../../app'
+import app from '../../../app.js'
 
 test('File Info: GET /file_info', async () => {
   await supertest(app)
-    .get(
-      '/api/lighthouse/file_info?cid=QmWWkks3aHf1pyygat1o2QEGmZMagCJVCa388UxiSNbvEN'
-    )
+    .get('/api/lighthouse/file_info?cid=QmWWkks3aHf1pyygat1o2QEGmZMagCJVCa388UxiSNbvEN')
     .expect(200)
     .then((response) => {
       const info = JSON.parse(response.text)

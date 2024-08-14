@@ -1,33 +1,32 @@
-const coverageToNumber = 80 // [0..100]
-
-/*
- * For a detailed explanation regarding each configuration property and type check, visit:
- * https://jestjs.io/docs/configuration
- */
+import dotenv from 'dotenv'
+dotenv.config()
 
 export default {
   verbose: true,
   rootDir: './',
-  clearMocks: true, // clear mocks before every test
-  resetMocks: false, // reset mock state before every test
-  testMatch: [
-    // '<rootDir>/src/**/*.spec.ts', // Commenting cache test for github actions
-    '<rootDir>/src/**/*.test.ts',
-    '<rootDir>/src/**/*.test.js',
-  ], // match only tests inside /tests folder
-  testPathIgnorePatterns: ['<rootDir>/node_modules/'], // exclude unnecessary folders
-
-  // following lines are about coverage
+  testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.test.ts'],
+  transform: {
+    '^.+\\.ts?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
+  },
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '<rootDir>/src/**/*.js'],
+  collectCoverageFrom: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.test.ts'],
   coverageDirectory: '<rootDir>/coverage',
   coverageReporters: ['lcov'],
   coverageThreshold: {
     global: {
-      branches: coverageToNumber,
-      functions: coverageToNumber,
-      lines: coverageToNumber,
-      statements: coverageToNumber,
+      branches: 60,
+      functions: 85,
+      lines: 80,
+      statements: 90,
     },
   },
 }

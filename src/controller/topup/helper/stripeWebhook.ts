@@ -2,11 +2,11 @@ import { Request } from 'express'
 import { v4 } from 'uuid'
 import Stripe from 'stripe'
 
-import { CustomError } from '../../../errors'
-import config from '../../../config'
-import { recordTransactions } from '../../../repository/topup/userTransactions'
-import updateUserDataLimit from '../../../repository/user/updateUserDataLimit'
-import getNetwork from '../../../middlewares/getNetwork'
+import CustomError from '../../../middlewares/error/customError.js'
+import config from '../../../config/index.js'
+import { recordTransactions } from '../../../db/topup/userTransactions.js'
+import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
+import getNetwork from '../../../middlewares/getNetwork.js'
 
 const stripe = new Stripe(config.stripe_key)
 
@@ -21,12 +21,30 @@ const validateStripePayload = async (req: Request) => {
       req.body,
       req.headers['stripe-signature'] as any,
       webhookSecret,
-      undefined
+      undefined,
     )
     return { data: event.data.object, eventType: event.type }
   } catch (err) {
     console.log(`⚠️  Webhook signature verification failed:  ${err}`)
-    throw new CustomError(`webhook error`, 400, err)
+    throw new CustomError(400, `webhook error`)
+  }
+}
+
+const createAdditionalSubscription = async (customerId: string) => {
+  const subscriptionParams = {
+    customer: customerId,
+    items: [
+      {
+        price: 'price_1PTJiJRt62OgkTYOuoKsvFA9', // Replace with overage plan price ID
+      },
+    ],
+  }
+  try {
+    const subscription = await stripe.subscriptions.create(subscriptionParams)
+    return subscription
+  } catch (error) {
+    console.error('Error creating additional subscription:', error)
+    throw error
   }
 }
 
@@ -36,11 +54,13 @@ const processStripePayment = async (data: any, eventType: any) => {
       try {
         const invoiceMetadata = data.invoice_creation.invoice_data.metadata
 
+        if (invoiceMetadata.planID == 5 || invoiceMetadata.planID == 6) {
+          await createAdditionalSubscription(data.customer)
+        }
         // Check type of wallet
         const network = getNetwork(invoiceMetadata.walletAddress)
         if (network === 'evm') {
-          invoiceMetadata.walletAddress =
-            invoiceMetadata.walletAddress.toLowerCase()
+          invoiceMetadata.walletAddress = invoiceMetadata.walletAddress.toLowerCase()
         }
 
         // Add transaction to DB
@@ -56,17 +76,13 @@ const processStripePayment = async (data: any, eventType: any) => {
         })
 
         //Add paid data cap to DB
-        const dataCapPurchased =
-          parseInt(`${invoiceMetadata.storageInGB ?? 0}`, 10) * 1073741824 //GB converted to bytes
+        const dataCapPurchased = parseInt(`${invoiceMetadata.storageInGB ?? 0}`, 10) * 1073741824 //GB converted to bytes
         if (dataCapPurchased) {
-          await updateUserDataLimit(
-            invoiceMetadata.walletAddress,
-            dataCapPurchased
-          )
+          await updateUserDataLimit(invoiceMetadata.walletAddress, dataCapPurchased)
           console.log('plan updated')
         }
       } catch (err: any) {
-        throw new CustomError(`${err.message}`, 406, err)
+        throw new CustomError(406, err)
       }
       break
 

@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 import ethers from 'ethers'
-import app from '../../../app'
+import app from '../../../app.js'
 
 // get_active_plan_list
 test('Get Transaction Details Main Case: GET /get_active_plan_list', async () => {

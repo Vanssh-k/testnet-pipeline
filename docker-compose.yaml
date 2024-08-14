@@ -1,72 +1,58 @@
 version: '3.8'
-
 services:
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: unless-stopped
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    expose:
-      - 9100
-    networks:
-      - monitoring
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
-    expose:
-      - 9090
-    networks:
-      - monitoring
-    depends_on:
-      - node-exporter
-
-  lighthouse_backend:
-    build:
+  lighthouse-backend:
+    container_name: lighthouse-backend
+    build: 
       context: .
-      dockerfile: dockerfile
-    container_name: lighthouse_backend
+      args:
+        - PORT={{ PORT }}
+        - COVALENT_API_KEY={{ COVALENT_API_KEY }}
+        - NODE_ENV={{ NODE_ENV }}
+        - AWS_ACCESS_KEY_ID={{ AWS_ACCESS_KEY_ID }}
+        - AWS_SECRET_ACCESS_KEY={{ AWS_SECRET_ACCESS_KEY }}
+        - AWS_REGION={{ AWS_REGION }}
+        - CLOUDFLARE_KEY={{ CLOUDFLARE_KEY }}
+        - TEST_WALLET1_PRIVATE_KEY={{ TEST_WALLET1_PRIVATE_KEY }}
+        - TEST_WALLET2_PRIVATE_KEY={{ TEST_WALLET2_PRIVATE_KEY }}
+        - TEST_WALLET3_PRIVATE_KEY={{ TEST_WALLET3_PRIVATE_KEY }}
+        - TEST_WALLET4_PRIVATE_KEY={{ TEST_WALLET4_PRIVATE_KEY }}
+        - TEST_WALLET5_PRIVATE_KEY={{ TEST_WALLET5_PRIVATE_KEY }}
+        - TEST_WALLET6_PRIVATE_KEY={{ TEST_WALLET6_PRIVATE_KEY }}
+        - TEST_WALLET7_API_KEY={{ TEST_WALLET7_API_KEY }}
+        - TEST_WALLET7_API_KEY_DEVELOPMENT={{ TEST_WALLET7_API_KEY_DEVELOPMENT }}
+        - TWITTER_API_KEY={{ TWITTER_API_KEY }}
+        - JWT_SECRET={{ JWT_SECRET }}
+        - JWT_REFRESH_SECRET={{ JWT_REFRESH_SECRET }}
+        - LIGHTHOUSE_IPNS_NODE={{ LIGHTHOUSE_IPNS_NODE }}
+        - LIGHTHOUSE_PUBLIC_NODE_TOKEN={{ LIGHTHOUSE_PUBLIC_NODE_TOKEN }}
+        - ROUTE_ACCESS_TOKEN={{ ROUTE_ACCESS_TOKEN }}
+        - MIGRATION_OCEAN_ACCESS_TOKEN={{ MIGRATION_OCEAN_ACCESS_TOKEN }}
+        - MIGRATION_TEST_ACCESS_TOKEN={{ MIGRATION_TEST_ACCESS_TOKEN }}
+        - TRANSACTION_ROUTE_TOKEN={{ TRANSACTION_ROUTE_TOKEN }}
+        - POLYGON_RPC={{ POLYGON_RPC }}
+        - REDIS_PASSWORD={{ REDIS_PASSWORD }}
+        - REDIS_URL={{ REDIS_URL }}
+        - LIGHTHOUSE_BILLING_ADDRESS={{ LIGHTHOUSE_BILLING_ADDRESS }}
+        - LIGHTHOUSE_ENC_MESSAGE_TOKENS={{ LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
+        - SMTP_EMAIL_HOST={{ SMTP_EMAIL_HOST }}
+        - SMTP_EMAIL_PASSWORD={{ SMTP_EMAIL_PASSWORD }}
+        - SMTP_EMAIL_ID={{ SMTP_EMAIL_ID }}
+        - DKIM_PRIVATE_KEY={{ DKIM_PRIVATE_KEY }}
+        - STRIPE_KEY={{ STRIPE_KEY }}
+        - PAYMENT_URL={{ PAYMENT_URL }}
+        - STRIPE_WEBHOOK={{ STRIPE_WEBHOOK }}
+        - LIGHTHOUSE_COREUM_ADDRESS={{ LIGHTHOUSE_COREUM_ADDRESS }}
     ports:
-      - "8000:8000"
+      - "13001:13001"
     depends_on:
-      - prometheus
-    networks:
-      - monitoring
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
+      - redis
+  redis:
+    image: redis:6
+    container_name: lighthouse-redis
+    command: redis-server
     ports:
-      - 9000:3000
+      - "6379:6379"
     volumes:
-      - grafana-data:/var/lib/grafana
-    depends_on:
-      - prometheus
-    networks:
-      - monitoring
-
+      - redis_data:/data
 volumes:
-  prometheus-data:
-  grafana-data:
-
-networks:
-  monitoring:
-    driver: bridge
+  redis_data:
