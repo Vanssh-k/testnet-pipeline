@@ -50,6 +50,35 @@ export const getMessage = async (publicKey: string, encryption: string): Promise
   return message
 }
 
+export const signatureAuth = async (publicKey: string): Promise<UserDetails> => {
+  const network = getNetwork(publicKey)
+  if (network === 'evm') {
+    publicKey = publicKey.trim().toLowerCase()
+  }
+
+  const timestamp = Date.now()
+  let response: UserDetails = {
+    publicKey,
+    message: timestamp,
+    dataLimit: freeDataLimitInBytes,
+    dataUsed: 0,
+    fileCount: 0,
+    network: network,
+    email: 'null-' + v4(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
+  const record = await userDetails(publicKey, network)
+
+  if (!record) {
+    await createNewUser(response, network)
+  } else {
+    response = record
+  }
+
+  return response
+}
+
 export const createApiKey = async (publicKey: string, keyName: string) => {
   const prefix = v4().split('-')[0]
   const apiKey = prefix + '.' + v4().split('-').join('')
