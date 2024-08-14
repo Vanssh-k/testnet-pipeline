@@ -15,10 +15,14 @@ const addCIDToRAASTestnet = async (cid: string, fileID: string) => {
   const __ = await axios.get(`https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`)
 }
 
-export const pinCID = async (publicKey: any, cid: string, fileName: string, raas: any) => {
+export const pinCID = async (record: any, cid: string, fileName: string, raas: any) => {
   // Verify CID's
   if (!isIPFS.cid(cid)) {
     throw new CustomError(400, `Invalid CID`)
+  }
+
+  if (parseInt(record.dataLimit) - parseInt(record.dataUsed) < 0) {
+    throw new CustomError(403, 'Data Cap exceed')
   }
 
   // Save Migration Request
@@ -26,7 +30,7 @@ export const pinCID = async (publicKey: any, cid: string, fileName: string, raas
   const requestID = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
-    publicKey: publicKey,
+    publicKey: record.publicKey,
     totalCID: 1,
     migrationStatus: MigrationStatus.Queued,
     enterprise: 'lighthouse',
@@ -62,7 +66,7 @@ export const pinCID = async (publicKey: any, cid: string, fileName: string, raas
   return requestID
 }
 
-export const migrationRequest = async (publicKey: any, bodyData: string) => {
+export const migrationRequest = async (record: any, bodyData: string) => {
   // Get CID, filename array
   const data = JSON.parse(bodyData)
   if (data.length === 0) {
@@ -76,12 +80,16 @@ export const migrationRequest = async (publicKey: any, bodyData: string) => {
     }
   }
 
+  if (parseInt(record.dataLimit) - parseInt(record.dataUsed) < 0) {
+    throw new CustomError(403, 'Data Cap exceed')
+  }
+
   // Save Migration Request
   const timestamp = Date.now()
   const requestID = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
-    publicKey: publicKey,
+    publicKey: record.publicKey,
     totalCID: data.length,
     migrationStatus: MigrationStatus.Queued,
     enterprise: 'lighthouse',
