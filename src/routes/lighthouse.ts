@@ -28,16 +28,11 @@ router.get('/file_info', validate(validator.cidSchema, { query: true }), file_in
 router.post(
   '/migration_request',
   validate(validator.migrationRequestSchema, { body: true }),
-  authenticator('verifyToken', ['publicKeyOnly']),
+  authenticator('verifyToken'),
   migration_request,
 )
 
-router.post(
-  '/pin',
-  validate(validator.pinningSchema, { body: true }),
-  authenticator('verifyToken', ['publicKeyOnly']),
-  pin_cid,
-)
+router.post('/pin', validate(validator.pinningSchema, { body: true }), authenticator('verifyToken'), pin_cid)
 
 router.post(
   '/migration_request_ent',
