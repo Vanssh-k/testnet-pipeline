@@ -36,7 +36,6 @@ export default (rule: string, clauses: string[] = []) => {
             req.body.signedMessage,
             network,
           )
-          console.log(authentic)
           if (!authentic) {
             throw new CustomError(401, 'Authentication Failed.')
           }
