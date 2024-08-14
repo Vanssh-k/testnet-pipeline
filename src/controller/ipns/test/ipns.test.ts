@@ -3,7 +3,8 @@ import supertest from 'supertest'
 import config from '../../../config/index.js'
 
 test('IPNS Test', async () => {
-  const apiKey = config.test_wallet7_api_key
+  const apiKey =
+    config.environment === 'development' ? config.test_wallet7_api_key_development : config.test_wallet7_api_key
 
   // Generate key
   const ipns = JSON.parse(
