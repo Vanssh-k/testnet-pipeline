@@ -1,7 +1,7 @@
 import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getSubscriptionStatus } from './billing.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
-import CustomError from 'src/middlewares/error/customError.js'
+import CustomError from '../../../middlewares/error/customError.js'
 
 const getActivePlanList = async () => {
   const filterPlans = []
