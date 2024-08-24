@@ -1,6 +1,7 @@
 import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getSubscriptionStatus } from './billing.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
+import CustomError from 'src/middlewares/error/customError.js'
 
 const getActivePlanList = async () => {
   const filterPlans = []
@@ -31,6 +32,8 @@ const getPlanDetails = async (planId: string) => {
 
 const usersActivePlan = async (publicKey: string, subId: number) => {
   const { status, subscriptionId } = await getSubscriptionStatus(publicKey, subId)
+  console.log(status)
+  console.log(subscriptionId)
   if (!status) {
     if (subscriptionId > Number.MAX_SAFE_INTEGER) {
       return {
@@ -61,12 +64,7 @@ const usersActivePlan = async (publicKey: string, subId: number) => {
 const activatePlan = async (userRecord: any, subId: number) => {
   const activePlan = await usersActivePlan(userRecord.publicKey, subId)
   if (activePlan.status !== 200) {
-    return {
-      status: 403,
-      data: {
-        message: `No active plan for user ${userRecord.publicKey}`,
-      },
-    }
+    throw new CustomError(403, `No active plan for user ${userRecord.publicKey}`)
   }
   const dataCapPurchased = parseInt(`${activePlan?.data?.planDetails?.dataCap ?? 0}`, 10) * 1073741824 //GB converted to bytes
 
