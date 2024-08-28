@@ -7,7 +7,7 @@ import expressWinston from 'express-winston'
 import logger from './utils/logger.js'
 import errorHandler from './middlewares/error/index.js'
 import * as prometheusMetrics from './middlewares/prometheus.js'
-import { rateLimiterMiddleware } from './middlewares/rate-limitter.js'
+import rateLimiterMiddleware from './middlewares/rate-limiter.js'
 
 import AuthRouter from './routes/auth.js'
 import UserRouter from './routes/user.js'
