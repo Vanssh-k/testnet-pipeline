@@ -84,6 +84,7 @@ const lighthouse_encryption_nodes = isDevelopment
     ]
 
 export {
+  isDevelopment,
   ffUserRecord,
   ffTransactions,
   historicRecords,

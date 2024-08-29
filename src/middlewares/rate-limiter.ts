@@ -3,6 +3,7 @@ import { RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
 import { Request, Response, NextFunction } from 'express'
 import logger from '../utils/logger.js'
 import config from '../config/index.js'
+import { isDevelopment } from '../config/constants.js'
 
 const _redisClient = new Redis(config.redis_url!, {
   enableOfflineQueue: false,
@@ -29,10 +30,14 @@ const _rateLimiter = new RateLimiterRedis(rateLimiterOpts)
 export default async (req: Request, res: Response, next: NextFunction) => {
   const unique_address = req.ip ? `${req.ip}:url:${req.url}` : `unknown:url:${req.url}`
 
+  if (isDevelopment) {
+    next()
+    return
+  }
+
   await _rateLimiter
     .consume(unique_address)
-    .then((rate: RateLimiterRes) => {
-      console.log('Rate limit remaining:', JSON.stringify(rate))
+    .then((_: RateLimiterRes) => {
       next()
     })
     .catch((e) => {
@@ -43,6 +48,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       } else {
         // Handle rate limit exceeded
         const retrySecs = Math.ceil((e as RateLimiterRes).msBeforeNext / 1000) || 1
+        logger.warn(`Rate limit exceeded for ${unique_address}, retry in ${retrySecs} seconds`)
         res.set('Retry-After', String(retrySecs)) // can be taken from header
         res.status(429).send('Too Many Requests')
       }
