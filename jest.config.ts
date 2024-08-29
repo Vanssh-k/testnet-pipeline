@@ -3,6 +3,7 @@ dotenv.config()
 
 export default {
   verbose: true,
+  setupFilesAfterEnv: ['./jest.setup.ts'],
   rootDir: './',
   testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.test.ts'],
   transform: {
