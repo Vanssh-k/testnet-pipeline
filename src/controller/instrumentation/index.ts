@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { getPoolMetrics } from './helper/poolMetrics.js'
 import { getUserMetrics } from './helper/userMetrics.js'
-import { getTransactions } from './helper/transactions.js'
+import { getTransactions, getUserTransactions } from './helper/transactions.js'
 import { getHistoricTVL, getHistoricDepositors, getHistoricFees, getHistoricVolume } from './helper/historicData.js'
 
 export const pool_metric = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +26,19 @@ export const user_metric = async (req: Request, res: Response, next: NextFunctio
 
 export const all_transactions = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { items, lastEvaluatedKey } = await getTransactions(req.query)
+    const { items, lastEvaluatedKey } = await getTransactions(req.query.lastEvaluatedKey)
+    res.status(200).json({ items, lastEvaluatedKey })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const user_transactions = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { items, lastEvaluatedKey } = await getUserTransactions(
+      req.query.lastEvaluatedKey,
+      req.query.userAddress as string,
+    )
     res.status(200).json({ items, lastEvaluatedKey })
   } catch (error) {
     next(error)
