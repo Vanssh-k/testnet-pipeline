@@ -5,6 +5,7 @@ import {
   pool_metric,
   user_metric,
   all_transactions,
+  user_transactions,
   historic_tvl,
   historic_volume,
   historic_fees,
@@ -16,6 +17,7 @@ const router = express.Router()
 router.get('/pool_metric', pool_metric)
 router.get('/user_record', validate(validator.userAddressSchema, { query: true }), user_metric)
 router.get('/transactions', all_transactions)
+router.get('/user_transactions', validate(validator.userAddressSchema, { query: true }), user_transactions)
 router.get('/historic_tvl', historic_tvl)
 router.get('/historic_volume', historic_volume)
 router.get('/historic_fees', historic_fees)
