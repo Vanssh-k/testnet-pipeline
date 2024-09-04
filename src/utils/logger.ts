@@ -4,13 +4,13 @@ import LokiTransport from 'winston-loki'
 import { createLogger, format, transports } from 'winston'
 
 const selectTransports = () => {
-  if (config.environment === 'production') {
-    return new LokiTransport({
-      host: config.logger_loki_host!,
-      labels: { service: service, environment: config.environment },
-      basicAuth: `${config.logger_loki_username}:${config.logger_loki_password}`,
-    })
-  }
+  // if (config.environment === 'production') {
+  //   return new LokiTransport({
+  //     host: config.logger_loki_host!,
+  //     labels: { service: service, environment: config.environment },
+  //     basicAuth: `${config.logger_loki_username}:${config.logger_loki_password}`,
+  //   })
+  // }
   return new transports.File({
     filename: config.devLogPath,
   })
