@@ -93,7 +93,7 @@ export const pin_cid = async (req: Request, res: Response, next: NextFunction) =
 export const migration_request = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const requestID = await migrationRequest(req.body.user, req.body.data)
-    await removeCache(`migration-requests-${req.body.publicKey}`)
+    await removeCache(`migration-requests-${req.body.user.publicKey}`)
     res.status(200).json({ requestID })
   } catch (error) {
     console.log(error)
