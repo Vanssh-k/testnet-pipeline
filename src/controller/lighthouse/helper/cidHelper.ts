@@ -20,14 +20,15 @@ import CustomError from '../../../middlewares/error/customError.js'
 export const cidDealStatus = async (cid: string) => {
   try {
     let raasInfo = await getRaasInfo(cid)
+    let cidV1 = ''
     if (!raasInfo && CID.parse(cid).version === 0) {
-      const cidV1 = CID.parse(cid).toV1().toString()
+      cidV1 = CID.parse(cid).toV1().toString()
       raasInfo = await getRaasInfo(cidV1)
     }
     if (!raasInfo) {
       throw new CustomError(404, 'Record not found.')
     }
-    const fileInfo = await getFileInfo(cid)
+    const fileInfo = await getFileInfo(cidV1)
     const deals: any = []
     for (let i = 0; i < raasInfo?.dealIDs.length; i++) {
       const dealRecord = await getDealInfo(raasInfo?.dealIDs[i])
