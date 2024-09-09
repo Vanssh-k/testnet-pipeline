@@ -25,7 +25,7 @@ const userTransactions = isDevelopment ? 'tn-user-transactions' : 'userTransacti
 
 const ffUserRecord = isDevelopment ? 'tn-ff-user-record' : 'ff-user-record'
 const ffTransactions = isDevelopment ? 'tn-ff-transactions' : 'ff-transactions'
-const historicRecords = isDevelopment ? 'tn-historic-records' : 'historic-records'
+const historicRecords = isDevelopment ? 'tn-historic-records' : 'ff-historic-records'
 
 const ipnsTable = isDevelopment ? 'tn-user-ipns-records' : 'user-ipns-records'
 
