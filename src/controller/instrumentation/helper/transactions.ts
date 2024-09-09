@@ -36,7 +36,7 @@ const getUserTransactions = async (evalKey: any, userAddress: string) => {
 
   // Build the query parameters
   const params: any = {
-    TableName: 'tn-ff-transactions',
+    TableName: ffTransactions,
     IndexName: 'purchase-createdAt-index', // Use the GSI
     KeyConditionExpression: '#purchase = :purchaseVal',
     FilterExpression: '#from = :userAddress',
