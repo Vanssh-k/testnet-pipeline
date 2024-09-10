@@ -77,7 +77,7 @@ export const aggregate_info = async (req: Request, res: Response, next: NextFunc
 export const pin_cid = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const requestID = await pinCID(
-      req.body.publicKey,
+      req.body.user.publicKey,
       req.body.cid,
       req.body.fileName ? req.body.fileName : 'pinned-file',
       req.body.raas,
