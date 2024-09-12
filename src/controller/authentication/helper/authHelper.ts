@@ -55,28 +55,8 @@ export const signatureAuth = async (publicKey: string): Promise<UserDetails> => 
   if (network === 'evm') {
     publicKey = publicKey.trim().toLowerCase()
   }
-
-  const timestamp = Date.now()
-  let response: UserDetails = {
-    publicKey,
-    message: timestamp,
-    dataLimit: freeDataLimitInBytes,
-    dataUsed: 0,
-    fileCount: 0,
-    network: network,
-    email: 'null-' + v4(),
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  }
   const record = await userDetails(publicKey, network)
-
-  if (!record) {
-    await createNewUser(response, network)
-  } else {
-    response = record
-  }
-
-  return response
+  return record as UserDetails
 }
 
 export const createApiKey = async (publicKey: string, keyName: string) => {
