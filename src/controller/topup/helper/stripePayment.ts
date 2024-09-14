@@ -82,29 +82,44 @@ export const create_session_order = async (address: string, subID: number, email
       },
     ]
   }
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    phone_number_collection: {
-      enabled: true,
-    },
-    invoice_creation: {
-      enabled: true,
-      invoice_data: {
-        metadata: {
-          planID: plan.index,
-          storageInGB: plan.storageInGB,
-          amount: plan.amount,
-          walletAddress: address,
+  if (mode == 'subscription') {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      phone_number_collection: {
+        enabled: true,
+      },
+      line_items: lineItems,
+      mode: mode,
+      customer: customer.id,
+      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
+      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
+    })
+    return { url: session.url }
+  } else {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      phone_number_collection: {
+        enabled: true,
+      },
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          metadata: {
+            planID: plan.index,
+            storageInGB: plan.storageInGB,
+            amount: plan.amount,
+            walletAddress: address,
+          },
         },
       },
-    },
-    line_items: lineItems,
-    mode: mode,
-    customer: customer.id,
-    success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
-    cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
-  })
-  return { url: session.url }
+      line_items: lineItems,
+      mode: mode,
+      customer: customer.id,
+      success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
+      cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
+    })
+    return { url: session.url }
+  }
 }
 
 export const cancel_subscription_order = async (stripePlanId: number, emailId: string | undefined) => {
