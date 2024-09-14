@@ -50,7 +50,7 @@ const paymentPlans = [
     imageResize: 'yes',
     payInCrypto: 'yes',
     filecoinDeals: 'yes',
-    priceID: '',
+    priceID: 'price_1PysQbLHysgIDjapwMLnEmUE',
   },
   {
     index: 6,
@@ -64,7 +64,7 @@ const paymentPlans = [
     imageResize: 'yes',
     payInCrypto: 'yes',
     filecoinDeals: 'yes',
-    priceID: '',
+    priceID: 'price_1PysRILHysgIDjap7K3egfi6',
   },
 ]
 
