@@ -33,7 +33,6 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
     publicKey: record.publicKey,
     totalCID: 1,
     migrationStatus: MigrationStatus.Queued,
-    enterprise: 'lighthouse',
     createdAt: timestamp,
     lastUpdate: timestamp,
   })
@@ -44,24 +43,12 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
     cid: cid,
     requestID,
     fileName: fileName,
-    fileSizeInBytes: '',
-    userDataUpdated: false,
-    txHash: '',
+    fileSizeInBytes: 0,
     cidStatus: MigrationStatus.Queued,
-    deal: '',
     lastUpdate: timestamp,
   })
 
-  if (raas && raas['network'] === 'calibration') {
-    // handle deal parameters
-    const dealParam = processDealParam(raas, id)
-    if (dealParam) {
-      await testnetDealParams(dealParam)
-    }
-    const addCIDToTestnet = addCIDToRAASTestnet(cid, id)
-  }
-
-  const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
+  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
 
   return requestID
 }
@@ -90,9 +77,8 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   const saveRequest = await createMigrationRequest({
     id: requestID,
     publicKey: record.publicKey,
-    totalCID: data.length,
+    totalCID: data.length as number,
     migrationStatus: MigrationStatus.Queued,
-    enterprise: 'lighthouse',
     createdAt: timestamp,
     lastUpdate: timestamp,
   })
@@ -104,16 +90,13 @@ export const migrationRequest = async (record: any, bodyData: string) => {
       cid: data[i]['cid'],
       requestID,
       fileName: data[i]['fileName'] ? data[i]['fileName'] : 'migrated-file',
-      fileSizeInBytes: '',
-      userDataUpdated: false,
-      txHash: '',
+      fileSizeInBytes: 0,
       cidStatus: MigrationStatus.Queued,
-      deal: '',
       lastUpdate: timestamp,
     })
   }
 
-  const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
+  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
   return requestID
 }
 
@@ -137,9 +120,8 @@ export const migrationRequestEnt = async (publicKey: string, bodyData: string, e
   const saveRequest = await createMigrationRequest({
     id: requestID,
     publicKey,
-    totalCID: data.length,
+    totalCID: data.length as number,
     migrationStatus: MigrationStatus.Queued,
-    enterprise,
     createdAt: timestamp,
     lastUpdate: timestamp,
   })
@@ -151,15 +133,12 @@ export const migrationRequestEnt = async (publicKey: string, bodyData: string, e
       cid: data[i],
       requestID,
       fileName: data[i].fileName ? data[i].fileName : '',
-      fileSizeInBytes: '',
-      userDataUpdated: false,
-      txHash: '',
+      fileSizeInBytes: 0,
       cidStatus: MigrationStatus.Queued,
-      deal: '',
       lastUpdate: timestamp,
     })
   }
 
-  const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
+  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
   return requestID
 }
