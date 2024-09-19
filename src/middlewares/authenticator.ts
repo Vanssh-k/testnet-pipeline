@@ -3,7 +3,7 @@ import cjs from 'crypto-js'
 import userDetails from '../db/user/userDetails.js'
 import getMigrationRequestInfo from '../db/migration/getMigrationRequestInfo.js'
 import verifySignature from '../utils/verifySignature.js'
-import { messageString } from '../config/constants.js'
+import { messageString, oceanPublicKey } from '../config/constants.js'
 import CustomError from './error/customError.js'
 import { verifyJWT } from '../utils/verifyJWT.js'
 import getNetwork from './getNetwork.js'
@@ -96,6 +96,9 @@ export default (rule: string, clauses: string[] = []) => {
           let verificationToken = null
           if (req.body.enterprise === 'ocean_protocol') {
             verificationToken = config.migration_ocean_access_token
+            if(req.body.publicKey){
+              req.body.publicKey = oceanPublicKey
+            }
           }
           if (req.body.enterprise === 'test_org') {
             verificationToken = config.migration_test_access_token
