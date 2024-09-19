@@ -30,6 +30,7 @@ const historicRecords = isDevelopment ? 'tn-historic-records' : 'ff-historic-rec
 const ipnsTable = isDevelopment ? 'tn-user-ipns-records' : 'user-ipns-records'
 
 const fileTableEncryption = isDevelopment ? 'tn-file-table-encryption' : 'file-table-encryption'
+const oceanPublicKey = '0x7c4fe89219e3078c85766ea5f0d448e9b15b78d4'
 
 const FilecoinLegacyTables = {
   FILE_Bundle_Records: 'file-aggregate-info',
@@ -114,4 +115,5 @@ export {
   lighthouse_ipfs_node,
   lighthouse_auth_enc_node,
   lighthouse_encryption_nodes,
+  oceanPublicKey
 }
