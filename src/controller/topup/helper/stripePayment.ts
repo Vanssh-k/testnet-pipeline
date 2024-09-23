@@ -91,6 +91,12 @@ export const create_session_order = async (address: string, subID: number, email
       line_items: lineItems,
       mode: mode,
       customer: customer.id,
+      metadata: {
+        planID: plan.index,
+        storageInGB: plan.storageInGB,
+        amount: plan.amount,
+        walletAddress: address,
+      },
       success_url: `${config.payment_url}/success?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
       cancel_url: `${config.payment_url}/cancel?transaction-id={CHECKOUT_SESSION_ID}&plan-id=${subID}`,
     })
