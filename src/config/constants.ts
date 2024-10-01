@@ -115,5 +115,5 @@ export {
   lighthouse_ipfs_node,
   lighthouse_auth_enc_node,
   lighthouse_encryption_nodes,
-  oceanPublicKey
+  oceanPublicKey,
 }
