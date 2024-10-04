@@ -53,9 +53,11 @@ const processStripePayment = async (data: any, eventType: any) => {
     case 'checkout.session.completed':
       try {
         let invoiceMetadata
+        let subscriptionId
         if (data.mode === 'subscription') {
           const session = await stripe.checkout.sessions.retrieve(data.id)
           invoiceMetadata = session.metadata
+          subscriptionId = session.subscription
         } else {
           invoiceMetadata = data.invoice_creation.invoice_data.metadata
         }
@@ -76,7 +78,8 @@ const processStripePayment = async (data: any, eventType: any) => {
           txHash: data.id,
           publicKey: invoiceMetadata.walletAddress,
           tokenAddress: 'Fiat Payment',
-          subscriptionID: invoiceMetadata.planID.toString(),
+          planID: invoiceMetadata.planID.toString(),
+          subscriptionID: subscriptionId,
           amount: invoiceMetadata.amount,
           network: 'stripe',
           createdAt: Date.now(),
