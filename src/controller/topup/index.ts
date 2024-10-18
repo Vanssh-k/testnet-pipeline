@@ -72,10 +72,7 @@ export const plan_details_by_id = async (req: Request, res: Response, next: Next
 
 export const cancel_user_subscription = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await cancel_subscription_order(
-      parseInt(req.query.subscriptionId as string),
-      req.body.user.email ?? undefined,
-    )
+    const data = await cancel_subscription_order(req.query.subscriptionId as string, req.body.user.email ?? undefined)
     res.status(200).json({ ...data })
   } catch (error) {
     console.log(error)

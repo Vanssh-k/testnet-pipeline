@@ -122,7 +122,7 @@ export const create_session_order = async (address: string, subID: number, email
   }
 }
 
-export const cancel_subscription_order = async (stripePlanId: number, emailId: string | undefined) => {
+export const cancel_subscription_order = async (stripePlanId: string, emailId: string | undefined) => {
   if (emailId === undefined) {
     throw new CustomError(403, 'Email not updated in profile')
   }
