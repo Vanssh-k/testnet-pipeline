@@ -17,14 +17,44 @@ import getRaasInfo from '../../../db/filecoin/mainnet/getRaasInfo.js'
 import getFileInfo from '../../../db/filecoin/mainnet/getFileInfo.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
+import getDealInfoCG from '../../../db/filecoin/getDealInfoCG.js'
+import getFFRecord from '../../../db/filecoin/getFFRecord.js'
+
+const ffDeal = async (cid: string) => {
+  const record = await getFFRecord(cid)
+  if (!record) {
+    return null
+  }
+  const deal = await getDealInfoCG(record[0]?.pieceCID)
+  if (!deal) {
+    return
+  }
+
+  const dealData = []
+  for (let i = 0; i < deal.deal.length; i++) {
+    dealData.push({
+      pieceCID: record[0]?.pieceCID,
+      payloadCid: record[0]?.payloadCID,
+      dealId: parseInt(deal.deal[i]['dealId']),
+      miner: deal.deal[i]['provider'],
+    })
+  }
+  return dealData
+}
+
 export const cidDealStatus = async (cid: string) => {
   try {
+    const ffDeals = await ffDeal(cid)
+    if (ffDeals) {
+      return ffDeals
+    }
     let raasInfo = await getRaasInfo(cid)
     let cidV1 = ''
     if (!raasInfo && CID.parse(cid).version === 0) {
       cidV1 = CID.parse(cid).toV1().toString()
       raasInfo = await getRaasInfo(cidV1)
     }
+
     if (!raasInfo) {
       throw new CustomError(404, 'Record not found.')
     }

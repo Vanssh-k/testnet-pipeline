@@ -96,7 +96,7 @@ export default (rule: string, clauses: string[] = []) => {
           let verificationToken = null
           if (req.body.enterprise === 'ocean_protocol') {
             verificationToken = config.migration_ocean_access_token
-            if(req.body.publicKey){
+            if (req.body.publicKey) {
               req.body.publicKey = oceanPublicKey
             }
           }

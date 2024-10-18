@@ -40,44 +40,44 @@ export default async (
     if (network === 'cosmos') {
       let success = false
       let attempt = 0
-      const signer = pubkeyToAddress(usersPublicKey);
+      const signer = pubkeyToAddress(usersPublicKey)
       do {
         //kepler (attempt 1) -> chain_id = "" & fee.amount = []
         //cosmostation -> chain_id = coreum-mainnet-1 & fee.amount = [{ amount: "0", denom: "ucore" }]
         //leap (attempt 2) -> chain_id = "" & fee.amount = [{ amount: "0", denom: "ucore" }]
 
         const signed = {
-          chain_id: attempt === 0 ? "coreum-mainnet-1" : "",
-          account_number: "0",
-          sequence: "0",
+          chain_id: attempt === 0 ? 'coreum-mainnet-1' : '',
+          account_number: '0',
+          sequence: '0',
           fee: {
             amount:
               attempt === 0
-                ? [{ amount: "0", denom: "ucore" }]
+                ? [{ amount: '0', denom: 'ucore' }]
                 : attempt === 2
-                  ? [{ amount: "0", denom: "ucore" }]
+                  ? [{ amount: '0', denom: 'ucore' }]
                   : [],
-            gas: "0",
+            gas: '0',
           },
           msgs: [
             {
-              type: "sign/MsgSignData",
+              type: 'sign/MsgSignData',
               value: {
                 signer: signer,
-                data: Buffer.from(originalMessage).toString("base64"),
+                data: Buffer.from(originalMessage).toString('base64'),
               },
             },
           ],
-          memo: "",
-        };
+          memo: '',
+        }
         success = await Secp256k1.verifySignature(
           Secp256k1Signature.fromFixedLength(fromBase64(signedMessage)),
           sha256(serializeSignDoc(signed)),
-          hexToUint8Array(usersPublicKey)
-        );
-        if (success) break;
-        attempt++;
-      } while (!success && attempt < 3);
+          hexToUint8Array(usersPublicKey),
+        )
+        if (success) break
+        attempt++
+      } while (!success && attempt < 3)
       return success
     }
     return false

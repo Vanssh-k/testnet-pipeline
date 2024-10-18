@@ -52,11 +52,20 @@ const processStripePayment = async (data: any, eventType: any) => {
   switch (eventType) {
     case 'checkout.session.completed':
       try {
-        const invoiceMetadata = data.invoice_creation.invoice_data.metadata
+        let invoiceMetadata
+        let subscriptionId
+        if (data.mode === 'subscription') {
+          const session = await stripe.checkout.sessions.retrieve(data.id)
+          invoiceMetadata = session.metadata
+          subscriptionId = session.subscription
+        } else {
+          invoiceMetadata = data.invoice_creation.invoice_data.metadata
+        }
 
         // if (invoiceMetadata.planID == 5 || invoiceMetadata.planID == 6) {
         //   await createAdditionalSubscription(data.customer)
         // }
+
         // Check type of wallet
         const network = getNetwork(invoiceMetadata.walletAddress)
         if (network === 'evm') {
@@ -69,7 +78,8 @@ const processStripePayment = async (data: any, eventType: any) => {
           txHash: data.id,
           publicKey: invoiceMetadata.walletAddress,
           tokenAddress: 'Fiat Payment',
-          subscriptionID: invoiceMetadata.planID.toString(),
+          planID: invoiceMetadata.planID.toString(),
+          subscriptionID: subscriptionId,
           amount: invoiceMetadata.amount,
           network: 'stripe',
           createdAt: Date.now(),
