@@ -1,9 +1,9 @@
-import { CID } from 'multiformats/cid'
 import filecoinDeal from '../../../db/filecoin/filecoinDeal.js'
 import getCIDRecord from '../../../db/filecoin/legacy/getCIDRecord.js'
 import getBundleRecord from '../../../db/filecoin/legacy/getBundleRecord.js'
 import getCIDList from '../../../db/filecoin/getCIDList.js'
 import podsiRecord from '../../../db/filecoin/podsiRecord.js'
+import { legacyDealInfo } from './legacyDeals.js'
 
 // Testnet
 import getBundleRecordTestnet from '../../../db/filecoin/testnet/getBundleRecordTestnet.js'
@@ -13,107 +13,44 @@ import getRaasInfoTestnet from '../../../db/filecoin/testnet/getRaasInfoTestnet.
 import getFileInfoTestnet from '../../../db/filecoin/testnet/getFileInfoTestnet.js'
 import getDealInfoTestnet from '../../../db/filecoin/testnet/getDealInfoTestnet.js'
 import getDealInfo from '../../../db/filecoin/mainnet/getDealInfo.js'
-import getRaasInfo from '../../../db/filecoin/mainnet/getRaasInfo.js'
-import getFileInfo from '../../../db/filecoin/mainnet/getFileInfo.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
 import getDealInfoCG from '../../../db/filecoin/getDealInfoCG.js'
 import getFFRecord from '../../../db/filecoin/getFFRecord.js'
 
 const ffDeal = async (cid: string) => {
-  const record = await getFFRecord(cid)
-  if (!record) {
-    return null
+  try {
+    const record = await getFFRecord(cid)
+    if (!record) {
+      return []
+    }
+    const dealData = []
+    if (typeof record[0]?.pieceCID === 'string') {
+      const deal = await getDealInfoCG(record[0]?.pieceCID)
+      dealData.push(deal)
+    } else {
+      for (let i = 0; i < record[0]?.pieceCID.length; i++) {
+        const deal = await getDealInfoCG(record[0]?.pieceCID[i])
+        dealData.push(deal)
+      }
+    }
+    return dealData
+  } catch (err) {
+    return []
   }
-  const deal = await getDealInfoCG(record[0]?.pieceCID)
-  if (!deal) {
-    return
-  }
-
-  const dealData = []
-  for (let i = 0; i < deal.deal.length; i++) {
-    dealData.push({
-      pieceCID: record[0]?.pieceCID,
-      payloadCid: record[0]?.payloadCID,
-      dealId: parseInt(deal.deal[i]['dealId']),
-      miner: deal.deal[i]['provider'],
-    })
-  }
-  return dealData
 }
 
 export const cidDealStatus = async (cid: string) => {
   try {
     const ffDeals = await ffDeal(cid)
-    if (ffDeals) {
-      return ffDeals
+    if (ffDeals.length === 0) {
+      const legacyDeals = await legacyDealInfo(cid)
+      return legacyDeals
     }
-    let raasInfo = await getRaasInfo(cid)
-    let cidV1 = ''
-    if (!raasInfo && CID.parse(cid).version === 0) {
-      cidV1 = CID.parse(cid).toV1().toString()
-      raasInfo = await getRaasInfo(cidV1)
-    }
-
-    if (!raasInfo) {
-      throw new CustomError(404, 'Record not found.')
-    }
-    const fileInfo = await getFileInfo(cidV1)
-    const deals: any = []
-    for (let i = 0; i < raasInfo?.dealIDs.length; i++) {
-      const dealRecord = await getDealInfo(raasInfo?.dealIDs[i])
-      const dealRecordInfo = dealRecord[0]
-      deals[i] = {}
-      deals[i].pieceCID = raasInfo?.cid
-      deals[i].payloadCid = fileInfo?.cidV1
-      deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
-      deals[i].carFileSize = parseInt(fileInfo?.carSize)
-      deals[i].dealId = dealRecordInfo.chainDealID
-      deals[i].miner = 'f0' + raasInfo?.miners[i]
-      deals[i].content = parseInt(fileInfo?.fileSize)
-      deals[i].dealStatus = dealRecordInfo.dealStatus
-      deals[i].startEpoch = dealRecordInfo.startEpoch
-      deals[i].endEpoch = dealRecordInfo.endEpoch
-      deals[i].publishCid = dealRecordInfo.publishCID
-      deals[i].dealUUID = dealRecordInfo.dealUUID
-      deals[i].providerCollateral = dealRecordInfo.providerCollateral
-      deals[i].chainDealID = dealRecordInfo.chainDealID
-    }
-    return deals
-  } catch (e) {
-    try {
-      const cidRecord = await getCIDRecord(cid)
-
-      // Get bundle record
-      let aggregatedIn: any
-      /* istanbul ignore next */
-      if (cidRecord[0].aggregatedIn !== 'none') {
-        aggregatedIn = await getBundleRecord(cidRecord[0].aggregatedIn)
-      }
-
-      // Check bundle status
-      // If initiated then get miner details
-      let deals: any = []
-      /* istanbul ignore next */
-      if (aggregatedIn && aggregatedIn['aggFileStatus'] === 'deal initiated') {
-        deals = await filecoinDeal(aggregatedIn['aggregateID'])
-      }
-
-      /* istanbul ignore next */
-      for (let i = 0; i < deals.length; i++) {
-        deals[i].pieceCID = aggregatedIn.commpCID
-        deals[i].payloadCid = aggregatedIn.payloadCid
-        deals[i].pieceSize = parseInt(aggregatedIn.pieceSize)
-        deals[i].carFileSize = parseInt(aggregatedIn.carFileSize)
-        deals[i].dealId = parseInt(deals[i]['chainDealID'])
-        deals[i].miner = deals[i]['storageProvider']
-        deals[i].content = cidRecord[0].fileSize
-      }
-
-      return deals
-    } catch (e) {
-      return []
-    }
+    return ffDeals
+  } catch (error) {
+    console.error('Error getting deal record', error)
+    return []
   }
 }
 
