@@ -1,12 +1,12 @@
 import dbbClient from '../../db/ddbClient.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-import { FilecoinMainnetTableName } from '../../../config/constants.js'
+import { FilecoinMainnetLegacyTableName } from '../../../config/constants.js'
 
 export default async (cid: string) => {
   try {
     const params = {
-      TableName: FilecoinMainnetTableName.PODSI_TABLE,
+      TableName: FilecoinMainnetLegacyTableName.PODSI_TABLE,
       Key: {
         cid: cid,
       },
