@@ -39,14 +39,6 @@ const FilecoinLegacyTables = {
   FILE_POSDI: 'file-podsi',
 }
 
-// const FilecoinTestnetTableName = {
-//   PODSI_TABLE: 'inclusion-proof',
-//   RAAS_TABLE: 'raas-testing',
-//   AGGREGATE_TABLE: 'aggregate-file-records',
-//   FILE_RECORD_TABLE: 'file-records',
-//   DEAL_RECORD_TABLE: 'deal-records',
-// }
-
 const FilecoinTestnetTableName = {
   PODSI_TABLE: 'tn-inclusion-proof',
   RAAS_TABLE: 'tn-raas',
@@ -55,7 +47,7 @@ const FilecoinTestnetTableName = {
   DEAL_RECORD_TABLE: 'tn-filecoin-deals',
 }
 
-const FilecoinMainnetTableName = {
+const FilecoinMainnetLegacyTableName = {
   PODSI_TABLE: 'de-inclusion-proof',
   RAAS_TABLE: 'de-raas',
   AGGREGATE_TABLE: 'de-aggregate-info',
@@ -108,7 +100,7 @@ export {
   fileTableEncryption,
   ipnsTable,
   FilecoinTestnetTableName,
-  FilecoinMainnetTableName,
+  FilecoinMainnetLegacyTableName,
   filesPageSize,
   cacheTime,
   lighthouse_migration_node,
