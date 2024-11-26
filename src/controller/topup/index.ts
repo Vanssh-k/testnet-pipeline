@@ -5,6 +5,7 @@ import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './help
 import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
 import { checkCoreumTxnUpdateCap } from './helper/coreumPurchase.js'
+import { checkRadixTxnUpdateCap } from './helper/radixPurchase.js'
 
 export const create_subdomain = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -115,6 +116,15 @@ export const webhook_stripe = async (req: Request, res: Response, next: NextFunc
 export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await checkCoreumTxnUpdateCap(req)
+    res.status(200).json('Success')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const verify_radixtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await checkRadixTxnUpdateCap(req)
     res.status(200).json('Success')
   } catch (error) {
     next(error)
