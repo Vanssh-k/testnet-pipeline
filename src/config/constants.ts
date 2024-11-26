@@ -58,15 +58,15 @@ const FilecoinMainnetLegacyTableName = {
 const lighthouse_migration_node = 'http://65.2.9.210'
 const lighthouse_ipfs_node = isDevelopment ? 'https://node-test.lighthouse.storage' : 'https://node.lighthouse.storage'
 const lighthouse_auth_enc_node = isDevelopment
-  ? 'https://enc-test.lighthouse.storage'
+  ? 'https://encryption-dev.lighthouse.storage'
   : 'https://encryption.lighthouse.storage'
 const lighthouse_encryption_nodes = isDevelopment
   ? [
-      'https://enc-test.lighthouse.storage/api/auth-message/1',
-      'https://enc-test.lighthouse.storage/api/auth-message/2',
-      'https://enc-test.lighthouse.storage/api/auth-message/3',
-      'https://enc-test.lighthouse.storage/api/auth-message/4',
-      'https://enc-test.lighthouse.storage/api/auth-message/5',
+      'https://encryption-dev.lighthouse.storage/api/auth-message/1',
+      'https://encryption-dev.lighthouse.storage/api/auth-message/2',
+      'https://encryption-dev.lighthouse.storage/api/auth-message/3',
+      'https://encryption-dev.lighthouse.storage/api/auth-message/4',
+      'https://encryption-dev.lighthouse.storage/api/auth-message/5',
     ]
   : [
       'https://encryption.lighthouse.storage/api/auth-message/1',

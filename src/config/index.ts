@@ -15,6 +15,7 @@ const baseConfig = {
 
   redis_url: process.env.REDIS_URL,
   coreum_api_url: 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs',
+  radix_api_url: 'https://mainnet.radixdlt.com/transaction/committed-details',
   lighthouse_encryption_auth_keys: JSON.parse(process.env.LIGHTHOUSE_ENC_MESSAGE_TOKENS ?? '[]'),
   lighthouse_ipns_node: process.env.LIGHTHOUSE_IPNS_NODE ?? 'http://10.0.9.53',
   est_api_key: process.env.EST_API_KEY ?? '',
@@ -59,6 +60,8 @@ const baseConfig = {
     process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0x21C491Ea745D26aFC82E695849fEc27e95eD717D',
   filecoin_usdc: process.env.FILECOIN_USDC ?? '0xA471B7936906fF810865e52AF86C12B9865C850A',
   lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core145f5j80zfr730kndlx7ek55pt6ya0kcnr6d9ha',
+  lighthouse_radix_address:
+    process.env.LIGHTHOUSE_RADIX_ADDRESS ?? 'account_tdx_2_128pfchzzmd6kz4af53cz629d6s284w9sknzfc2dc39hs27rqu9d2a2',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   lighthouse-backend:
     container_name: lighthouse-backend
-    build: 
+    build:
       context: .
       args:
         - PORT={{ PORT }}
@@ -42,8 +42,9 @@ services:
         - PAYMENT_URL={{ PAYMENT_URL }}
         - STRIPE_WEBHOOK={{ STRIPE_WEBHOOK }}
         - LIGHTHOUSE_COREUM_ADDRESS={{ LIGHTHOUSE_COREUM_ADDRESS }}
+        - LIGHTHOUSE_RADIX_ADDRESS={{ LIGHTHOUSE_RADIX_ADDRESS }}
     ports:
-      - "13001:13001"
+      - '13001:13001'
     depends_on:
       - redis
   redis:
@@ -51,7 +52,7 @@ services:
     container_name: lighthouse-redis
     command: redis-server
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
 volumes:

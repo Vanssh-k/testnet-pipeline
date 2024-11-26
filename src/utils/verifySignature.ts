@@ -5,6 +5,8 @@ import crypto from 'crypto'
 import { makeSignDoc as makeSignDocAmino, serializeSignDoc } from '@cosmjs/amino'
 import { Secp256k1, Secp256k1Signature, sha256, ripemd160 } from '@cosmjs/crypto'
 import { fromBase64, toBech32 } from '@cosmjs/encoding'
+import { Rola } from '@radixdlt/rola'
+import { ResultAsync } from 'neverthrow'
 
 function hexToUint8Array(hexString: string): Uint8Array {
   return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
@@ -15,10 +17,17 @@ function pubkeyToAddress(pubkey: string) {
   return toBech32('core', ripemd160(sha256(rawSecp256k1Pubkey)))
 }
 
+const { verifySignedChallenge } = Rola({
+  applicationName: 'filesdapp',
+  dAppDefinitionAddress: 'account_tdx_2_12yr25e62eehxn6dvf239d8f8077kcccsvd57nlltrkgqxwmm46u8he', // address of the dApp definition
+  networkId: 2, // network id of the Radix network
+  expectedOrigin: 'http://localhost:3000', // origin of the client making the wallet request
+})
+
 export default async (
   usersPublicKey: string,
   originalMessage: string,
-  signedMessage: string,
+  signedMessage: any,
   network: string,
 ): Promise<boolean> => {
   try {
@@ -79,6 +88,17 @@ export default async (
         attempt++
       } while (!success && attempt < 3)
       return success
+    }
+    if (network === 'radix') {
+      const challenges = JSON.parse(signedMessage)
+      const result = await ResultAsync.combine(
+        challenges.map((signedChallenge: any) => verifySignedChallenge(signedChallenge)),
+      )
+      if (result.isErr()) {
+        return false
+      } else {
+        return true
+      }
     }
     return false
   } catch {

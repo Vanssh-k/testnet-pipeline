@@ -60,3 +60,11 @@ export const coreumPurchaseSchema = joi.object({
   address: joi.string().required(),
   amount: joi.string().required(),
 })
+export const radixPurchaseSchema = joi.object({
+  subscriptionId: joi.string().required().messages({
+    'any.required': `subscriptionId not found`,
+  }),
+  transactionHash: joi.string().required(),
+  address: joi.string().required(),
+  amount: joi.string().required(),
+})

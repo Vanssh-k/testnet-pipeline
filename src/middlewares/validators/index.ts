@@ -31,6 +31,7 @@ import {
   tokenAddressSchema,
   userAddressSchema,
   coreumPurchaseSchema,
+  radixPurchaseSchema,
 } from './topup.js'
 import { apiKeyName, verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth.js'
 import { verifyPublishSchema, verifyRemoveSchema } from './ipns.js'
@@ -71,4 +72,5 @@ export default {
   tokenAddressSchema,
   userAddressSchema,
   coreumPurchaseSchema,
+  radixPurchaseSchema,
 }

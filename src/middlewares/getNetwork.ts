@@ -29,6 +29,13 @@ function checkCosmos(value: string): boolean {
   }
 }
 
+function checkRadix(value: any): boolean {
+  if (typeof value !== 'string') return false
+  const prefixMainnet = 'account_rdx_1'
+  const prefixTestnet = 'account_tdx_2'
+  return value.startsWith(prefixMainnet) || value.startsWith(prefixTestnet)
+}
+
 export default (value: string) => {
   try {
     if (checkEVM(value)) {
@@ -37,6 +44,8 @@ export default (value: string) => {
       return 'solana'
     } else if (checkCosmos(value)) {
       return 'cosmos'
+    } else if (checkRadix(value)) {
+      return 'radix'
     }
 
     throw new CustomError(400, 'Invalid Address')
