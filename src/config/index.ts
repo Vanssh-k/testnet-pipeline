@@ -61,7 +61,12 @@ const baseConfig = {
   filecoin_usdc: process.env.FILECOIN_USDC ?? '0xA471B7936906fF810865e52AF86C12B9865C850A',
   lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core145f5j80zfr730kndlx7ek55pt6ya0kcnr6d9ha',
   lighthouse_radix_address:
-    process.env.LIGHTHOUSE_RADIX_ADDRESS ?? 'account_tdx_2_128pfchzzmd6kz4af53cz629d6s284w9sknzfc2dc39hs27rqu9d2a2',
+    process.env.LIGHTHOUSE_RADIX_ADDRESS ?? 'account_rdx12y9lphtr6yjy0pskv287v8kkcyjwfqssn3sgzlwmjhr7rlqx2kr5np',
+  radixApplicationName: 'filesdapp',
+  radixDappDefination:
+    process.env.RADIX_DAPP_DEFINATION ?? 'account_rdx12y9lphtr6yjy0pskv287v8kkcyjwfqssn3sgzlwmjhr7rlqx2kr5np',
+  radixNetworkId: Number(process.env.RADIX_NETWORK_ID) ?? 1,
+  radixExpectedOrigin: process.env.RADIX_EXPECTED_ORIGIN ?? 'https://files.lighthouse.storage',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,

@@ -31,7 +31,7 @@ function checkCosmos(value: string): boolean {
 
 function checkRadix(value: any): boolean {
   if (typeof value !== 'string') return false
-  const prefixMainnet = 'account_rdx_1'
+  const prefixMainnet = 'account_rdx1'
   const prefixTestnet = 'account_tdx_2'
   return value.startsWith(prefixMainnet) || value.startsWith(prefixTestnet)
 }
