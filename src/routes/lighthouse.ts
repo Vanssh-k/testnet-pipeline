@@ -14,6 +14,7 @@ import {
   migration_request_info,
   file_info_testnet,
   raas_info_testnet,
+  retry_migration,
 } from '../controller/lighthouse/index.js'
 import authenticator from '../middlewares/authenticator.js'
 import validate from '../middlewares/validate.js'
@@ -39,6 +40,13 @@ router.post(
   validate(validator.migrationRequestEntSchema, { body: true }),
   authenticator('enterpriseRoute'),
   migration_request_ent,
+)
+
+router.get(
+  '/retry_migration',
+  validate(validator.migrationRequestIdSchema, { query: true }),
+  // authenticator('verifyToken'),
+  retry_migration,
 )
 
 router.get('/list_migration_requests', validate(validator.publicKeySchema, { query: true }), list_migration_requests)

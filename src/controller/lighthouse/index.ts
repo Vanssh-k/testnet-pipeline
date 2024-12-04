@@ -12,7 +12,7 @@ import {
   raasInfoTestnet,
 } from './helper/cidHelper.js'
 import fileDetailsByCid from '../../db/file/fileDetailsByCid.js'
-import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migrationHelper.js'
+import { pinCID, migrationRequest, migrationRequestEnt, retryMigration } from './helper/migrationHelper.js'
 import migrationRequestInfo from '../../db/migration/migrationRequestInfo.js'
 import listMigrationRequests from '../../db/migration/listMigrationRequests.js'
 import cidPinStatus from '../../db/migration/cidPinStatus.js'
@@ -130,6 +130,15 @@ export const list_migration_requests = async (req: Request, res: Response, next:
     }
 
     res.status(200).json(record)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const retry_migration = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const status = await retryMigration(req.query.requestId as string)
+    res.status(200).json(status)
   } catch (error) {
     next(error)
   }
