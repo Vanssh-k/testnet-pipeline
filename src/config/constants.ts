@@ -55,7 +55,7 @@ const FilecoinMainnetLegacyTableName = {
   DEAL_RECORD_TABLE: 'de-filecoin-deals',
 }
 
-const lighthouse_migration_node = 'http://65.2.9.210'
+const lighthouse_migration_node = 'http://13.200.252.197'
 const lighthouse_ipfs_node = isDevelopment ? 'https://node-test.lighthouse.storage' : 'https://node.lighthouse.storage'
 const lighthouse_auth_enc_node = isDevelopment
   ? 'https://encryption-dev.lighthouse.storage'
