@@ -51,7 +51,7 @@ router.get(
 
 router.get('/list_migration_requests', validate(validator.publicKeySchema, { query: true }), list_migration_requests)
 
-router.get('/cid_pin_status', validate(validator.cidSchema, { query: true }), cid_pin_status)
+router.get('/cid_pin_status', validate(validator.pinningStatusSchema, { query: true }), cid_pin_status)
 
 router.get(
   '/migration_request_info',

@@ -85,3 +85,10 @@ export const addCIDToQueueSchema = joi.object({
     'any.required': `encryption not found`,
   }),
 })
+
+export const pinningStatusSchema = joi.object({
+  cid: joi.string().required().messages({
+    'any.required': `cid not found`,
+  }),
+  requestId: joi.string().optional(),
+})

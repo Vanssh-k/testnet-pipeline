@@ -211,20 +211,31 @@ export const cid_pin_status = async (req: Request, res: Response, next: NextFunc
     const pinStatus = await cidPinStatus(req.query.cid as string)
     let pinned = 'failed'
     let fileSize = '0'
+    let requestId = ''
     for (let i = 0; i < pinStatus.length; i++) {
       if (pinStatus[i].cidStatus === 'pinned') {
         pinned = 'pinned'
         fileSize = pinStatus[i].fileSizeInBytes
+        requestId = pinStatus[i].requestID
         break
       }
       if (pinStatus[i].cidStatus === 'queued') {
         pinned = 'queued'
       }
     }
-    res.status(200).json({
-      status: pinned,
-      fileSize: fileSize,
-    })
+    console.log(req.query.requestId)
+    if (req.query.requestId) {
+      res.status(200).json({
+        status: pinned,
+        fileSize: fileSize,
+        requestId: requestId,
+      })
+    } else {
+      res.status(200).json({
+        status: pinned,
+        fileSize: fileSize,
+      })
+    }
   } catch (error) {
     next(error)
   }
