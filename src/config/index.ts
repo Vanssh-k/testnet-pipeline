@@ -65,7 +65,7 @@ const baseConfig = {
   radixApplicationName: 'filesdapp',
   radixDappDefination:
     process.env.RADIX_DAPP_DEFINATION ?? 'account_rdx12y9lphtr6yjy0pskv287v8kkcyjwfqssn3sgzlwmjhr7rlqx2kr5np',
-  radixNetworkId: Number(process.env.RADIX_NETWORK_ID) ?? 1,
+  radixNetworkId: 1,
   radixExpectedOrigin: process.env.RADIX_EXPECTED_ORIGIN ?? 'https://files.lighthouse.storage',
 
   migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
