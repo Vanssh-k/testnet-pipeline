@@ -7,6 +7,7 @@ import { Secp256k1, Secp256k1Signature, sha256, ripemd160 } from '@cosmjs/crypto
 import { fromBase64, toBech32 } from '@cosmjs/encoding'
 import { Rola } from '@radixdlt/rola'
 import { ResultAsync } from 'neverthrow'
+import config from '../config/index.js'
 
 function hexToUint8Array(hexString: string): Uint8Array {
   return new Uint8Array(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)))
@@ -18,10 +19,10 @@ function pubkeyToAddress(pubkey: string) {
 }
 
 const { verifySignedChallenge } = Rola({
-  applicationName: 'filesdapp',
-  dAppDefinitionAddress: 'account_tdx_2_12yr25e62eehxn6dvf239d8f8077kcccsvd57nlltrkgqxwmm46u8he', // address of the dApp definition
-  networkId: 2, // network id of the Radix network
-  expectedOrigin: 'http://localhost:3000', // origin of the client making the wallet request
+  applicationName: config.radixApplicationName,
+  dAppDefinitionAddress: config.radixDappDefination, // address of the dApp definition
+  networkId: config.radixNetworkId, // network id of the Radix network
+  expectedOrigin: config.radixExpectedOrigin, // origin of the client making the wallet request
 })
 
 export default async (

@@ -42,12 +42,12 @@ const validatePayment = async (req: Request) => {
       txHash: req.body.transactionHash,
       publicKey: pubKey,
       tokenAddress: 'coreum Payment',
-      subscriptionID: req.body.subscriptionId,
+      planID: req.body.subscriptionId,
       amount: requestAmount,
       network: 'radix',
       createdAt: Date.now(),
     }
-    // await recordTransactions(data)
+    await recordTransactions(data)
     const paymentPlan = paymentPlans.find((plan) => plan.index === Number(req.body.subscriptionId))
     const dataCapPurchased = (paymentPlan ? paymentPlan.storageInGB : 0) * 1073741824
     return dataCapPurchased
