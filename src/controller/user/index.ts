@@ -4,6 +4,7 @@ import {
   getTagDetailsHelper,
   getAllTagsHelper,
   removeTagHelper,
+  generateReferralCode,
 } from './helper/userHelper.js'
 import { NextFunction, Request, Response } from 'express'
 import updateEmail from '../../db/user/updateEmail.js'
@@ -11,6 +12,7 @@ import { generateTokenAndSendMail, verifyEmailToken } from './helper/verifyEmail
 import createReferralRecord from '../../db/user/referral/createReferralRecord.js'
 import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
+import getUserFromCode from '../../db/user/referral/getUserFromCode.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -115,11 +117,28 @@ export const remove_tag = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const get_referral_code = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const referralCode = generateReferralCode(req.body.publicKey)
+    return res.status(200).json({ referralCode })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const create_referral = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const referralCode = req.query.referredBy as string
+    if (referralCode === null) {
+      return res.status(200).json('Success')
+    }
+    const referralDetails = await getUserFromCode(referralCode)
+    if (referralDetails.length === 0) {
+      return res.status(400).json('Invalid referral code.')
+    }
     const details = {
       publicKey: req.body.publicKey,
-      referredBy: req.query.referredBy as string,
+      referredBy: referralDetails[0].publicKey,
     }
     await createReferralRecord(details)
     return res.status(200).json('Success')

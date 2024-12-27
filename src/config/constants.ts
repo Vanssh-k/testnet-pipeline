@@ -17,6 +17,7 @@ const userTable = isDevelopment ? 'tn-user-record' : 'user-record'
 const userAuthTable = isDevelopment ? 'tn-user-auth' : 'user-auth'
 const fileTable = isDevelopment ? 'tn-files' : 'files'
 const referralTable = isDevelopment ? 'tn-referral' : 'referral'
+const referralCodeTable = isDevelopment ? 'tn-user-referral-code' : 'user-referral-code'
 const cidTagTable = isDevelopment ? 'tn-cid-tag-table' : 'cid-tag-table'
 const gatewayTable = isDevelopment ? 'tn-dedicated-gateway' : 'dedicatedGatewayRecords'
 const migrationCIDs = isDevelopment ? 'tn-migration-cids' : 'migration-cid'
@@ -87,6 +88,7 @@ export {
   jwtExpire,
   userTable,
   referralTable,
+  referralCodeTable,
   userAuthTable,
   fileTable,
   cidTagTable,

@@ -1,3 +1,4 @@
+import { v4 } from 'uuid'
 import userUploads from '../../../db/file/userUploads.js'
 import createTag from '../../../db/user/tag/createTag.js'
 import getTagData from '../../../db/user/tag/getTagData.js'
@@ -5,6 +6,8 @@ import getAllTags from '../../../db/user/tag/getAllTags.js'
 import removeTag from '../../../db/user/tag/removeTag.js'
 import getFileByID from '../../../db/file/getFileByID.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import updateUserReferralCode from '../../../db/user/referral/updateUserReferralCode.js'
+import getUserReferralCode from '../../../db/user/referral/getUserReferralCode.js'
 
 export const getUploads = async (publicKey: string, lastKey: string | undefined) => {
   let exclusiveStartKey = undefined
@@ -20,6 +23,16 @@ export const getUploads = async (publicKey: string, lastKey: string | undefined)
   }
   const fileList = await userUploads(publicKey, exclusiveStartKey)
   return fileList
+}
+
+export const generateReferralCode = async (publicKey: string) => {
+  const code = await getUserReferralCode(publicKey)
+  if (code) {
+    return code
+  }
+  const referralCode = v4().replace(/-/g, '')
+  await updateUserReferralCode(publicKey, referralCode)
+  return referralCode
 }
 
 export const createTagHelper = async (tag: string, cid: string, publicKey: string): Promise<void> => {
