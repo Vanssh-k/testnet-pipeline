@@ -13,6 +13,7 @@ import createReferralRecord from '../../db/user/referral/createReferralRecord.js
 import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
 import getUserFromCode from '../../db/user/referral/getUserFromCode.js'
+import getUserReferrals from '../../db/user/referral/getUserReferrals.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -147,10 +148,19 @@ export const create_referral = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const get_referral = async (req: Request, res: Response, next: NextFunction) => {
+export const get_referred_by = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await getReferral(req.body.publicKey)
     return res.status(200).json('Success')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const get_my_referrals = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const referralCode = await getUserReferrals(req.body.publicKey)
+    return res.status(200).json({ referralCode })
   } catch (error) {
     next(error)
   }

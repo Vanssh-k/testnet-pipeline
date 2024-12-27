@@ -11,7 +11,9 @@ import {
   verify_email_token,
   verify_web3auth_email,
   create_referral,
-  get_referral,
+  get_referred_by,
+  get_referral_code,
+  get_my_referrals,
 } from '../controller/user/index.js'
 import authenticator from '../middlewares/authenticator.js'
 import validate from '../middlewares/validate.js'
@@ -81,6 +83,8 @@ router.get(
   create_referral,
 )
 
-router.get('/get_referral', authenticator('verifyToken', ['publicKeyOnly']), get_referral)
+router.get('/get_referred_by', authenticator('verifyToken', ['publicKeyOnly']), get_referred_by)
+router.get('/get_referral_code', authenticator('verifyToken', ['publicKeyOnly']), get_referral_code)
+router.get('/get_my_referrals', authenticator('verifyToken', ['publicKeyOnly']), get_my_referrals)
 
 export default router
