@@ -1,6 +1,6 @@
-import joi from 'joi'
+import joi, { Schema } from 'joi'
 
-export const recordTransactionSchema = joi.object({
+export const recordTransactionSchema: Schema = joi.object({
   txHash: joi.string().required().messages({
     'any.required': `txHash not found`,
   }),
@@ -18,7 +18,7 @@ export const recordTransactionSchema = joi.object({
   }),
 })
 
-export const addSubdomainSchema = joi.object({
+export const addSubdomainSchema: Schema = joi.object({
   subDomain: joi.string().required().messages({
     'any.required': `subDomain not found`,
   }),
@@ -30,29 +30,29 @@ export const addSubdomainSchema = joi.object({
   }),
 })
 
-export const subdomainSchema = joi.object({
+export const subdomainSchema: Schema = joi.object({
   subDomain: joi.string().required().messages({
     'any.required': `subDomain not found`,
   }),
 })
 
-export const subscriptionIdSchema = joi.object({
+export const subscriptionIdSchema: Schema = joi.object({
   subscriptionId: joi.string().required().messages({
     'any.required': `subscriptionId not found`,
   }),
 })
 
-export const tokenAddressSchema = joi.object({
+export const tokenAddressSchema: Schema = joi.object({
   tokenAddress: joi.string().default('0x0000000000000000000000000000000000000000'),
 })
 
-export const userAddressSchema = joi.object({
+export const userAddressSchema: Schema = joi.object({
   userAddress: joi.string().required().messages({
     'any.required': `userAddress not found`,
   }),
 })
 
-export const coreumPurchaseSchema = joi.object({
+export const coreumPurchaseSchema: Schema = joi.object({
   subscriptionId: joi.string().required().messages({
     'any.required': `subscriptionId not found`,
   }),
@@ -60,7 +60,8 @@ export const coreumPurchaseSchema = joi.object({
   address: joi.string().required(),
   amount: joi.string().required(),
 })
-export const radixPurchaseSchema = joi.object({
+
+export const radixPurchaseSchema: Schema = joi.object({
   subscriptionId: joi.string().required().messages({
     'any.required': `subscriptionId not found`,
   }),

@@ -3,7 +3,7 @@ import { NextFunction, Response, Request } from 'express'
 import { getAccessToken } from './helper/jwt.js'
 
 // Get message - user will sign this message to verify himself
-export const get_message = async (req: Request, res: Response, next: NextFunction) => {
+export const get_message = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const message = await getMessage(req.query.publicKey as string, req.query.encryption as string)
     res.status(200).json(message)
@@ -13,7 +13,7 @@ export const get_message = async (req: Request, res: Response, next: NextFunctio
 }
 
 // Return access token if user is authentic
-export const verify_signer = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_signer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const accessToken = getAccessToken(req.body.publicKey)
     res.status(200).json(accessToken)
@@ -22,7 +22,7 @@ export const verify_signer = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export const signature_auth = async (req: Request, res: Response, next: NextFunction) => {
+export const signature_auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const response = await signatureAuth(req.body.publicKey)
     res.status(200).json({
@@ -37,7 +37,7 @@ export const signature_auth = async (req: Request, res: Response, next: NextFunc
 }
 
 // Return data usage if signature authentic
-export const get_profile = async (req: Request, res: Response, next: NextFunction) => {
+export const get_profile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const record = req.body.user
     res.status(200).json({
@@ -51,7 +51,7 @@ export const get_profile = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const verify_access_token = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_access_token = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const record = req.body.user
     res.status(200).json({
@@ -66,7 +66,7 @@ export const verify_access_token = async (req: Request, res: Response, next: Nex
   }
 }
 
-export const create_api_key = async (req: Request, res: Response, next: NextFunction) => {
+export const create_api_key = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const keyName = req.query.keyName as string
     const apiKey = await createApiKey(req.body.publicKey, keyName)
@@ -76,7 +76,7 @@ export const create_api_key = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export const get_user_keys = async (req: Request, res: Response, next: NextFunction) => {
+export const get_user_keys = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const data = await getUserKeys(req.body.publicKey)
     res.status(200).json(data)
@@ -85,7 +85,7 @@ export const get_user_keys = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export const verify_api_key = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_api_key = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const record = req.body.user
     res.status(200).json({
@@ -99,7 +99,7 @@ export const verify_api_key = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export const remove_api_key = async (req: Request, res: Response, next: NextFunction) => {
+export const remove_api_key = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await revokeApiKey(req.query.keyId as string, req.body.publicKey)
     res.status(200).send({ data: 'Success' })

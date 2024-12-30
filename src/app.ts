@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Request, Response, Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
@@ -18,7 +18,7 @@ import LighthouseRouter from './routes/lighthouse.js'
 import WebhookRouter from './routes/stripeWebhook.js'
 import InstrumentationRouter from './routes/instrumentation.js'
 
-const app = express()
+const app: Application = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/api/webhook', WebhookRouter)
@@ -44,7 +44,7 @@ app.use(cors())
 
 app.use(prometheusMetrics.middleware)
 
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (req: Request, res: Response): void => {
   res.status(200).send('OK')
 })
 

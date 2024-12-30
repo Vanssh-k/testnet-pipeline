@@ -48,7 +48,7 @@ const validateStripePayload = async (req: Request) => {
 //   }
 // }
 
-const processStripePayment = async (data: any, eventType: any) => {
+const processStripePayment = async (data: any, eventType: string) => {
   switch (eventType) {
     case 'checkout.session.completed':
       try {
@@ -57,7 +57,7 @@ const processStripePayment = async (data: any, eventType: any) => {
         if (data.mode === 'subscription') {
           const session = await stripe.checkout.sessions.retrieve(data.id)
           invoiceMetadata = session.metadata
-          subscriptionId = session.subscription
+          subscriptionId = session.subscription as string
         } else {
           invoiceMetadata = data.invoice_creation.invoice_data.metadata
         }
@@ -95,8 +95,6 @@ const processStripePayment = async (data: any, eventType: any) => {
         throw new CustomError(406, err)
       }
       break
-
-    // Handle other cases
 
     default:
       console.log(`Unhandled event type ${eventType}`)

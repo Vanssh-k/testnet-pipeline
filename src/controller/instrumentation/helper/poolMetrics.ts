@@ -31,12 +31,12 @@ const getPoolMetrics = async () => {
     const depositors = await getDepositerCount()
 
     const feePercentage = await contract.endowmentFee()
-    let fee: any = volumeRaw * (Number(feePercentage) / 100000)
-    fee = fee.toFixed(2)
+    let fee: number = volumeRaw * (Number(feePercentage) / 100000)
+    fee = parseFloat(fee.toFixed(2))
 
     const stakedAmount = iFilUSD.toFixed(2)
-    let liquidAmount: any = filUSD + usdcBal
-    liquidAmount = liquidAmount.toFixed(2)
+    let liquidAmount: number = filUSD + usdcBal
+    liquidAmount = parseFloat(liquidAmount.toFixed(2))
 
     const filShare = ((filUSD + iFilUSD) * 100) / tvlRaw
     const usdcShare = (usdcBal * 100) / tvlRaw

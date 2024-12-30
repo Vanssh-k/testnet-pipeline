@@ -1,7 +1,7 @@
 import docClient from '../../../db/db/ddbClient.js'
 import { ffTransactions } from '../../../config/constants.js'
 
-const getTransactions = async (evalKey: any) => {
+const getTransactions = async (evalKey: string | null) => {
   const limit = 10
 
   const params: any = {
@@ -31,7 +31,7 @@ const getTransactions = async (evalKey: any) => {
   }
 }
 
-const getUserTransactions = async (evalKey: any, userAddress: string) => {
+const getUserTransactions = async (evalKey: string | null, userAddress: string) => {
   const limit = 10
 
   // Build the query parameters

@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis'
-import { RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
+import { RateLimiterAbstract, RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
 import { Request, Response, NextFunction } from 'express'
 import logger from '../utils/logger.js'
 import config from '../config/index.js'
@@ -25,7 +25,7 @@ const rateLimiterOpts = {
   keyPrefix: 'rlimit:ip:', // Unique key prefix for different rate limiters
 }
 
-const _rateLimiter = new RateLimiterRedis(rateLimiterOpts)
+const _rateLimiter: RateLimiterAbstract = new RateLimiterRedis(rateLimiterOpts)
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const unique_address = req.ip ? `${req.ip}:url:${req.url}` : `unknown:url:${req.url}`

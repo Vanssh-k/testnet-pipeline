@@ -1,6 +1,12 @@
 import { type NextFunction, type Request, type Response } from 'express'
+import { Schema } from 'joi'
 
-export default (schema: any, intercept: any, allowUnknown = false) => {
+interface Intercept {
+  body?: boolean
+  query?: boolean
+}
+
+export default (schema: Schema, intercept: Intercept, allowUnknown = false) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const payload = intercept.body ? { ...req.body } : { ...req.query }
 
@@ -10,7 +16,7 @@ export default (schema: any, intercept: any, allowUnknown = false) => {
     if (validated.error) {
       const error = {
         message: validated.error.details[0].message.replace(/"/g, ''),
-        param: validated.error.details[0].context.key,
+        param: validated.error.details[0].context?.key,
       }
 
       return res.status(400).json({ error: error })

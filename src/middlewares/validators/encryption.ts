@@ -1,6 +1,6 @@
-import joi from 'joi'
+import joi, { Schema } from 'joi'
 
-export const saveFileEncryptionKeySchema = joi.object({
+export const saveFileEncryptionKeySchema: Schema = joi.object({
   publicKey: joi.string().required().messages({
     'any.required': `publicKey not found`,
   }),
@@ -30,7 +30,7 @@ export const saveFileEncryptionKeySchema = joi.object({
   }),
 })
 
-export const getFileEncryptionKeySchema = joi.object({
+export const getFileEncryptionKeySchema: Schema = joi.object({
   sharedTo: joi.string().required().messages({
     'any.required': `sharedTo not found`,
   }),
