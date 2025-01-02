@@ -7,6 +7,8 @@ import config from '../../../config/index.js'
 import { recordTransactions } from '../../../db/topup/userTransactions.js'
 import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import getNetwork from '../../../middlewares/getNetwork.js'
+import getReferral from '../../../db/user/referral/getReferral.js'
+import { referralBonusPercentage } from '../../../config/constants.js'
 
 const stripe = new Stripe(config.stripe_key)
 
@@ -90,6 +92,14 @@ const processStripePayment = async (data: any, eventType: any) => {
         if (dataCapPurchased) {
           await updateUserDataLimit(invoiceMetadata.walletAddress, dataCapPurchased)
           console.log('plan updated')
+
+          // Fetch referred_by from the database
+          const referral = await getReferral(invoiceMetadata.walletAddress)
+          if (referral && referral.referredBy) {
+            const bonusDataCap = dataCapPurchased * referralBonusPercentage
+            await updateUserDataLimit(referral.referredBy, bonusDataCap)
+            console.log('referral bonus updated')
+          }
         }
       } catch (err: any) {
         throw new CustomError(406, err)
