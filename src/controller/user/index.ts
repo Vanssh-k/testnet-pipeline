@@ -120,7 +120,7 @@ export const remove_tag = async (req: Request, res: Response, next: NextFunction
 
 export const get_referral_code = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const referralCode = generateReferralCode(req.body.publicKey)
+    const referralCode = await generateReferralCode(req.body.publicKey)
     return res.status(200).json({ referralCode })
   } catch (error) {
     next(error)
@@ -150,8 +150,8 @@ export const create_referral = async (req: Request, res: Response, next: NextFun
 
 export const get_referred_by = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await getReferral(req.body.publicKey)
-    return res.status(200).json('Success')
+    const referral = await getReferral(req.body.publicKey)
+    return res.status(200).json({ referral })
   } catch (error) {
     next(error)
   }
