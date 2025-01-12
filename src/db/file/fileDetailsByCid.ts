@@ -18,7 +18,7 @@ export default async (cid: string): Promise<FileSchema> => {
     const record = await dbbClient.query(params)
     const Items = record.Items ?? []
     return Items[0] as FileSchema
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error get file details by CID: ' + error)
     throw new CustomError(500, `Internal Server Error.`)
   }

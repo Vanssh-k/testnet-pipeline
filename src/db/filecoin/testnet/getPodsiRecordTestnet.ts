@@ -1,10 +1,10 @@
 import dbbClient from '../../db/ddbClient.js'
 import logger from '../../../utils/logger.js'
-import { TestnetPODSI } from '../../../types/filecoin.js'
+import { PODSI } from '../../../types/filecoin.js'
 import CustomError from '../../../middlewares/error/customError.js'
 import { FilecoinTestnetTableName } from '../../../config/constants.js'
 
-export default async (cid: string): Promise<TestnetPODSI | null> => {
+export default async (cid: string): Promise<PODSI | null> => {
   try {
     const params = {
       TableName: FilecoinTestnetTableName.PODSI_TABLE,
@@ -14,7 +14,7 @@ export default async (cid: string): Promise<TestnetPODSI | null> => {
     }
 
     const record = await dbbClient.get(params)
-    return (record.Item as TestnetPODSI) ?? null
+    return (record.Item as PODSI) ?? null
   } catch (error) {
     logger.error('Error update user details: ' + error)
     throw new CustomError(500, 'Internal Server Error.')

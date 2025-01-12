@@ -1,8 +1,23 @@
 import { v4 } from 'uuid'
 import { activatePlan } from './plansHelper.js'
 import { getUserTransactions, recordTransactions } from '../../../db/topup/userTransactions.js'
+import { UserTransaction } from '../../../types/transaction.js'
 
-const recordUserTransaction = async (bodyData: any, userRecord: any) => {
+interface BodyData {
+  txHash: string
+  tokenAddress: string
+  subscriptionID: number
+  chain: string
+}
+
+interface UserRecord {
+  publicKey: string
+}
+
+const recordUserTransaction = async (
+  bodyData: BodyData,
+  userRecord: UserRecord,
+): Promise<{ status: number; data: string }> => {
   const record = {
     id: v4().toString(),
     txHash: bodyData.txHash,
@@ -13,11 +28,11 @@ const recordUserTransaction = async (bodyData: any, userRecord: any) => {
     createdAt: Date.now(),
   }
   const saveRecord = await recordTransactions(record)
-  const activate = await activatePlan(userRecord, record.subscriptionID)
+  const activate = await activatePlan(userRecord, Number(record.subscriptionID))
   return { status: 200, data: 'Success!!!' }
 }
 
-const getUserTransactionDetails = async (publicKey: string) => {
+const getUserTransactionDetails = async (publicKey: string): Promise<UserTransaction[]> => {
   const record = await getUserTransactions(publicKey)
   return record
 }

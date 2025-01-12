@@ -4,7 +4,7 @@ import { getUserMetrics } from './helper/userMetrics.js'
 import { getTransactions, getUserTransactions } from './helper/transactions.js'
 import { getHistoricTVL, getHistoricDepositors, getHistoricFees, getHistoricVolume } from './helper/historicData.js'
 
-export const pool_metric = async (req: Request, res: Response, next: NextFunction) => {
+export const pool_metric = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { tvl, volume, fee, stakedAmount, liquidAmount, depositors, composition } = await getPoolMetrics()
     res.status(200).json({ tvl, volume, fee, stakedAmount, liquidAmount, depositors, composition })
@@ -13,7 +13,7 @@ export const pool_metric = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const user_metric = async (req: Request, res: Response, next: NextFunction) => {
+export const user_metric = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { datacapPurchased, datacapSpent, fileCount, dataUsed } = await getUserMetrics(
       req.query.userAddress as string,
@@ -24,19 +24,19 @@ export const user_metric = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const all_transactions = async (req: Request, res: Response, next: NextFunction) => {
+export const all_transactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { items, lastEvaluatedKey } = await getTransactions(req.query.lastEvaluatedKey)
+    const { items, lastEvaluatedKey } = await getTransactions((req.query.lastEvaluatedKey as string) || null)
     res.status(200).json({ items, lastEvaluatedKey })
   } catch (error) {
     next(error)
   }
 }
 
-export const user_transactions = async (req: Request, res: Response, next: NextFunction) => {
+export const user_transactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { items, lastEvaluatedKey } = await getUserTransactions(
-      req.query.lastEvaluatedKey,
+      (req.query.lastEvaluatedKey as string) || null,
       req.query.userAddress as string,
     )
     res.status(200).json({ items, lastEvaluatedKey })
@@ -45,7 +45,7 @@ export const user_transactions = async (req: Request, res: Response, next: NextF
   }
 }
 
-export const historic_tvl = async (req: Request, res: Response, next: NextFunction) => {
+export const historic_tvl = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const value = await getHistoricTVL()
     res.status(200).json(value)
@@ -54,7 +54,7 @@ export const historic_tvl = async (req: Request, res: Response, next: NextFuncti
   }
 }
 
-export const historic_volume = async (req: Request, res: Response, next: NextFunction) => {
+export const historic_volume = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const value = await getHistoricVolume()
     res.status(200).json(value)
@@ -63,7 +63,7 @@ export const historic_volume = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const historic_fees = async (req: Request, res: Response, next: NextFunction) => {
+export const historic_fees = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const value = await getHistoricFees()
     res.status(200).json(value)
@@ -72,7 +72,7 @@ export const historic_fees = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export const historic_depositors = async (req: Request, res: Response, next: NextFunction) => {
+export const historic_depositors = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const value = await getHistoricDepositors()
     res.status(200).json(value)

@@ -2,8 +2,9 @@ import dbbClient from '../../db/ddbClient.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
 import { FilecoinMainnetTableName } from '../../../config/constants.js'
+import { RAAS } from '../../../types/filecoin.js'
 
-export default async (cid: string) => {
+export default async (cid: string): Promise<RAAS> => {
   try {
     const params = {
       TableName: FilecoinMainnetTableName.RAAS_TABLE,
@@ -13,7 +14,7 @@ export default async (cid: string) => {
     }
     const record = await dbbClient.get(params)
     // const record = await dbbClient.query(params)
-    return record.Item
+    return record.Item as RAAS
   } catch (error) {
     /* istanbul ignore next */
     console.log('Error getting raas record', error)

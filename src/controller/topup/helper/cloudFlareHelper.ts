@@ -1,7 +1,7 @@
 import axios from 'axios'
 import config from '../../../config/index.js'
 
-const addDNSRecord = async (name: string) => {
+const addDNSRecord = async (name: string): Promise<string> => {
   try {
     const data = {
       type: 'CNAME',

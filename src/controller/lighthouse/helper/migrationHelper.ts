@@ -9,13 +9,13 @@ import addMigrationCIDs from '../../../db/migration/addMigrationCIDs.js'
 import createMigrationRequest from '../../../db/migration/createMigrationRequest.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-const addCIDToRAASTestnet = async (cid: string, fileID: string) => {
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+const addCIDToRAASTestnet = async (cid: string, fileID: string): Promise<void> => {
   await delay(30000) // after 5 min
   const __ = await axios.get(`https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`)
 }
 
-export const pinCID = async (record: any, cid: string, fileName: string, raas: any) => {
+export const pinCID = async (record: any, cid: string, fileName: string, raas: any): Promise<string> => {
   // Verify CID's
   if (!isIPFS.cid(cid)) {
     throw new CustomError(400, `Invalid CID`)
@@ -27,7 +27,7 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
 
   // Save Migration Request
   const timestamp = Date.now()
-  const requestID = v4().toString()
+  const requestID: string = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
     publicKey: record.publicKey,
@@ -37,7 +37,7 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
     lastUpdate: timestamp,
   })
 
-  const id = v4().toString()
+  const id: string = v4().toString()
   const saveCID = await addMigrationCIDs({
     id: id,
     cid: cid,
@@ -53,7 +53,7 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
   return requestID
 }
 
-export const migrationRequest = async (record: any, bodyData: string) => {
+export const migrationRequest = async (record: any, bodyData: string): Promise<string> => {
   // Get CID, filename array
   const data = JSON.parse(bodyData)
   if (data.length === 0) {
@@ -73,7 +73,7 @@ export const migrationRequest = async (record: any, bodyData: string) => {
 
   // Save Migration Request
   const timestamp = Date.now()
-  const requestID = v4().toString()
+  const requestID: string = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
     publicKey: record.publicKey,
@@ -100,7 +100,7 @@ export const migrationRequest = async (record: any, bodyData: string) => {
   return requestID
 }
 
-export const migrationRequestEnt = async (publicKey: string, bodyData: string, enterprise: any) => {
+export const migrationRequestEnt = async (publicKey: string, bodyData: string, enterprise: any): Promise<string> => {
   // Get CID, filename array
   const data = JSON.parse(bodyData)
   if (data.length === 0) {
@@ -116,7 +116,7 @@ export const migrationRequestEnt = async (publicKey: string, bodyData: string, e
 
   // Save Migration Request
   const timestamp = Date.now()
-  const requestID = v4().toString()
+  const requestID: string = v4().toString()
   const saveRequest = await createMigrationRequest({
     id: requestID,
     publicKey,

@@ -24,3 +24,10 @@ export type Referral = {
   publicKey: string
   referredBy: string
 }
+
+export type UserMetrics = {
+  datacapPurchased: number
+  datacapSpent: number
+  fileCount: number
+  dataUsed: number
+}

@@ -2,8 +2,9 @@ import dbbClient from '../../db/ddbClient.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
 import { FilecoinMainnetTableName } from '../../../config/constants.js'
+import { PODSI } from '../../../types/filecoin.js'
 
-export default async (cid: string) => {
+export default async (cid: string): Promise<PODSI> => {
   try {
     const params = {
       TableName: FilecoinMainnetTableName.PODSI_TABLE,
@@ -13,7 +14,7 @@ export default async (cid: string) => {
     }
     const record = await dbbClient.get(params)
     // const record = await dbbClient.query(params)
-    return record.Item
+    return record.Item as PODSI
   } catch (error) {
     /* istanbul ignore next */
     console.log('Error getting podsi record', error)

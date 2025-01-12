@@ -2,8 +2,9 @@ import dbbClient from '../db/ddbClient.js'
 import logger from '../../utils/logger.js'
 import { userTransactions } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
+import { UserTransaction } from '../../types/transaction.js'
 
-export const getUserTransactions = async (publicKey: string) => {
+export const getUserTransactions = async (publicKey: string): Promise<UserTransaction[]> => {
   try {
     const params = {
       TableName: userTransactions,
@@ -14,8 +15,7 @@ export const getUserTransactions = async (publicKey: string) => {
     }
 
     const record = await dbbClient.scan(params)
-    const Items = record.Items ?? []
-    return Items
+    return (record.Items as UserTransaction[]) ?? []
   } catch (error) {
     logger.error('Error update user details: ' + error)
     throw new CustomError(500, 'Internal Server Error.')

@@ -1,8 +1,9 @@
 import dbbClient from '../../db/ddbClient.js'
 import logger from '../../../utils/logger.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { DealParameters } from '../../../types/filecoin.js'
 
-export default async (dealParams: any) => {
+export default async (dealParams: DealParameters) => {
   try {
     const params = {
       TableName: 'deal-parameters',

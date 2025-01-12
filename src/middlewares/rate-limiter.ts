@@ -27,7 +27,7 @@ const rateLimiterOpts = {
 
 const _rateLimiter: RateLimiterAbstract = new RateLimiterRedis(rateLimiterOpts)
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const unique_address = req.ip ? `${req.ip}:url:${req.url}` : `unknown:url:${req.url}`
 
   if (isDevelopment) {
@@ -40,7 +40,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     .then((_: RateLimiterRes) => {
       next()
     })
-    .catch((e) => {
+    .catch((e: Error | RateLimiterRes) => {
       if (e instanceof Error) {
         // Handle Redis or other errors
         logger.error('Rate limiter error:', e)

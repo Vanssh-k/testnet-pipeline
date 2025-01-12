@@ -2,13 +2,14 @@ import { ethers } from 'ethers'
 import EndowmentABI from '../../../contract_abi/endowment.js'
 import config from '../../../config/index.js'
 import { getExchangeRate, get24hVolume, getDepositerCount } from './utils.js'
+import { PoolMetrics } from '../../../types/poolMetrics.js'
 
 const contractAddress = config.lighthouse_endowment_address
 const provider = new ethers.JsonRpcProvider(config.filecoin_rpc)
 
 const contract = new ethers.Contract(contractAddress, EndowmentABI, provider)
 
-const getPoolMetrics = async () => {
+const getPoolMetrics = async (): Promise<PoolMetrics> => {
   try {
     const filBalRaw = await contract.getContractBalance(ethers.ZeroAddress)
     const filBal = parseFloat(ethers.formatEther(filBalRaw))
@@ -41,7 +42,7 @@ const getPoolMetrics = async () => {
     const filShare = ((filUSD + iFilUSD) * 100) / tvlRaw
     const usdcShare = (usdcBal * 100) / tvlRaw
 
-    const composition = {
+    const composition: { FIL: [string, string, string]; USDC: [string, string, string] } = {
       FIL: [iFilBal.toFixed(2), filBal.toFixed(2), filShare.toFixed(2)],
       USDC: ['0.00', usdcBal.toFixed(2), usdcShare.toFixed(2)],
     }

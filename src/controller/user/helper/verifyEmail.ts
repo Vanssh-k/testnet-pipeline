@@ -4,7 +4,7 @@ import { setExCache, getCache } from '../../../db/db/cacheClient.js'
 import updateEmail from '../../../db/user/updateEmail.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-export const generateTokenAndSendMail = async (address: string, email: string) => {
+export const generateTokenAndSendMail = async (address: string, email: string): Promise<void> => {
   const token = v4().split('-').join('')
 
   const lastMailByUser: any = getCache(`lastMailByUser/${address}`)
@@ -25,7 +25,7 @@ export const generateTokenAndSendMail = async (address: string, email: string) =
   await sendEmail(email, 'Verify your email address', plainTextContent)
 }
 
-export const verifyEmailToken = async (token: string) => {
+export const verifyEmailToken = async (token: string): Promise<{ message: string }> => {
   const data: any = await getCache(`verifytoken/${token}`)
   if (!data) {
     throw new Error('This Token is expired')

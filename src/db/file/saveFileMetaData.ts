@@ -11,7 +11,7 @@ export default async (record: any): Promise<void> => {
     }
 
     await dbbClient.put(params)
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error save file metadata: ' + error)
     throw new CustomError(500, `Internal Server Error.`)
   }

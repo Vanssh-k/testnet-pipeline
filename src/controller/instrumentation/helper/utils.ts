@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Select } from '@aws-sdk/client-dynamodb'
 import docClient from '../../../db/db/ddbClient.js'
 import { ffTransactions, ffUserRecord, historicRecords } from '../../../config/constants.js'
+import { HistoricDataKey, HistoricRecord } from '../../../types/filecoin.js'
 
 export const getExchangeRate = async (): Promise<number> => {
   try {
@@ -67,7 +68,7 @@ export const getDepositerCount = async (): Promise<number> => {
   }
 }
 
-export const fetchData = async (attribute: string): Promise<any[]> => {
+export const fetchData = async (attribute: HistoricDataKey): Promise<number[]> => {
   const params = {
     TableName: historicRecords,
     KeyConditionExpression: 'recordType = :recordType',
@@ -80,7 +81,8 @@ export const fetchData = async (attribute: string): Promise<any[]> => {
 
   try {
     const data = await docClient.query(params)
-    return (data.Items ?? []).map((item) => item[attribute])
+    const items = data.Items as HistoricRecord[]
+    return items?.map((item) => item[attribute]) ?? []
   } catch (error) {
     console.error(`Error fetching ${attribute} data:`, error)
     throw error

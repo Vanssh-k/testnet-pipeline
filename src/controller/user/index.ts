@@ -12,7 +12,7 @@ import createReferralRecord from '../../db/user/referral/createReferralRecord.js
 import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export const get_uploads = async (req: Request, res: Response, next: NextFunction) => {
+export const get_uploads = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const fileList = await getUploads(req.body.user.publicKey as string, req.query.lastKey as string)
     res.status(200).send(fileList)
@@ -21,7 +21,7 @@ export const get_uploads = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const files_uploaded = async (req: Request, res: Response, next: NextFunction) => {
+export const files_uploaded = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const fileList = await getUploads(req.body.user.publicKey as string, req.query.lastKey as string)
 
@@ -34,7 +34,7 @@ export const files_uploaded = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export const user_data_usage = async (req: Request, res: Response, next: NextFunction) => {
+export const user_data_usage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     res.status(200).json({
       dataLimit: req.body.user.dataLimit,
@@ -45,7 +45,7 @@ export const user_data_usage = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const send_email_verification_mail = async (req: Request, res: Response, next: NextFunction) => {
+export const send_email_verification_mail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const status = await generateTokenAndSendMail(req.body.publicKey as string, req.query.email as string)
     res.status(200).send(status)
@@ -54,7 +54,7 @@ export const send_email_verification_mail = async (req: Request, res: Response, 
   }
 }
 
-export const verify_email_token = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_email_token = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const status = await verifyEmailToken((req.query.verification_token as string).trim())
     res.status(200).send(status)
@@ -63,7 +63,7 @@ export const verify_email_token = async (req: Request, res: Response, next: Next
   }
 }
 
-export const verify_web3auth_email = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_web3auth_email = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const app_pub_key = req.query.appPubKey as string
     const idToken = req.query.idToken as string
@@ -79,59 +79,59 @@ export const verify_web3auth_email = async (req: Request, res: Response, next: N
   }
 }
 
-export const create_tag = async (req: Request, res: Response, next: NextFunction) => {
+export const create_tag = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await createTagHelper(req.body.tag, req.body.cid, req.body.publicKey)
-    return res.status(200).json('Success')
+    res.status(200).json('Success')
   } catch (error: any) {
     next(error)
   }
 }
 
-export const get_tag_details = async (req: Request, res: Response, next: NextFunction) => {
+export const get_tag_details = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const tagDetails = await getTagDetailsHelper(req.query.tag as string, req.body.publicKey)
-    return res.status(200).json({ data: tagDetails })
+    res.status(200).json({ data: tagDetails })
   } catch (error) {
     next(error)
   }
 }
 
-export const get_all_tags = async (req: Request, res: Response, next: NextFunction) => {
+export const get_all_tags = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const tagDetails = await getAllTagsHelper(req.body.publicKey)
-    return res.status(200).json({ data: tagDetails })
+    res.status(200).json({ data: tagDetails })
   } catch (error: any) {
     next(error)
   }
 }
 
-export const remove_tag = async (req: Request, res: Response, next: NextFunction) => {
+export const remove_tag = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await removeTagHelper(req.query.tag as string, req.body.publicKey)
-    return res.status(200).json('Success')
+    res.status(200).json('Success')
   } catch (error) {
     next(error)
   }
 }
 
-export const create_referral = async (req: Request, res: Response, next: NextFunction) => {
+export const create_referral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const details = {
       publicKey: req.body.publicKey,
       referredBy: req.query.referredBy as string,
     }
     await createReferralRecord(details)
-    return res.status(200).json('Success')
+    res.status(200).json('Success')
   } catch (error) {
     next(error)
   }
 }
 
-export const get_referral = async (req: Request, res: Response, next: NextFunction) => {
+export const get_referral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await getReferral(req.body.publicKey)
-    return res.status(200).json('Success')
+    res.status(200).json('Success')
   } catch (error) {
     next(error)
   }

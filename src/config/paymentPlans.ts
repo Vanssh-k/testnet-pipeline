@@ -1,4 +1,6 @@
-const paymentPlans = [
+import { PaymentPlan } from '../types/payment.js'
+
+const paymentPlans: PaymentPlan[] = [
   {
     index: 0,
     planName: 'Baecon',

@@ -2,9 +2,10 @@ import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getSubscriptionStatus } from './billing.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { Plan } from '../../../types/payment.js'
 
-const getActivePlanList = async () => {
-  const filterPlans = []
+const getActivePlanList = async (): Promise<Plan[]> => {
+  const filterPlans: Plan[] = []
   for (let i = 0; i < paymentPlans.length; i++) {
     filterPlans.push({
       subscriptionId: paymentPlans[i]['index'],
@@ -19,7 +20,7 @@ const getActivePlanList = async () => {
   return filterPlans
 }
 
-const getPlanDetails = async (planId: string) => {
+const getPlanDetails = async (planId: string): Promise<{ status: number; data: Plan }> => {
   const planList = await getActivePlanList()
   let i
   for (i = 0; i < planList.length; i++) {
@@ -30,7 +31,7 @@ const getPlanDetails = async (planId: string) => {
   return { status: 200, data: planList[i] }
 }
 
-const usersActivePlan = async (publicKey: string, subId: number) => {
+const usersActivePlan = async (publicKey: string, subId: number): Promise<{ status: number; data: any }> => {
   const { status, subscriptionId } = await getSubscriptionStatus(publicKey, subId)
   console.log(status)
   console.log(subscriptionId)
@@ -61,7 +62,7 @@ const usersActivePlan = async (publicKey: string, subId: number) => {
   }
 }
 
-const activatePlan = async (userRecord: any, subId: number) => {
+const activatePlan = async (userRecord: any, subId: number): Promise<{ status: number; data: { message: string } }> => {
   const activePlan = await usersActivePlan(userRecord.publicKey, subId)
   if (activePlan.status !== 200) {
     throw new CustomError(403, `No active plan for user ${userRecord.publicKey}`)

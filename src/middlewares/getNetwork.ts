@@ -36,7 +36,7 @@ function checkRadix(value: any): boolean {
   return value.startsWith(prefixMainnet) || value.startsWith(prefixTestnet)
 }
 
-export default (value: string) => {
+export default (value: string): string => {
   try {
     if (checkEVM(value)) {
       return 'evm'

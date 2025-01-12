@@ -19,18 +19,26 @@ import CustomError from '../../../middlewares/error/customError.js'
 
 import getDealInfoCG from '../../../db/filecoin/getDealInfoCG.js'
 import getFFRecord from '../../../db/filecoin/getFFRecord.js'
+import { CIDListItem } from '../../../types/filecoin.js'
 
-const ffDeal = async (cid: string) => {
+type DealData = {
+  pieceCID: string
+  payloadCid: string
+  dealId: number
+  miner: string
+}
+
+const ffDeal = async (cid: string): Promise<DealData[] | null> => {
   const record = await getFFRecord(cid)
   if (!record) {
     return null
   }
   const deal = await getDealInfoCG(record[0]?.pieceCID)
   if (!deal) {
-    return
+    return null
   }
 
-  const dealData = []
+  const dealData: DealData[] = []
   for (let i = 0; i < deal.deal.length; i++) {
     dealData.push({
       pieceCID: record[0]?.pieceCID,
@@ -42,7 +50,7 @@ const ffDeal = async (cid: string) => {
   return dealData
 }
 
-export const cidDealStatus = async (cid: string) => {
+export const cidDealStatus = async (cid: string): Promise<any[]> => {
   try {
     const ffDeals = await ffDeal(cid)
     if (ffDeals) {
@@ -66,11 +74,11 @@ export const cidDealStatus = async (cid: string) => {
       deals[i] = {}
       deals[i].pieceCID = raasInfo?.cid
       deals[i].payloadCid = fileInfo?.cidV1
-      deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
-      deals[i].carFileSize = parseInt(fileInfo?.carSize)
+      deals[i].pieceSize = parseInt(fileInfo?.pieceSize.toString())
+      deals[i].carFileSize = parseInt(fileInfo?.carSize.toString())
       deals[i].dealId = dealRecordInfo.chainDealID
       deals[i].miner = 'f0' + raasInfo?.miners[i]
-      deals[i].content = parseInt(fileInfo?.fileSize)
+      deals[i].content = parseInt(fileInfo?.fileSize.toString())
       deals[i].dealStatus = dealRecordInfo.dealStatus
       deals[i].startEpoch = dealRecordInfo.startEpoch
       deals[i].endEpoch = dealRecordInfo.endEpoch
@@ -117,7 +125,15 @@ export const cidDealStatus = async (cid: string) => {
   }
 }
 
-export const dealInfoTestnet = async (dealId: string) => {
+export const dealInfoTestnet = async (
+  dealId: string,
+): Promise<{
+  dealId: number
+  storageProvider: string
+  startEpoch: number
+  endEpoch: number
+  publishCid: string
+}> => {
   const dealRecord = await getDealInfoTestnet(dealId)
   const dealRecordInfo = dealRecord[0]
   return {
@@ -151,7 +167,7 @@ type dealResponseTestnet = {
   dealInfo: DealInfoTestnet[]
 }
 
-export const podsi = async (cid: string) => {
+export const podsi = async (cid: string): Promise<dealResponse> => {
   const cidRecord = await getCIDRecord(cid)
   /* istanbul ignore next */
 
@@ -176,7 +192,7 @@ export const podsi = async (cid: string) => {
         const deals = await filecoinDeal(aggregatedIn['aggregateID'])
         for (let i = 0; i < deals.length; i++) {
           dealArray.push({
-            dealId: parseInt(deals[i]['chainDealID']),
+            dealId: parseInt(deals[i]['chainDealID'].toString()),
             storageProvider: deals[i]['storageProvider'],
             proof: {
               inclusionProof: proofOfAggregate['fileProof']['inclusionProof'],
@@ -199,7 +215,19 @@ export const podsi = async (cid: string) => {
   return dealRes
 }
 
-export const fileInfoTestnet = async (cid: string) => {
+export const fileInfoTestnet = async (
+  cid: string,
+): Promise<
+  | {
+      cid: string
+      cidV1: string
+      fileSize: number
+      pieceCid: string
+      pieceSize: number
+      carSize: number
+    }
+  | object
+> => {
   const fileRecord = await getFileInfoTestnet(cid)
   if (!fileRecord) {
     return {}
@@ -214,7 +242,18 @@ export const fileInfoTestnet = async (cid: string) => {
   }
 }
 
-export const raasInfoTestnet = async (cid: string) => {
+export const raasInfoTestnet = async (
+  cid: string,
+): Promise<
+  | {
+      cid: string
+      dealIDs: string[]
+      miners: string[]
+      currentReplications: number
+      replicationTarget: number
+    }
+  | object
+> => {
   const raasInfo = await getRaasInfoTestnet(cid)
   if (!raasInfo) {
     return {}
@@ -228,7 +267,7 @@ export const raasInfoTestnet = async (cid: string) => {
   }
 }
 
-export const podsiTestnet = async (cid: string) => {
+export const podsiTestnet = async (cid: string): Promise<dealResponseTestnet> => {
   const cidInfo = await getPodsiRecordTestnet(cid)
   if (!cidInfo) {
     throw new CustomError(404, 'Record not found.')
@@ -255,7 +294,21 @@ export const podsiTestnet = async (cid: string) => {
   return dealRes
 }
 
-export const aggregateInfo = async (aggregateID: string) => {
+export const aggregateInfo = async (
+  aggregateID: string,
+): Promise<
+  | {
+      pieceCID: string
+      pieceSize: number
+      carFileSize: number
+      dealInfo: {
+        dealUUID: string
+        dealId: number
+        storageProvider: string
+      }[]
+    }
+  | object
+> => {
   const aggregatedIn: any = await getBundleRecordTestnet(aggregateID)
 
   /* istanbul ignore next */
@@ -266,7 +319,7 @@ export const aggregateInfo = async (aggregateID: string) => {
       for (let i = 0; i < deals.length; i++) {
         dealInfo.push({
           dealUUID: deals[i]['dealUUID'],
-          dealId: parseInt(deals[i]['chainDealID']),
+          dealId: parseInt(deals[i]['chainDealID'].toString()),
           storageProvider: deals[i]['storageProvider'],
         })
       }
@@ -285,7 +338,19 @@ export const aggregateInfo = async (aggregateID: string) => {
   return {}
 }
 
-export const bundleDetails = async (bundleId: string) => {
+export const bundleDetails = async (
+  bundleId: string,
+): Promise<{
+  aggregateID: string
+  aggFileStatus: string
+  carFileSize: number
+  commpCID: string
+  lastUpdate: number
+  minerCount: number
+  payloadCid: string
+  pieceSize: number
+  cidList: any[]
+} | null> => {
   const bundleRecord: any = await getBundleRecord(bundleId)
 
   if (!bundleRecord) {
@@ -293,7 +358,7 @@ export const bundleDetails = async (bundleId: string) => {
   }
 
   // Get List of CIDs
-  const cidList = await getCIDList(bundleId)
+  const cidList: CIDListItem[] = await getCIDList(bundleId)
   bundleRecord['cidList'] = cidList
 
   return bundleRecord

@@ -1,7 +1,13 @@
 import docClient from '../../../db/db/ddbClient.js'
 import { ffTransactions } from '../../../config/constants.js'
+import { FFTransaction } from '../../../types/filecoin.js'
 
-const getTransactions = async (evalKey: string | null) => {
+interface TransactionsResult {
+  items: FFTransaction[]
+  lastEvaluatedKey?: any
+}
+
+const getTransactions = async (evalKey: string | null): Promise<TransactionsResult> => {
   const limit = 10
 
   const params: any = {
@@ -24,14 +30,14 @@ const getTransactions = async (evalKey: string | null) => {
 
   try {
     const data = await docClient.query(params)
-    return { items: data.Items, lastEvaluatedKey: data.LastEvaluatedKey }
+    return { items: data.Items as FFTransaction[], lastEvaluatedKey: data.LastEvaluatedKey }
   } catch (error: any) {
     console.error(error)
     throw new Error()
   }
 }
 
-const getUserTransactions = async (evalKey: string | null, userAddress: string) => {
+const getUserTransactions = async (evalKey: string | null, userAddress: string): Promise<TransactionsResult> => {
   const limit = 10
 
   // Build the query parameters
@@ -58,7 +64,7 @@ const getUserTransactions = async (evalKey: string | null, userAddress: string) 
 
   try {
     const data = await docClient.query(params)
-    return { items: data.Items, lastEvaluatedKey: data.LastEvaluatedKey }
+    return { items: data.Items as FFTransaction[], lastEvaluatedKey: data.LastEvaluatedKey }
   } catch (error: any) {
     console.error(error)
     throw new Error()
