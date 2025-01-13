@@ -17,6 +17,7 @@ const userTable = isDevelopment ? 'tn-user-record' : 'user-record'
 const userAuthTable = isDevelopment ? 'tn-user-auth' : 'user-auth'
 const fileTable = isDevelopment ? 'tn-files' : 'files'
 const referralTable = isDevelopment ? 'tn-referral' : 'referral'
+const referralCodeTable = isDevelopment ? 'tn-user-referral-code' : 'user-referral-code'
 const cidTagTable = isDevelopment ? 'tn-cid-tag-table' : 'cid-tag-table'
 const gatewayTable = isDevelopment ? 'tn-dedicated-gateway' : 'dedicatedGatewayRecords'
 const migrationCIDs = isDevelopment ? 'tn-migration-cids' : 'migration-cid'
@@ -39,14 +40,6 @@ const FilecoinLegacyTables = {
   FILE_POSDI: 'file-podsi',
 }
 
-// const FilecoinTestnetTableName = {
-//   PODSI_TABLE: 'inclusion-proof',
-//   RAAS_TABLE: 'raas-testing',
-//   AGGREGATE_TABLE: 'aggregate-file-records',
-//   FILE_RECORD_TABLE: 'file-records',
-//   DEAL_RECORD_TABLE: 'deal-records',
-// }
-
 const FilecoinTestnetTableName = {
   PODSI_TABLE: 'tn-inclusion-proof',
   RAAS_TABLE: 'tn-raas',
@@ -55,7 +48,7 @@ const FilecoinTestnetTableName = {
   DEAL_RECORD_TABLE: 'tn-filecoin-deals',
 }
 
-const FilecoinMainnetTableName = {
+const FilecoinMainnetLegacyTableName = {
   PODSI_TABLE: 'de-inclusion-proof',
   RAAS_TABLE: 'de-raas',
   AGGREGATE_TABLE: 'de-aggregate-info',
@@ -63,7 +56,7 @@ const FilecoinMainnetTableName = {
   DEAL_RECORD_TABLE: 'de-filecoin-deals',
 }
 
-const lighthouse_migration_node = 'http://65.2.9.210'
+const lighthouse_migration_node = 'http://13.200.252.197'
 const lighthouse_ipfs_node = isDevelopment ? 'https://node-test.lighthouse.storage' : 'https://node.lighthouse.storage'
 const lighthouse_auth_enc_node = isDevelopment
   ? 'https://encryption-dev.lighthouse.storage'
@@ -84,6 +77,8 @@ const lighthouse_encryption_nodes = isDevelopment
       'https://encryption.lighthouse.storage/api/auth-message/5',
     ]
 
+const referralBonusPercentage = 0.1
+
 export {
   isDevelopment,
   ffUserRecord,
@@ -95,6 +90,7 @@ export {
   jwtExpire,
   userTable,
   referralTable,
+  referralCodeTable,
   userAuthTable,
   fileTable,
   cidTagTable,
@@ -108,7 +104,7 @@ export {
   fileTableEncryption,
   ipnsTable,
   FilecoinTestnetTableName,
-  FilecoinMainnetTableName,
+  FilecoinMainnetLegacyTableName,
   filesPageSize,
   cacheTime,
   lighthouse_migration_node,
@@ -116,4 +112,5 @@ export {
   lighthouse_auth_enc_node,
   lighthouse_encryption_nodes,
   oceanPublicKey,
+  referralBonusPercentage,
 }

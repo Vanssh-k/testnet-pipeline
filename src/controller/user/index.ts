@@ -4,6 +4,7 @@ import {
   getTagDetailsHelper,
   getAllTagsHelper,
   removeTagHelper,
+  generateReferralCode,
 } from './helper/userHelper.js'
 import { NextFunction, Request, Response } from 'express'
 import updateEmail from '../../db/user/updateEmail.js'
@@ -11,6 +12,8 @@ import { generateTokenAndSendMail, verifyEmailToken } from './helper/verifyEmail
 import createReferralRecord from '../../db/user/referral/createReferralRecord.js'
 import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
+import getUserFromCode from '../../db/user/referral/getUserFromCode.js'
+import getUserReferrals from '../../db/user/referral/getUserReferrals.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -115,11 +118,28 @@ export const remove_tag = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+export const get_referral_code = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const referralCode = await generateReferralCode(req.body.publicKey)
+    res.status(200).json({ referralCode })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const create_referral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const referralCode = req.query.referredBy as string
+    if (referralCode === null) {
+      res.status(200).json('Success')
+    }
+    const referralDetails = await getUserFromCode(referralCode)
+    if (referralDetails.length === 0) {
+      res.status(400).json('Invalid referral code.')
+    }
     const details = {
       publicKey: req.body.publicKey,
-      referredBy: req.query.referredBy as string,
+      referredBy: referralDetails[0].publicKey,
     }
     await createReferralRecord(details)
     res.status(200).json('Success')
@@ -128,10 +148,19 @@ export const create_referral = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const get_referral = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const get_referred_by = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await getReferral(req.body.publicKey)
-    res.status(200).json('Success')
+    const referral = await getReferral(req.body.publicKey)
+    res.status(200).json({ referral })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const get_my_referrals = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const referralCode = await getUserReferrals(req.body.publicKey)
+    res.status(200).json({ referralCode })
   } catch (error) {
     next(error)
   }

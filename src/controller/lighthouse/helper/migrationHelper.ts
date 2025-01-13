@@ -8,11 +8,21 @@ import testnetDealParams from '../../../db/filecoin/testnet/testnetDealParams.js
 import addMigrationCIDs from '../../../db/migration/addMigrationCIDs.js'
 import createMigrationRequest from '../../../db/migration/createMigrationRequest.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import updateRequestStatus from '../../../db/migration/updateRequestStatus.js'
 
-const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
-const addCIDToRAASTestnet = async (cid: string, fileID: string): Promise<void> => {
-  await delay(30000) // after 5 min
-  const __ = await axios.get(`https://calibration.lighthouse.storage/api/deal/add_cid?cid=${cid}&fileId=${fileID}`)
+const triggerMigration = async (requestID: string): Promise<void> => {
+  const __ = await axios.post(
+    'http://13.200.252.197/migration/',
+    {
+      requestId: requestID,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'insomnia/10.0.0',
+      },
+    },
+  )
 }
 
 export const pinCID = async (record: any, cid: string, fileName: string, raas: any): Promise<string> => {
@@ -47,10 +57,19 @@ export const pinCID = async (record: any, cid: string, fileName: string, raas: a
     cidStatus: MigrationStatus.Queued,
     lastUpdate: timestamp,
   })
-
-  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
-
+  await triggerMigration(requestID)
   return requestID
+}
+
+export const retryMigration = async (requestID: string): Promise<string> => {
+  try {
+    await updateRequestStatus(requestID, MigrationStatus.Queued)
+    await triggerMigration(requestID)
+    return 'success'
+  } catch (error) {
+    console.error('Error retrying migration', error)
+    return 'failed'
+  }
 }
 
 export const migrationRequest = async (record: any, bodyData: string): Promise<string> => {
@@ -96,7 +115,7 @@ export const migrationRequest = async (record: any, bodyData: string): Promise<s
     })
   }
 
-  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
+  await triggerMigration(requestID)
   return requestID
 }
 
@@ -139,6 +158,6 @@ export const migrationRequestEnt = async (publicKey: string, bodyData: string, e
     })
   }
 
-  // const startMigration = axios.get(`${lighthouse_migration_node}/api?requestId=${requestID}`)
+  await triggerMigration(requestID)
   return requestID
 }

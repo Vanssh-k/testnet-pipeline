@@ -20,6 +20,7 @@ import {
   migrationRequestEntSchema,
   migrationRequestIdSchema,
   migrationRequestSchema,
+  pinningStatusSchema,
 } from './lighthouse.js'
 import { getFileEncryptionKeySchema, saveFileEncryptionKeySchema } from './encryption.js'
 import { addProposalSchema } from './governance.js'
@@ -63,6 +64,7 @@ export default {
   migrationRequestEntSchema,
   migrationRequestIdSchema,
   migrationRequestSchema,
+  pinningStatusSchema,
   verifyPublishSchema,
   verifyRemoveSchema,
   emailSchema,

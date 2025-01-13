@@ -12,7 +12,7 @@ import {
   raasInfoTestnet,
 } from './helper/cidHelper.js'
 import fileDetailsByCid from '../../db/file/fileDetailsByCid.js'
-import { pinCID, migrationRequest, migrationRequestEnt } from './helper/migrationHelper.js'
+import { pinCID, migrationRequest, migrationRequestEnt, retryMigration } from './helper/migrationHelper.js'
 import migrationRequestInfo from '../../db/migration/migrationRequestInfo.js'
 import listMigrationRequests from '../../db/migration/listMigrationRequests.js'
 import cidPinStatus from '../../db/migration/cidPinStatus.js'
@@ -135,6 +135,15 @@ export const list_migration_requests = async (req: Request, res: Response, next:
   }
 }
 
+export const retry_migration = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const status = await retryMigration(req.query.requestId as string)
+    res.status(200).json(status)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const migration_request_info = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     let record = await getCache(`migration-req-info-${req.query.requestId?.toLocaleString()}`)
@@ -202,20 +211,31 @@ export const cid_pin_status = async (req: Request, res: Response, next: NextFunc
     const pinStatus = await cidPinStatus(req.query.cid as string)
     let pinned: string = 'failed'
     let fileSize: string = '0'
+    let requestId: string = ''
     for (let i = 0; i < pinStatus.length; i++) {
       if (pinStatus[i].cidStatus === 'pinned') {
         pinned = 'pinned'
         fileSize = pinStatus[i].fileSizeInBytes.toString()
+        requestId = pinStatus[i].requestID
         break
       }
-      if (pinStatus[i].cidStatus === 'queued') {
-        pinned = 'queued'
-      }
+      pinned = pinStatus[i].cidStatus
+      requestId = pinStatus[i].requestID
+      fileSize = pinStatus[i].fileSizeInBytes.toString()
     }
-    res.status(200).json({
-      status: pinned,
-      fileSize: fileSize,
-    })
+
+    if (req.query.requestId) {
+      res.status(200).json({
+        status: pinned,
+        fileSize: fileSize,
+        requestId: requestId,
+      })
+    } else {
+      res.status(200).json({
+        status: pinned,
+        fileSize: fileSize,
+      })
+    }
   } catch (error) {
     next(error)
   }

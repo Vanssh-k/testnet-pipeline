@@ -1,12 +1,12 @@
 import dbbClient from '../../db/ddbClient.js'
 import CustomError from '../../../middlewares/error/customError.js'
 import { FilecoinDealsMainnet } from '../../../types/filecoin.js'
-import { FilecoinMainnetTableName } from '../../../config/constants.js'
+import { FilecoinMainnetLegacyTableName } from '../../../config/constants.js'
 
 export default async (dealId: string): Promise<FilecoinDealsMainnet[]> => {
   try {
     const params = {
-      TableName: FilecoinMainnetTableName.DEAL_RECORD_TABLE,
+      TableName: FilecoinMainnetLegacyTableName.DEAL_RECORD_TABLE,
       IndexName: 'chainDealID-index',
       KeyConditionExpression: 'chainDealID = :c',
       ExpressionAttributeValues: {

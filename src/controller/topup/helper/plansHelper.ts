@@ -2,6 +2,8 @@ import updateUserDataLimit from '../../../db/user/updateUserDataLimit.js'
 import { getSubscriptionStatus } from './billing.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import getReferral from '../../../db/user/referral/getReferral.js'
+import { referralBonusPercentage } from '../../../config/constants.js'
 import { Plan } from '../../../types/payment.js'
 
 const getActivePlanList = async (): Promise<Plan[]> => {
@@ -73,6 +75,14 @@ const activatePlan = async (userRecord: any, subId: number): Promise<{ status: n
   if (dataCapPurchased) {
     const updateDataCapResponse = await updateUserDataLimit(userRecord.publicKey, dataCapPurchased)
     console.log('plan updated')
+
+    // Fetch referred_by from the database
+    const referral = await getReferral(userRecord.publicKey)
+    if (referral && referral.referredBy) {
+      const bonusDataCap = dataCapPurchased * referralBonusPercentage
+      await updateUserDataLimit(referral.referredBy, bonusDataCap)
+      console.log('referral bonus updated')
+    }
   }
 
   return {
