@@ -19,7 +19,7 @@ const checkTxnExists = async (pubKey: string, transactionHash: string) => {
 
 const validatePayment = async (req: Request) => {
   const response = await axios.get(`${config.coreum_api_url}/${req.body.transactionHash}`)
-  const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(1)
+  const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(2)
   const fromAddress = response.data.tx.body.messages[0].from_address
   const toAddress = response.data.tx.body.messages[0].to_address
   const pubKey = req.body.publicKey

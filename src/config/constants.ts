@@ -77,6 +77,8 @@ const lighthouse_encryption_nodes = isDevelopment
       'https://encryption.lighthouse.storage/api/auth-message/5',
     ]
 
+const referralBonusPercentage = 0.1
+
 export {
   isDevelopment,
   ffUserRecord,
@@ -110,4 +112,5 @@ export {
   lighthouse_auth_enc_node,
   lighthouse_encryption_nodes,
   oceanPublicKey,
+  referralBonusPercentage,
 }
