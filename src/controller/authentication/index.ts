@@ -92,6 +92,7 @@ export const verify_api_key = async (req: Request, res: Response, next: NextFunc
       publicKey: record.publicKey,
       dataLimit: record.dataLimit,
       dataUsed: record.dataUsed,
+      createdAt: record.createdAt,
       email: record.email,
     })
   } catch (error) {
