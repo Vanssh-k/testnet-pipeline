@@ -23,6 +23,8 @@ export const getMessage = async (publicKey: string, encryption: string): Promise
 
   const record = await userDetails(publicKey, network)
   const timestamp = Date.now()
+  const date = new Date(timestamp)
+  const formattedDate = date.toLocaleDateString('en-GB')
   const message = messageString + timestamp
 
   // New user
@@ -37,6 +39,7 @@ export const getMessage = async (publicKey: string, encryption: string): Promise
       email: 'null-' + v4(),
       createdAt: timestamp,
       updatedAt: timestamp,
+      dataPartition: formattedDate,
     }
 
     await createNewUser(userRecord, network)
