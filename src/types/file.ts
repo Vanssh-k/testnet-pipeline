@@ -9,4 +9,5 @@ export type FileSchema = {
   sentForDeal: string
   lastUpdate: number
   createdAt: number
+  dataPartition: string
 }

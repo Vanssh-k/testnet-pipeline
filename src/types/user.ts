@@ -8,6 +8,7 @@ export type UserDetails = {
   network: string
   createdAt: number
   updatedAt: number
+  dataPartition: string
 }
 
 export type UserAuthDetails = {
