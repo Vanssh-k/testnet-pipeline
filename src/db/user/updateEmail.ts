@@ -20,6 +20,6 @@ export default async (publicKey: string, email: string): Promise<void> => {
     await dbbClient.update(params)
   } catch (error) {
     logger.error('Update user email: ' + error)
-    throw new CustomError(500, `Internal Server Error.`)
+    throw new CustomError(500, `Error updating user email.`)
   }
 }
