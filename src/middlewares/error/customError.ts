@@ -1,5 +1,5 @@
 class CustomError extends Error {
-  error?: any
+  error?: { code: number; message: string }
 
   constructor(statusCode: number, error: string) {
     super(`${error}`)
@@ -11,8 +11,8 @@ class CustomError extends Error {
     Error.captureStackTrace(this, this.constructor)
   }
 
-  serializeErrors() {
-    return [{ message: this.error }]
+  serializeErrors(): { message: { code: number; message: string } }[] {
+    return [{ message: this.error! }]
   }
 }
 

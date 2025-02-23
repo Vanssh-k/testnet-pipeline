@@ -12,9 +12,9 @@ import checkApiKey from '../db/user/auth/checkApiKey.js'
 import { getCache, removeCache } from '../db/db/cacheClient.js'
 import { NextFunction, Request, Response } from 'express'
 
-const verifyAccessToken = async (accessToken: string) => {}
+const verifyAccessToken = async (accessToken: string): Promise<void> => {}
 
-const verifySig = async (accessToken: string) => {}
+const verifySig = async (accessToken: string): Promise<void> => {}
 
 /*
   req.body.publicKey: only to pass public key
@@ -22,7 +22,7 @@ const verifySig = async (accessToken: string) => {}
 */
 
 export default (rule: string, clauses: string[] = []) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       switch (rule) {
         case 'verifysignature':
@@ -77,8 +77,8 @@ export default (rule: string, clauses: string[] = []) => {
           break
 
         case 'verifyMigrationRequest':
-          const requestId = req.query.requestId
-          const requestInfo = await getMigrationRequestInfo(requestId as string)
+          const requestId = req.query.requestId as string
+          const requestInfo = await getMigrationRequestInfo(requestId)
           if (!requestInfo) {
             throw new CustomError(404, 'User Not Found.')
           }
@@ -93,7 +93,7 @@ export default (rule: string, clauses: string[] = []) => {
 
         case 'enterpriseRoute':
           const routeAccessToken = req.headers['authorization']?.split(' ')[1]
-          let verificationToken = null
+          let verificationToken: string | null = null
           if (req.body.enterprise === 'ocean_protocol') {
             verificationToken = config.migration_ocean_access_token
             if (req.body.publicKey) {

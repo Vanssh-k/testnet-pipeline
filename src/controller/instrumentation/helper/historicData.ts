@@ -1,6 +1,6 @@
 import { fetchData } from './utils.js'
 
-export const getHistoricTVL = async () => {
+export const getHistoricTVL = async (): Promise<number[]> => {
   try {
     const tvlData = await fetchData('tvl')
     return tvlData
@@ -10,7 +10,7 @@ export const getHistoricTVL = async () => {
   }
 }
 
-export const getHistoricVolume = async () => {
+export const getHistoricVolume = async (): Promise<number[]> => {
   try {
     const volumeData = await fetchData('volume24h')
     return volumeData
@@ -20,7 +20,7 @@ export const getHistoricVolume = async () => {
   }
 }
 
-export const getHistoricFees = async () => {
+export const getHistoricFees = async (): Promise<number[]> => {
   try {
     const feesData = await fetchData('fees24h')
     return feesData
@@ -30,7 +30,7 @@ export const getHistoricFees = async () => {
   }
 }
 
-export const getHistoricDepositors = async () => {
+export const getHistoricDepositors = async (): Promise<number[]> => {
   try {
     const depositorsData = await fetchData('depositorsCumulative')
     return depositorsData

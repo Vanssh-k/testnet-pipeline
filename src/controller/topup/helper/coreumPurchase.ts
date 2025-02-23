@@ -8,16 +8,16 @@ import config from '../../../config/index.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-const checkTxnExists = async (pubKey: string, transactionHash: string) => {
+const checkTxnExists = async (pubKey: string, transactionHash: string): Promise<boolean> => {
   const userTxns = await getUserTransactionDetails(pubKey)
-  const userTxn = userTxns.find((item) => item.txHash === transactionHash)
+  const userTxn = userTxns.find((item: any) => item.txHash === transactionHash)
   if (userTxn) {
     return true
   }
   return false
 }
 
-const validatePayment = async (req: Request) => {
+const validatePayment = async (req: Request): Promise<number> => {
   const response = await axios.get(`${config.coreum_api_url}/${req.body.transactionHash}`)
   const amountFromTx = (response.data.tx.body.messages[0].amount[0].amount / 1000000).toFixed(2)
   const fromAddress = response.data.tx.body.messages[0].from_address
@@ -50,7 +50,7 @@ const validatePayment = async (req: Request) => {
   return 0
 }
 
-export const checkCoreumTxnUpdateCap = async (req: Request) => {
+export const checkCoreumTxnUpdateCap = async (req: Request): Promise<void> => {
   const value = await validatePayment(req)
   if (value) {
     await updateUserDataLimit(req.body.publicKey, value)

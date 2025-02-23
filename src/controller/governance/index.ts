@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-export const create_proposal = async (req: Request, res: Response, next: NextFunction) => {
+export const create_proposal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     res.status(200).json('Proposal Added')
   } catch (error) {
@@ -8,7 +8,7 @@ export const create_proposal = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const list_proposals = async (req: Request, res: Response, next: NextFunction) => {
+export const list_proposals = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     res.status(200).json([])
   } catch (error) {

@@ -8,9 +8,12 @@ import getFileByID from '../../../db/file/getFileByID.js'
 import CustomError from '../../../middlewares/error/customError.js'
 import updateUserReferralCode from '../../../db/user/referral/updateUserReferralCode.js'
 import getUserReferralCode from '../../../db/user/referral/getUserReferralCode.js'
+import { FileSchema } from '../../../types/file.js'
+import { TagDetails } from '../../../types/tag.js'
+import { Referral } from 'src/types/user.js'
 
-export const getUploads = async (publicKey: string, lastKey: string | undefined) => {
-  let exclusiveStartKey = undefined
+export const getUploads = async (publicKey: string, lastKey: string | undefined): Promise<FileSchema[]> => {
+  let exclusiveStartKey: any = undefined
   if (lastKey) {
     const fileInfo = await getFileByID(lastKey)
     if (fileInfo) {
@@ -25,7 +28,7 @@ export const getUploads = async (publicKey: string, lastKey: string | undefined)
   return fileList
 }
 
-export const generateReferralCode = async (publicKey: string) => {
+export const generateReferralCode = async (publicKey: string): Promise<string | Referral> => {
   const code = await getUserReferralCode(publicKey)
   if (code) {
     return code
@@ -48,12 +51,12 @@ export const createTagHelper = async (tag: string, cid: string, publicKey: strin
   })
 }
 
-export const getTagDetailsHelper = async (tag: string, publicKey: string) => {
+export const getTagDetailsHelper = async (tag: string, publicKey: string): Promise<TagDetails> => {
   const tagDetails = await getTagData(publicKey + '-' + tag)
   return tagDetails
 }
 
-export const getAllTagsHelper = async (publicKey: string) => {
+export const getAllTagsHelper = async (publicKey: string): Promise<TagDetails[]> => {
   const tags = await getAllTags(publicKey)
   return tags
 }

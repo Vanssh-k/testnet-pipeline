@@ -28,11 +28,11 @@ export const legacyDealInfo = async (cid: string) => {
       deals[i] = {}
       deals[i].pieceCID = raasInfo?.cid
       deals[i].payloadCid = fileInfo?.cidV1
-      deals[i].pieceSize = parseInt(fileInfo?.pieceSize)
-      deals[i].carFileSize = parseInt(fileInfo?.carSize)
+      deals[i].pieceSize = parseInt(fileInfo?.pieceSize.toString())
+      deals[i].carFileSize = parseInt(fileInfo?.carSize.toString())
       deals[i].dealId = dealRecordInfo.chainDealID
       deals[i].miner = 'f0' + raasInfo?.miners[i]
-      deals[i].content = parseInt(fileInfo?.fileSize)
+      deals[i].content = parseInt(fileInfo?.fileSize.toString())
       deals[i].dealStatus = dealRecordInfo.dealStatus
       deals[i].startEpoch = dealRecordInfo.startEpoch
       deals[i].endEpoch = dealRecordInfo.endEpoch

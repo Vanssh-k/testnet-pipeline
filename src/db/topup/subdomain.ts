@@ -3,8 +3,9 @@ import CustomError from '../../middlewares/error/customError.js'
 import { gatewayTable } from '../../config/constants.js'
 import dbbClient from '../db/ddbClient.js'
 import logger from '../../utils/logger.js'
+import { GatewayTableRecord } from '../../types/subdomain.js'
 
-const checkSubdomain = async (name: string) => {
+const checkSubdomain = async (name: string): Promise<GatewayTableRecord | undefined> => {
   try {
     const params = {
       TableName: gatewayTable,
@@ -16,7 +17,7 @@ const checkSubdomain = async (name: string) => {
     }
 
     const record = await dbbClient.query(params)
-    const items = record.Items ?? []
+    const items = (record.Items as GatewayTableRecord[]) ?? []
     return items[0]
   } catch (error) {
     logger.error('Error update user details: ' + error)
@@ -24,7 +25,7 @@ const checkSubdomain = async (name: string) => {
   }
 }
 
-const getRecord = async (publicKey: string) => {
+const getRecord = async (publicKey: string): Promise<GatewayTableRecord[]> => {
   try {
     const params = {
       TableName: gatewayTable,
@@ -36,14 +37,14 @@ const getRecord = async (publicKey: string) => {
     }
 
     const record = await dbbClient.query(params)
-    return record.Items ?? []
+    return (record.Items as GatewayTableRecord[]) ?? []
   } catch (error) {
     logger.error('Error update user details: ' + error)
     throw new CustomError(500, 'Internal Server Error.')
   }
 }
 
-const updateSubDomain = async (transactionDetails: any) => {
+const updateSubDomain = async (transactionDetails: GatewayTableRecord): Promise<string> => {
   try {
     const params = {
       TableName: gatewayTable,

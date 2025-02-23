@@ -3,8 +3,9 @@ import { checkSubdomain, getRecord, updateSubDomain } from '../../../db/topup/su
 import { addDNSRecord } from './cloudFlareHelper.js'
 
 import CustomError from '../../../middlewares/error/customError.js'
+import { GatewayTableRecord } from '../../../types/subdomain.js'
 
-const subDomainExists = async (subDomain: string) => {
+const subDomainExists = async (subDomain: string): Promise<string> => {
   const restrictedNames = ['api', 'gateway', 'testnet', 'mainnet', 'node', 'docs', 'encryption']
   if (restrictedNames.includes(subDomain) || /[^A-Za-z0-9]/.test(subDomain)) {
     return 'exist'
@@ -18,7 +19,7 @@ const subDomainExists = async (subDomain: string) => {
   return 'exist'
 }
 
-const getUserSubDomainDomain = async (publicKey: string) => {
+const getUserSubDomainDomain = async (publicKey: string): Promise<GatewayTableRecord[]> => {
   const record = await getRecord(publicKey)
   if (!record) {
     throw new CustomError(404, 'Record Not Found')
@@ -27,7 +28,7 @@ const getUserSubDomainDomain = async (publicKey: string) => {
   return record
 }
 
-const createSubDomain = async (publicKey: string, subDomain: string) => {
+const createSubDomain = async (publicKey: string, subDomain: string): Promise<{ status: number; data: string }> => {
   try {
     // Does the sub domain exist
     const exists = await subDomainExists(subDomain)

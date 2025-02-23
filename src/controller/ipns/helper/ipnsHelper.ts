@@ -7,10 +7,11 @@ import getIPNSRecord from '../../../db/ipns/getIPNSRecord.js'
 import updateIPNSRecord from '../../../db/ipns/updateIPNSRecord.js'
 import removeIPNSRecord from '../../../db/ipns/removeIPNSRecord.js'
 import getIPNSRecordById from '../../../db/ipns/getIPNSRecordById.js'
+import { IPNSSchema } from '../../../types/ipns.js'
 
-export const generateKey = async (publicKey: string) => {
+export const generateKey = async (publicKey: string): Promise<{ ipnsName: string; ipnsId: string }> => {
   // Check total keys of user
-  const ipnsRecords = await getIPNSRecord(publicKey)
+  const ipnsRecords: IPNSSchema[] = await getIPNSRecord(publicKey)
   /* istanbul ignore next */
   if (ipnsRecords.length > 500) {
     // Adding one client exception till IPNS plans are up
@@ -35,7 +36,7 @@ export const generateKey = async (publicKey: string) => {
   )
 
   // Add record to database
-  const record = {
+  const record: IPNSSchema = {
     ipnsName: keyGen,
     ipnsId: ipnsCID.data.Id,
     publicKey: publicKey,
@@ -50,13 +51,13 @@ export const generateKey = async (publicKey: string) => {
   }
 }
 
-export const getUserIPNSRecords = async (publicKey: string) => {
-  const ipnsRecords = await getIPNSRecord(publicKey)
+export const getUserIPNSRecords = async (publicKey: string): Promise<IPNSSchema[]> => {
+  const ipnsRecords: IPNSSchema[] = await getIPNSRecord(publicKey)
   return ipnsRecords
 }
 
-export const publishRecord = async (cid: string, id: string, publicKey: string) => {
-  const keyRecord: any = await getIPNSRecordById(id)
+export const publishRecord = async (cid: string, id: string, publicKey: string): Promise<any> => {
+  const keyRecord: IPNSSchema = await getIPNSRecordById(id)
   if (keyRecord.publicKey !== publicKey) {
     throw new CustomError(403, 'Forbidden.')
   }
@@ -80,8 +81,8 @@ export const publishRecord = async (cid: string, id: string, publicKey: string) 
   return publishResponse.data
 }
 
-export const removeKey = async (keyName: string, publicKey: string) => {
-  const keyRecord: any = await getIPNSRecordById(keyName)
+export const removeKey = async (keyName: string, publicKey: string): Promise<any> => {
+  const keyRecord: IPNSSchema = await getIPNSRecordById(keyName)
   if (keyRecord.publicKey !== publicKey) {
     throw new CustomError(403, 'Forbidden.')
   }

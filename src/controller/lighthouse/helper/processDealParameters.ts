@@ -1,23 +1,4 @@
-interface DealParameters {
-  miner?: string[]
-  num_copies?: number | null
-  repair_threshold?: number | null
-  renew_threshold?: number | null
-  add_mock_data?: number | null
-  deal_duration?: number
-  network?: string
-}
-
-interface ProcessedDealParameters {
-  fileId: string
-  miner: string[]
-  num_copies: number | null
-  repair_threshold: number | null
-  renew_threshold: number | null
-  add_mock_data: number | null
-  deal_duration: number
-  network: string
-}
+import { DealParameters, ProcessedDealParameters } from '../../../types/filecoin.js'
 
 const processDealParam = (dealParam: DealParameters | null, id: string): ProcessedDealParameters | null => {
   try {

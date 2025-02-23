@@ -4,7 +4,7 @@ import { UserAuthDetails } from '../../../types/user.js'
 import { userAuthTable } from '../../../config/constants.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-export default async (authDetails: UserAuthDetails) => {
+export default async (authDetails: UserAuthDetails): Promise<string> => {
   try {
     const params = {
       TableName: userAuthTable,

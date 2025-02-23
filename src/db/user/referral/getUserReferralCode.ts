@@ -2,11 +2,7 @@ import dbbClient from '../../db/ddbClient.js'
 import logger from '../../../utils/logger.js'
 import { referralCodeTable } from '../../../config/constants.js'
 import CustomError from '../../../middlewares/error/customError.js'
-
-type Referral = {
-  publicKey: string
-  referralCode: string
-}
+import { Referral } from 'src/types/user.js'
 
 export default async (usersPublicKey: string): Promise<Referral | null> => {
   try {

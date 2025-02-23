@@ -1,8 +1,9 @@
 import dbbClient from '../db/ddbClient.js'
 import CustomError from '../../middlewares/error/customError.js'
 import { FilecoinLegacyTables } from '../../config/constants.js'
+import { FilecoinDealsMainnet } from '../../types/filecoin.js'
 
-export default async (aggregateIn: string) => {
+export default async (aggregateIn: string): Promise<FilecoinDealsMainnet[]> => {
   try {
     const params = {
       TableName: FilecoinLegacyTables.FILECOIN_DEAL_RECORDS,
@@ -14,7 +15,7 @@ export default async (aggregateIn: string) => {
     }
 
     const record = await dbbClient.query(params)
-    return record.Items ?? []
+    return (record.Items as FilecoinDealsMainnet[]) ?? []
   } catch (error) {
     console.log(error)
     /* istanbul ignore next */

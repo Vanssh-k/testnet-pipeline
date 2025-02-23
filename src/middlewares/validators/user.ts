@@ -1,25 +1,25 @@
-import joi from 'joi'
+import joi, { Schema } from 'joi'
 
-export const publicKeySchema = joi.object({
+export const publicKeySchema: Schema = joi.object({
   publicKey: joi.string().required().messages({
     'any.required': `publicKey not found`,
   }),
 })
 
-export const messageSchema = joi.object({
+export const messageSchema: Schema = joi.object({
   publicKey: joi.string().required().messages({
     'any.required': `publicKey not found`,
   }),
   encryption: joi.boolean().default(false),
 })
 
-export const getUploadsSchema = joi.object({
+export const getUploadsSchema: Schema = joi.object({
   lastKey: joi.string().messages({
     'any.required': `lastKey not found`,
   }),
 })
 
-export const createTagSchema = joi.object({
+export const createTagSchema: Schema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `File cid not found`,
   }),
@@ -28,25 +28,25 @@ export const createTagSchema = joi.object({
   }),
 })
 
-export const getTagSchema = joi.object({
+export const getTagSchema: Schema = joi.object({
   tag: joi.string().required().messages({
     'any.required': `tag not found`,
   }),
 })
 
-export const emailSchema = joi.object({
+export const emailSchema: Schema = joi.object({
   email: joi.string().email().messages({
     'any.required': `email not found`,
   }),
 })
 
-export const verificationTokenSchema = joi.object({
+export const verificationTokenSchema: Schema = joi.object({
   verification_token: joi.string().min(20).messages({
     'any.required': `email not found`,
   }),
 })
 
-export const web3authEmailVerificationSchema = joi.object({
+export const web3authEmailVerificationSchema: Schema = joi.object({
   idToken: joi.string().required().messages({
     'any.required': `idToken not found`,
   }),
@@ -58,7 +58,7 @@ export const web3authEmailVerificationSchema = joi.object({
   }),
 })
 
-export const referralSchema = joi.object({
+export const referralSchema: Schema = joi.object({
   referredBy: joi.string().required().messages({
     'any.required': `idToken not found`,
   }),

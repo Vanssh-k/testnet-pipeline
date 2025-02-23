@@ -2,7 +2,7 @@ import dbbClient from '../db/ddbClient.js'
 import { migrationRequestTable } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export default async (id: string, status: string) => {
+export default async (id: string, status: string): Promise<string> => {
   try {
     const params = {
       TableName: migrationRequestTable,

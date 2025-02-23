@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis'
-import { RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
+import { RateLimiterAbstract, RateLimiterRedis, RateLimiterRes } from 'rate-limiter-flexible'
 import { Request, Response, NextFunction } from 'express'
 import logger from '../utils/logger.js'
 import config from '../config/index.js'
@@ -25,9 +25,9 @@ const rateLimiterOpts = {
   keyPrefix: 'rlimit:ip:', // Unique key prefix for different rate limiters
 }
 
-const _rateLimiter = new RateLimiterRedis(rateLimiterOpts)
+const _rateLimiter: RateLimiterAbstract = new RateLimiterRedis(rateLimiterOpts)
 
-export default async (req: Request, res: Response, next: NextFunction) => {
+export default async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const unique_address = req.ip ? `${req.ip}:url:${req.url}` : `unknown:url:${req.url}`
 
   if (isDevelopment) {
@@ -40,7 +40,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     .then((_: RateLimiterRes) => {
       next()
     })
-    .catch((e) => {
+    .catch((e: Error | RateLimiterRes) => {
       if (e instanceof Error) {
         // Handle Redis or other errors
         logger.error('Rate limiter error:', e)

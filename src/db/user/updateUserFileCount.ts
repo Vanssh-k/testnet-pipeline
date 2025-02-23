@@ -3,7 +3,7 @@ import logger from '../../utils/logger.js'
 import { userTable } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export default async (publicKey: string, fileSize: number) => {
+export default async (publicKey: string, fileSize: number): Promise<string> => {
   try {
     const params = {
       TableName: userTable,

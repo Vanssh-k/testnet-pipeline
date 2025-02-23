@@ -1,9 +1,9 @@
 import config from '../config/index.js'
 import { service } from '../config/constants.js'
 import LokiTransport from 'winston-loki'
-import { createLogger, format, transports } from 'winston'
+import { createLogger, format, transports, Logger } from 'winston'
 
-const selectTransports = () => {
+const selectTransports = (): transports.FileTransportInstance | LokiTransport => {
   // if (config.environment === 'production') {
   //   return new LokiTransport({
   //     host: config.logger_loki_host!,
@@ -16,7 +16,7 @@ const selectTransports = () => {
   })
 }
 
-const logger = createLogger({
+const logger: Logger = createLogger({
   level: 'info',
   defaultMeta: {
     service: service,

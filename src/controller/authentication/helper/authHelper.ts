@@ -11,7 +11,7 @@ import userKeysRecord from '../../../db/user/auth/userKeysRecord.js'
 import createNewUser from '../../../db/user/createNewUser.js'
 import userDetails from '../../../db/user/userDetails.js'
 import { sendMessageToEnc } from './encryption.js'
-import { UserDetails } from '../../../types/user.js'
+import { UserAuthDetails, UserDetails } from '../../../types/user.js'
 import getNetwork from '../../../middlewares/getNetwork.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
@@ -21,7 +21,7 @@ export const getMessage = async (publicKey: string, encryption: string): Promise
     publicKey = publicKey.trim().toLowerCase()
   }
 
-  const record = await userDetails(publicKey, network)
+  const record: UserDetails | null = await userDetails(publicKey, network)
   const timestamp = Date.now()
   const date = new Date(timestamp)
   const formattedDate = date.toLocaleDateString('en-GB')
@@ -58,11 +58,11 @@ export const signatureAuth = async (publicKey: string): Promise<UserDetails> => 
   if (network === 'evm') {
     publicKey = publicKey.trim().toLowerCase()
   }
-  const record = await userDetails(publicKey, network)
+  const record: UserDetails | null = await userDetails(publicKey, network)
   return record as UserDetails
 }
 
-export const createApiKey = async (publicKey: string, keyName: string) => {
+export const createApiKey = async (publicKey: string, keyName: string): Promise<string> => {
   const prefix = v4().split('-')[0]
   const apiKey = prefix + '.' + v4().split('-').join('')
   const authDetails = {
@@ -78,8 +78,8 @@ export const createApiKey = async (publicKey: string, keyName: string) => {
   return apiKey
 }
 
-export const revokeApiKey = async (id: string, publicKey: string) => {
-  const apiRecord: any = await getApiRecordById(id)
+export const revokeApiKey = async (id: string, publicKey: string): Promise<boolean> => {
+  const apiRecord: UserAuthDetails = await getApiRecordById(id)
   console.log(apiRecord.publicKey)
   console.log(publicKey)
   if (apiRecord.publicKey !== publicKey) {
@@ -89,7 +89,7 @@ export const revokeApiKey = async (id: string, publicKey: string) => {
   return status
 }
 
-export const getUserKeys = async (publicKey: string) => {
+export const getUserKeys = async (publicKey: string): Promise<UserAuthDetails[]> => {
   const data = await userKeysRecord(publicKey)
   return data
 }

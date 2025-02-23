@@ -1,7 +1,8 @@
 import docClient from '../../../db/db/ddbClient.js'
 import { ffUserRecord } from '../../../config/constants.js'
+import { UserMetrics } from '../../../types/user.js'
 
-const getUserMetrics = async (userAddress: string) => {
+const getUserMetrics = async (userAddress: string): Promise<UserMetrics> => {
   try {
     const params = {
       TableName: ffUserRecord,
@@ -21,10 +22,10 @@ const getUserMetrics = async (userAddress: string) => {
       }
     } else {
       return {
-        datacap_purchased: 0,
-        datacap_spent: 0,
-        filecount: 0,
-        dataused: 0,
+        datacapPurchased: 0,
+        datacapSpent: 0,
+        fileCount: 0,
+        dataUsed: 0,
       }
     }
   } catch (error: any) {
