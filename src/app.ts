@@ -7,7 +7,6 @@ import expressWinston from 'express-winston'
 import logger from './utils/logger.js'
 import errorHandler from './middlewares/error/index.js'
 import * as prometheusMetrics from './middlewares/prometheus.js'
-import rateLimiterMiddleware from './middlewares/rate-limiter.js'
 
 import AuthRouter from './routes/auth.js'
 import UserRouter from './routes/user.js'
@@ -47,8 +46,6 @@ app.use(prometheusMetrics.middleware)
 app.get('/health', (req: Request, res: Response): void => {
   res.status(200).send('OK')
 })
-
-app.use(rateLimiterMiddleware)
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/user', UserRouter)

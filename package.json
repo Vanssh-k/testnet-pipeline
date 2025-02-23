@@ -55,7 +55,6 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
     "prom-client": "^15.1.1",
-    "rate-limiter-flexible": "^5.0.3",
     "redis": "^4.6.13",
     "secp256k1": "^5.0.0",
     "stripe": "^14.24.0",
