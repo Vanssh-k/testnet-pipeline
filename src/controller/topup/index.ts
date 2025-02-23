@@ -1,38 +1,10 @@
 import { cancel_subscription_order, create_session_order, get_subscriptions_orders } from './helper/stripePayment.js'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper.js'
 import { handleStripeWebhook } from './helper/stripeWebhook.js'
-import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
 import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
 import { checkCoreumTxnUpdateCap } from './helper/coreumPurchase.js'
 import { checkRadixTxnUpdateCap } from './helper/radixPurchase.js'
-
-export const create_subdomain = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const data = await createSubDomain(req.body.publicKey, req.body.subDomain)
-    res.status(data.status).json({ data: data.data })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const check_subdomain = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const exists = await subDomainExists(req.query['subDomain'] as string)
-    res.status(200).json(exists)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const get_subdomain = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const records = await getUserSubDomainDomain(req.query.publicKey as string)
-    res.status(200).json(records)
-  } catch (error) {
-    next(error)
-  }
-}
 
 export const record_transaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { user } = req.body
