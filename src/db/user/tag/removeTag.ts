@@ -13,7 +13,7 @@ export default async (id: string): Promise<void> => {
     }
     await dbbClient.delete(params)
   } catch (error) {
-    logger.error('In checkAPIKey: ' + error)
+    logger.error('In remove tag: ' + error)
     throw new CustomError(500, `Internal Server Error.`)
   }
 }

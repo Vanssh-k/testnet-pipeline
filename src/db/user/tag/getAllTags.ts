@@ -19,7 +19,7 @@ export default async (publicKey: string): Promise<TagDetails[]> => {
     const Items = record.Items ? record.Items : []
     return Items as TagDetails[]
   } catch (error) {
-    logger.error('In checkAPIKey: ' + error)
+    logger.error('In get all tags: ' + error)
     throw new CustomError(500, `Internal Server Error.`)
   }
 }

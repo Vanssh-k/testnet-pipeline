@@ -16,7 +16,7 @@ export default async (id: string): Promise<TagDetails> => {
     const record = await dbbClient.get(params)
     return record.Item as TagDetails
   } catch (error) {
-    logger.error('In checkAPIKey: ' + error)
+    logger.error('In get tag data: ' + error)
     throw new CustomError(500, `Internal Server Error.`)
   }
 }
