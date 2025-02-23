@@ -12,7 +12,7 @@ import { generateTokenAndSendMail, verifyEmailToken } from './helper/verifyEmail
 import createReferralRecord from '../../db/user/referral/createReferralRecord.js'
 import getReferral from '../../db/user/referral/getReferral.js'
 import CustomError from '../../middlewares/error/customError.js'
-import getUserFromCode from '../../db/user/referral/getUserFromCode.js'
+import getUserFromReferralCode from '../../db/user/referral/getUserFromReferralCode.js'
 import getUserReferrals from '../../db/user/referral/getUserReferrals.js'
 
 export const get_uploads = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -133,7 +133,7 @@ export const create_referral = async (req: Request, res: Response, next: NextFun
     if (referralCode === null) {
       res.status(200).json('Success')
     }
-    const referralDetails = await getUserFromCode(referralCode)
+    const referralDetails = await getUserFromReferralCode(referralCode)
     if (referralDetails.length === 0) {
       res.status(400).json('Invalid referral code.')
     }
