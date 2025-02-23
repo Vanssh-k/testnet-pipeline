@@ -29,7 +29,6 @@ export const getCache = async (key: string): Promise<any | null> => {
         return result ? JSON.parse(result) : null
       })
       .catch((err) => {
-        console.error(err)
         return null
       })
   }
