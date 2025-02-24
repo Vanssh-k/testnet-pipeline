@@ -21,7 +21,12 @@ export type UserAuthDetails = {
   lastUpdate: number
 }
 
-export type Referral = {
+export type ReferralCode = {
+  publicKey: string
+  referralCode: string
+  updatedAt: number
+}
+export type ReferralMap = {
   publicKey: string
   referredBy: string
 }
