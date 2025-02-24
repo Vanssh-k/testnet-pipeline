@@ -80,8 +80,6 @@ export const createApiKey = async (publicKey: string, keyName: string): Promise<
 
 export const revokeApiKey = async (id: string, publicKey: string): Promise<boolean> => {
   const apiRecord: UserAuthDetails = await getApiRecordById(id)
-  console.log(apiRecord.publicKey)
-  console.log(publicKey)
   if (apiRecord.publicKey !== publicKey) {
     throw new CustomError(403, 'Forbidden')
   }
