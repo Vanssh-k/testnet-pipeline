@@ -151,7 +151,7 @@ export const create_referral = async (req: Request, res: Response, next: NextFun
 export const get_referred_by = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const referral = await getReferral(req.body.publicKey)
-    res.status(200).json({ referral })
+    res.status(200).json(referral)
   } catch (error) {
     next(error)
   }
