@@ -33,6 +33,7 @@ const recordUserTransaction = async (
 }
 
 const getUserTransactionDetails = async (publicKey: string): Promise<UserTransaction[]> => {
+  console.log(publicKey)
   const record = await getUserTransactions(publicKey)
   return record
 }
