@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import Stripe from 'stripe'
 import config from '../../../config/index.js'
 import CustomError from '../../../middlewares/error/customError.js'

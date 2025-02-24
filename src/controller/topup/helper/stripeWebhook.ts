@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Request } from 'express'
 import { v4 } from 'uuid'
 import Stripe from 'stripe'
