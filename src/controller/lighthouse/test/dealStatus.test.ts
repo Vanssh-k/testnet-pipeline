@@ -10,5 +10,5 @@ test('Status: Get /deal_status', async () => {
       )
     ).text,
   )
-  expect(typeof dealStatus[0].dealId).toBe('number')
+  expect(typeof dealStatus[0].pieceCID).toBe('string')
 }, 30000)
