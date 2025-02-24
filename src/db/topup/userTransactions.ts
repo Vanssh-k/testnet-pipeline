@@ -8,16 +8,17 @@ export const getUserTransactions = async (publicKey: string): Promise<UserTransa
   try {
     const params = {
       TableName: userTransactions,
-      FilterExpression: 'publicKey = :p',
+      IndexName: 'publicKey-createdAt-index',
+      KeyConditionExpression: 'publicKey = :p',
       ExpressionAttributeValues: {
-        ':p': publicKey.toLowerCase(),
+        ':p': publicKey,
       },
     }
 
-    const record = await dbbClient.scan(params)
+    const record = await dbbClient.query(params)
     return (record.Items as UserTransaction[]) ?? []
   } catch (error) {
-    logger.error('Error update user details: ' + error)
+    logger.error('Error getting user transactions: ' + error)
     throw new CustomError(500, 'Internal Server Error.')
   }
 }
@@ -31,7 +32,7 @@ export const recordTransactions = async (record: any): Promise<void> => {
 
     await dbbClient.put(params)
   } catch (error) {
-    logger.error('Error update user details: ' + error)
+    logger.error('Error recording user transaction: ' + error)
     throw new CustomError(500, 'Internal Server Error.')
   }
 }
