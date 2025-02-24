@@ -36,7 +36,6 @@ export const pin_cid = async (req: Request, res: Response, next: NextFunction): 
       req.body.user,
       req.body.cid,
       req.body.fileName ? req.body.fileName : 'pinned-file',
-      req.body.raas,
     )
     await removeCache(`migration-requests-${req.body.publicKey}`)
     res.status(200).json({ requestID })
