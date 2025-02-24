@@ -2,17 +2,9 @@ import { getTicker } from './helper/tickerHelper.js'
 import getNetwork from '../../middlewares/getNetwork.js'
 import CustomError from '../../middlewares/error/customError.js'
 import { NextFunction, Response, Request } from 'express'
-import {
-  cidDealStatus,
-  bundleDetails,
-  podsiTestnet,
-  aggregateInfo,
-  fileInfoTestnet,
-  dealInfoTestnet,
-  raasInfoTestnet,
-} from './helper/cidHelper.js'
+import { cidDealStatus } from './helper/cidHelper.js'
 import fileDetailsByCid from '../../db/file/fileDetailsByCid.js'
-import { pinCID, migrationRequest, migrationRequestEnt, retryMigration } from './helper/migrationHelper.js'
+import { pinCID, migrationRequest, retryMigration } from './helper/migrationHelper.js'
 import migrationRequestInfo from '../../db/migration/migrationRequestInfo.js'
 import listMigrationRequests from '../../db/migration/listMigrationRequests.js'
 import cidPinStatus from '../../db/migration/cidPinStatus.js'
@@ -33,42 +25,6 @@ export const deal_status = async (req: Request, res: Response, next: NextFunctio
   try {
     const status = await cidDealStatus(req.query.cid as string)
     res.status(200).json(status)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const bundle_details = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const status = await bundleDetails(req.query.bundleId as string)
-    res.status(200).json(status)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const get_proof = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const proof = await podsiTestnet(req.query.cid as string)
-    res.status(200).json(proof)
-  } catch (error) {
-    console.log('error', error)
-    next(error)
-  }
-}
-export const file_info_testnet = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const fileInfo = await fileInfoTestnet(req.query.cid as string)
-    res.status(200).json(fileInfo)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const aggregate_info = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const proof = await aggregateInfo(req.query.aggregateId as string)
-    res.status(200).json(proof)
   } catch (error) {
     next(error)
   }
@@ -97,20 +53,6 @@ export const migration_request = async (req: Request, res: Response, next: NextF
     res.status(200).json({ requestID })
   } catch (error) {
     console.log(error)
-    next(error)
-  }
-}
-
-export const migration_request_ent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    let publicKey: string = req.body.publicKey.trim()
-    if (req.body.network === 'evm') {
-      publicKey = publicKey.toLowerCase()
-    }
-    const requestID: string = await migrationRequestEnt(publicKey, req.body.data, req.body.enterprise)
-
-    res.status(200).json({ requestID })
-  } catch (error) {
     next(error)
   }
 }
@@ -183,24 +125,6 @@ export const file_info = async (req: Request, res: Response, next: NextFunction)
       fileName: record.fileName,
       mimeType: record.mimeType,
     })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const raas_info_testnet = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const raasInfo = await raasInfoTestnet(req.query.cid as string)
-    res.status(200).json(raasInfo)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const deal_id_testnet = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const dealInfo = await dealInfoTestnet(req.query.dealId as string)
-    res.status(200).json(dealInfo)
   } catch (error) {
     next(error)
   }
