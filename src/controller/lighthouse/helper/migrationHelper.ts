@@ -1,10 +1,7 @@
 import axios from 'axios'
 import { v4 } from 'uuid'
 import * as isIPFS from 'is-ipfs'
-import { lighthouse_migration_node } from '../../../config/constants.js'
 import { MigrationStatus } from '../../../types/status.js'
-import processDealParam from './processDealParameters.js'
-import testnetDealParams from '../../../db/filecoin/testnet/testnetDealParams.js'
 import addMigrationCIDs from '../../../db/migration/addMigrationCIDs.js'
 import createMigrationRequest from '../../../db/migration/createMigrationRequest.js'
 import CustomError from '../../../middlewares/error/customError.js'
@@ -109,49 +106,6 @@ export const migrationRequest = async (record: any, bodyData: string): Promise<s
       cid: data[i]['cid'],
       requestID,
       fileName: data[i]['fileName'] ? data[i]['fileName'] : 'migrated-file',
-      fileSizeInBytes: 0,
-      cidStatus: MigrationStatus.Queued,
-      lastUpdate: timestamp,
-    })
-  }
-
-  await triggerMigration(requestID)
-  return requestID
-}
-
-export const migrationRequestEnt = async (publicKey: string, bodyData: string, enterprise: any): Promise<string> => {
-  // Get CID, filename array
-  const data = JSON.parse(bodyData)
-  if (data.length === 0) {
-    throw new CustomError(400, 'No CID included')
-  }
-
-  // Verify CID's
-  for (let i = 0; i < data.length; i++) {
-    if (!isIPFS.cid(data[i])) {
-      throw new CustomError(400, `Row ${i}is not a CID`)
-    }
-  }
-
-  // Save Migration Request
-  const timestamp = Date.now()
-  const requestID: string = v4().toString()
-  const saveRequest = await createMigrationRequest({
-    id: requestID,
-    publicKey,
-    totalCID: data.length as number,
-    migrationStatus: MigrationStatus.Queued,
-    createdAt: timestamp,
-    lastUpdate: timestamp,
-  })
-
-  // Save all CIDs
-  for (let i = 0; i < data.length; i++) {
-    const saveCIDs = await addMigrationCIDs({
-      id: v4().toString(),
-      cid: data[i],
-      requestID,
-      fileName: data[i].fileName ? data[i].fileName : '',
       fileSizeInBytes: 0,
       cidStatus: MigrationStatus.Queued,
       lastUpdate: timestamp,
