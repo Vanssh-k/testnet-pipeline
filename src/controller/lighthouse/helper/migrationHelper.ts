@@ -22,7 +22,7 @@ const triggerMigration = async (requestID: string): Promise<void> => {
   )
 }
 
-export const pinCID = async (record: any, cid: string, fileName: string, raas: any): Promise<string> => {
+export const pinCID = async (record: any, cid: string, fileName: string): Promise<string> => {
   // Verify CID's
   if (!isIPFS.cid(cid)) {
     throw new CustomError(400, `Invalid CID`)
