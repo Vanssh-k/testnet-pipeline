@@ -10,10 +10,10 @@ import updateUserReferralCode from '../../../db/user/referral/updateUserReferral
 import getUserReferralCode from '../../../db/user/referral/getUserReferralCode.js'
 import { FileSchema } from '../../../types/file.js'
 import { TagDetails } from '../../../types/tag.js'
-import { Referral } from 'src/types/user.js'
+import { ReferralCode } from 'src/types/user.js'
 
 export const getUploads = async (publicKey: string, lastKey: string | undefined): Promise<FileSchema[]> => {
-  let exclusiveStartKey: any = undefined
+  let exclusiveStartKey = undefined
   if (lastKey) {
     const fileInfo = await getFileByID(lastKey)
     if (fileInfo) {
@@ -28,10 +28,10 @@ export const getUploads = async (publicKey: string, lastKey: string | undefined)
   return fileList
 }
 
-export const generateReferralCode = async (publicKey: string): Promise<string | Referral> => {
-  const code = await getUserReferralCode(publicKey)
-  if (code) {
-    return code
+export const generateReferralCode = async (publicKey: string): Promise<string | ReferralCode> => {
+  const refreealObj = await getUserReferralCode(publicKey)
+  if (refreealObj) {
+    return refreealObj.referralCode
   }
   const referralCode = v4().replace(/-/g, '')
   await updateUserReferralCode(publicKey, referralCode)

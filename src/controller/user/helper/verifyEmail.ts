@@ -7,7 +7,7 @@ import CustomError from '../../../middlewares/error/customError.js'
 export const generateTokenAndSendMail = async (address: string, email: string): Promise<void> => {
   const token = v4().split('-').join('')
 
-  const lastMailByUser: any = getCache(`lastMailByUser/${address}`)
+  const lastMailByUser = getCache(`lastMailByUser/${address}`)
   if (!lastMailByUser) {
     throw new CustomError(400, 'Wait for two min before sending another mail.')
   }
