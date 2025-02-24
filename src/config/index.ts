@@ -51,6 +51,7 @@ const baseConfig = {
   stripe_key: process.env.STRIPE_KEY ?? '',
   stripe_webhook: process.env.STRIPE_WEBHOOK ?? '',
   payment_url: process.env.PAYMENT_URL ?? '',
+  test_wallet6_api_key: process.env.TEST_WALLET6_API_KEY, // Wallet in use: 0x75a22ede971080c8448c46de6ae5df3f64c67475
   test_wallet7_api_key: process.env.TEST_WALLET7_API_KEY ?? '0x02', // Wallet in use: 0x5129b1153f4f9f321f41cba831899336cb4134c7
   test_wallet7_api_key_development: process.env.TEST_WALLET7_API_KEY_DEVELOPMENT ?? '0x02',
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
@@ -68,7 +69,6 @@ const baseConfig = {
   radixNetworkId: 1,
   radixExpectedOrigin: process.env.RADIX_EXPECTED_ORIGIN ?? 'https://files.lighthouse.storage',
 
-  migration_ocean_access_token: process.env.MIGRATION_OCEAN_ACCESS_TOKEN ?? '6576576565',
   port: process.env.PORT ?? 8000,
   no_reply_email_password: process.env.NO_REPLY_EMAIL_PASSWORD,
   no_reply_email: process.env.NO_REPLY_EMAIL_ID,
