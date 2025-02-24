@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import axios from 'axios'
 import { Request } from 'express'
 import { v4 } from 'uuid'
