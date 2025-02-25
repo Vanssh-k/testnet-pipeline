@@ -55,12 +55,6 @@ const baseConfig = {
 
   lighthouse_billing_address: process.env.LIGHTHOUSE_BILLING_ADDRESS ?? '0x02',
 
-  lighthouse_endowment_address:
-    process.env.LIGHTHOUSE_ENDOWMENT_ADDRESS ?? '0x520A3eb4Ce7e2827dD1C313683AEC11eD74C3322',
-  lighthouse_glifYield_address:
-    process.env.LIGHTHOUSE_GLIFYIELD_ADDRESS ?? '0x21C491Ea745D26aFC82E695849fEc27e95eD717D',
-  filecoin_usdc: process.env.FILECOIN_USDC ?? '0xA471B7936906fF810865e52AF86C12B9865C850A',
-
   coreum_api_url: 'https://full-node.mainnet-1.coreum.dev:1317/cosmos/tx/v1beta1/txs',
   lighthouse_coreum_address: process.env.LIGHTHOUSE_COREUM_ADDRESS ?? 'core145f5j80zfr730kndlx7ek55pt6ya0kcnr6d9ha',
 

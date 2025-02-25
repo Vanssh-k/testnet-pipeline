@@ -15,7 +15,6 @@ import TopUpRouter from './routes/topup.js'
 import GovernanceRouter from './routes/governance.js'
 import LighthouseRouter from './routes/lighthouse.js'
 import WebhookRouter from './routes/stripeWebhook.js'
-import InstrumentationRouter from './routes/instrumentation.js'
 
 const app: Application = express()
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -53,7 +52,6 @@ app.use('/api/ipns', IPNSRouter)
 app.use('/api/topup', TopUpRouter)
 app.use('/api/governance', GovernanceRouter)
 app.use('/api/lighthouse', LighthouseRouter)
-app.use('/api/endowment', InstrumentationRouter)
 
 app.use(errorHandler)
 
