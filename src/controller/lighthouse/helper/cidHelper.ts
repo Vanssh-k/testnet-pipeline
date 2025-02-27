@@ -11,13 +11,15 @@ const ffDeal = async (cid: string): Promise<any> => {
       return []
     }
     const dealData = []
-    if (typeof record[0]?.pieceCID === 'string') {
-      const deal = await getDealInfoCG(record[0]?.pieceCID)
-      dealData.push(deal)
-    } else {
-      for (let i = 0; i < (record[0]?.pieceCID as any).length; i++) {
-        const deal = await getDealInfoCG(record[0]?.pieceCID[i])
+    for (const rec of record) {
+      if (typeof rec?.pieceCID === 'string') {
+        const deal = await getDealInfoCG(rec.pieceCID)
         dealData.push(deal)
+      } else {
+        for (let i = 0; i < (rec?.pieceCID as any).length; i++) {
+          const deal = await getDealInfoCG(rec.pieceCID[i])
+          dealData.push(deal)
+        }
       }
     }
     return dealData
