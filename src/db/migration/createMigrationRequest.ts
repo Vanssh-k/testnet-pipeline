@@ -2,8 +2,9 @@ import chalk from 'chalk'
 import dbbClient from '../db/ddbClient.js'
 import { migrationRequestTable } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
+import { MigrationRequestSchema } from '../../types/migration.js'
 
-export default async (record: any) => {
+export default async (record: MigrationRequestSchema): Promise<any> => {
   try {
     const params = {
       TableName: migrationRequestTable,

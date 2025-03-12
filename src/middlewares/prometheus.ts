@@ -33,7 +33,7 @@ export const responseSizeHistogram = new promClient.Histogram({
   buckets: [1, 500, 1000, 5000, 10000, 50000, 100000, 500000],
 })
 
-export const middleware = (req: Request, res: Response, next: NextFunction) => {
+export const middleware = (req: Request, res: Response, next: NextFunction): void => {
   const userId = req.body.publicKey || req.query.publicKey
   const endTimer = requestDurationHistogram
     .labels(req.method, req.path, '0') // Initialize with '0' as the status
@@ -61,7 +61,7 @@ export const middleware = (req: Request, res: Response, next: NextFunction) => {
   next()
 }
 
-export const setupPrometheusCrons = () => {
+export const setupPrometheusCrons = (): void => {
   // Reset the daily user counter every day at midnight
   cron.schedule('0 0 * * *', () => {
     dailyUserCounter.reset()

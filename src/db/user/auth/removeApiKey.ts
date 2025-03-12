@@ -4,7 +4,7 @@ import { UserAuthDetails } from '../../../types/user.js'
 import { userAuthTable } from '../../../config/constants.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-export default async (id: string): Promise<void> => {
+export default async (id: string): Promise<boolean> => {
   try {
     const params = {
       TableName: userAuthTable,
@@ -14,6 +14,7 @@ export default async (id: string): Promise<void> => {
     }
 
     await dbbClient.delete(params)
+    return true
   } catch (error: any) {
     logger.error('In removeAPIKey: ' + error)
     throw new CustomError(500, `Internal Server Error.`)

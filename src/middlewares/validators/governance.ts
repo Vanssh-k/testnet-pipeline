@@ -1,6 +1,6 @@
-import joi from 'joi'
+import joi, { Schema } from 'joi'
 
-export const addProposalSchema = joi.object({
+export const addProposalSchema: Schema = joi.object({
   proposal: joi.string().required().messages({
     'any.required': `Proposal not found`,
   }),

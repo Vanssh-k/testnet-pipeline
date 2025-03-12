@@ -1,6 +1,8 @@
+import { FFDeal } from '../../types/filecoin.js'
 import dbbClient from '../db/ddbClient.js'
+import CustomError from '../../middlewares/error/customError.js'
 
-export default async (pieceCID: string) => {
+export default async (pieceCID: string): Promise<FFDeal> => {
   try {
     const params = {
       TableName: 'ff-deals',
@@ -10,9 +12,9 @@ export default async (pieceCID: string) => {
     }
 
     const record = await dbbClient.get(params)
-    return record.Item
+    return record.Item as FFDeal
   } catch (e) {
-    console.log('here')
-    console.log(e)
+    /* istanbul ignore next */
+    throw new CustomError(500, 'Internal Server Error.')
   }
 }

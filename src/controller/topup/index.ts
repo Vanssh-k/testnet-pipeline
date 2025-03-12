@@ -1,40 +1,12 @@
 import { cancel_subscription_order, create_session_order, get_subscriptions_orders } from './helper/stripePayment.js'
 import { getActivePlanList, getPlanDetails } from './helper/plansHelper.js'
 import { handleStripeWebhook } from './helper/stripeWebhook.js'
-import { createSubDomain, subDomainExists, getUserSubDomainDomain } from './helper/subDomain.js'
 import { recordUserTransaction, getUserTransactionDetails } from './helper/transactionHelper.js'
 import { NextFunction, Request, Response } from 'express'
 import { checkCoreumTxnUpdateCap } from './helper/coreumPurchase.js'
 import { checkRadixTxnUpdateCap } from './helper/radixPurchase.js'
 
-export const create_subdomain = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const data = await createSubDomain(req.body.publicKey, req.body.subDomain)
-    res.status(data.status).json({ data: data.data })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const check_subdomain = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const exists = await subDomainExists(req.query['subDomain'] as string)
-    res.status(200).json(exists)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const get_subdomain = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const records = await getUserSubDomainDomain(req.query.publicKey as string)
-    res.status(200).json(records)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const record_transaction = async (req: Request, res: Response, next: NextFunction) => {
+export const record_transaction = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { user } = req.body
   try {
     const data = await recordUserTransaction(req.body, user)
@@ -44,7 +16,7 @@ export const record_transaction = async (req: Request, res: Response, next: Next
   }
 }
 
-export const get_user_transactions = async (req: Request, res: Response, next: NextFunction) => {
+export const get_user_transactions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const record = await getUserTransactionDetails(req.body.publicKey as string)
     res.status(200).json(record)
@@ -53,7 +25,7 @@ export const get_user_transactions = async (req: Request, res: Response, next: N
   }
 }
 
-export const get_active_plan_list = async (req: Request, res: Response, next: NextFunction) => {
+export const get_active_plan_list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const planList = await getActivePlanList()
     res.status(200).send(planList)
@@ -62,7 +34,7 @@ export const get_active_plan_list = async (req: Request, res: Response, next: Ne
   }
 }
 
-export const plan_details_by_id = async (req: Request, res: Response, next: NextFunction) => {
+export const plan_details_by_id = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const data = await getPlanDetails(req.query.subscriptionId as string)
     res.status(data.status).json({ data: data.data })
@@ -71,7 +43,7 @@ export const plan_details_by_id = async (req: Request, res: Response, next: Next
   }
 }
 
-export const cancel_user_subscription = async (req: Request, res: Response, next: NextFunction) => {
+export const cancel_user_subscription = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const data = await cancel_subscription_order(req.query.subscriptionId as string, req.body.user.email ?? undefined)
     res.status(200).json({ ...data })
@@ -81,7 +53,7 @@ export const cancel_user_subscription = async (req: Request, res: Response, next
   }
 }
 
-export const get_user_subscriptions = async (req: Request, res: Response, next: NextFunction) => {
+export const get_user_subscriptions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const data = await get_subscriptions_orders(req.body.customerId ?? undefined, req.body.user.email ?? undefined)
     res.status(200).json({ ...data })
@@ -91,7 +63,7 @@ export const get_user_subscriptions = async (req: Request, res: Response, next: 
   }
 }
 
-export const create_stripe_order = async (req: Request, res: Response, next: NextFunction) => {
+export const create_stripe_order = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const data = await create_session_order(
       req.body.user.publicKey,
@@ -104,7 +76,7 @@ export const create_stripe_order = async (req: Request, res: Response, next: Nex
   }
 }
 
-export const webhook_stripe = async (req: Request, res: Response, next: NextFunction) => {
+export const webhook_stripe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await handleStripeWebhook(req)
     res.status(200).json({})
@@ -113,7 +85,11 @@ export const webhook_stripe = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_coreumtxn_and_updatecap = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     await checkCoreumTxnUpdateCap(req)
     res.status(200).json('Success')
@@ -122,7 +98,7 @@ export const verify_coreumtxn_and_updatecap = async (req: Request, res: Response
   }
 }
 
-export const verify_radixtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction) => {
+export const verify_radixtxn_and_updatecap = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await checkRadixTxnUpdateCap(req)
     res.status(200).json('Success')

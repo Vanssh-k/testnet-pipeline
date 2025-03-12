@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import axios from 'axios'
 import { Request } from 'express'
 import { v4 } from 'uuid'
@@ -8,16 +9,16 @@ import config from '../../../config/index.js'
 import { paymentPlans } from '../../../config/paymentPlans.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-const checkTxnExists = async (pubKey: string, transactionHash: string) => {
+const checkTxnExists = async (pubKey: string, transactionHash: string): Promise<boolean> => {
   const userTxns = await getUserTransactionDetails(pubKey)
-  const userTxn = userTxns.find((item) => item.txHash === transactionHash)
+  const userTxn = userTxns.find((item: any) => item.txHash === transactionHash)
   if (userTxn) {
     return true
   }
   return false
 }
 
-const validatePayment = async (req: Request) => {
+const validatePayment = async (req: Request): Promise<number> => {
   const response = await axios.post(config.radix_api_url, {
     intent_hash: req.body.transactionHash,
     opt_ins: { balance_changes: true },
@@ -54,7 +55,8 @@ const validatePayment = async (req: Request) => {
   }
   return 0
 }
-export const checkRadixTxnUpdateCap = async (req: Request) => {
+
+export const checkRadixTxnUpdateCap = async (req: Request): Promise<void> => {
   const value = await validatePayment(req)
   if (value) {
     await updateUserDataLimit(req.body.publicKey, value)

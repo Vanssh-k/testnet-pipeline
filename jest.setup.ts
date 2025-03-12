@@ -85,11 +85,4 @@ class Redis {
 
 beforeAll(() => {
   jest.setMock('ioredis', { Redis })
-
-  // Mock the rateLimiterMiddleware globally
-  jest.mock('./src/middlewares/rate-limiter.js', () => {
-    return jest.fn((req: Request, res: Response, next: NextFunction) => {
-      next()
-    })
-  })
 })

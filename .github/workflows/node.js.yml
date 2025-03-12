@@ -31,26 +31,27 @@ jobs:
       - name: Test 🚨
         run: npm test
         env:
-          EST_API_KEY: ${{ secrets.EST_API_KEY }}
-          COVALENT_API_KEY: ${{ secrets.COVALENT_API_KEY }}
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SMTP_EMAIL_HOST: ${{ secrets.SMTP_EMAIL_HOST }}
+          SMTP_EMAIL_ID: ${{ secrets.SMTP_EMAIL_ID }}
+          SMTP_EMAIL_PASSWORD: ${{ secrets.SMTP_EMAIL_PASSWORD }}
+          LIGHTHOUSE_IPNS_NODE: ${{ secrets.LIGHTHOUSE_IPNS_NODE }}
+          LIGHTHOUSE_ENC_MESSAGE_TOKENS: ${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
+          POLYGON_RPC: ${{ secrets.POLYGON_RPC }}
+          FILECOIN_RPC: ${{ secrets.FILECOIN_RPC }}
+          TRANSACTION_ROUTE_TOKEN: ${{ secrets.TRANSACTION_ROUTE_TOKEN }}
+          ROUTE_ACCESS_TOKEN: ${{ secrets.ROUTE_ACCESS_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
           TEST_WALLET1_PRIVATE_KEY: ${{ secrets.TEST_WALLET1_PRIVATE_KEY }}
           TEST_WALLET2_PRIVATE_KEY: ${{ secrets.TEST_WALLET2_PRIVATE_KEY }}
           TEST_WALLET3_PRIVATE_KEY: ${{ secrets.TEST_WALLET3_PRIVATE_KEY }}
           TEST_WALLET4_PRIVATE_KEY: ${{ secrets.TEST_WALLET4_PRIVATE_KEY }}
           TEST_WALLET5_PRIVATE_KEY: ${{ secrets.TEST_WALLET5_PRIVATE_KEY }}
           TEST_WALLET6_PRIVATE_KEY: ${{ secrets.TEST_WALLET6_PRIVATE_KEY }}
+          TEST_WALLET6_API_KEY: ${{ secrets.TEST_WALLET6_API_KEY }}
           TEST_WALLET7_API_KEY: ${{ secrets.TEST_WALLET7_API_KEY }}
-          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-          ROUTE_ACCESS_TOKEN: ${{ secrets.ROUTE_ACCESS_TOKEN }}
-          MIGRATION_TEST_ACCESS_TOKEN: ${{ secrets.MIGRATION_TEST_ACCESS_TOKEN }}
-          POLYGON_RPC: ${{ secrets.POLYGON_RPC }}
-          TRANSACTION_ROUTE_TOKEN: ${{ secrets.TRANSACTION_ROUTE_TOKEN }}
-          CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
-          LIGHTHOUSE_ENC_MESSAGE_TOKENS: ${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
-          NO_REPLY_EMAIL_PASSWORD: ${{ secrets.NO_REPLY_EMAIL_PASSWORD }}
-          NO_REPLY_EMAIL_ID: ${{ secrets.NO_REPLY_EMAIL_ID }}
-          LIGHTHOUSE_IPNS_NODE: ${{ secrets.LIGHTHOUSE_IPNS_NODE }}
+          

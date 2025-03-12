@@ -1,6 +1,7 @@
 import dbbClient from '../db/ddbClient.js'
+import { FFCIDRecord } from '../../types/filecoin.js'
 
-export default async (cid: string) => {
+export default async (cid: string): Promise<FFCIDRecord[]> => {
   const params = {
     TableName: 'ff-cid',
     IndexName: 'cid-index',
@@ -11,5 +12,5 @@ export default async (cid: string) => {
   }
 
   const record = await dbbClient.query(params)
-  return record.Items ?? []
+  return (record.Items as FFCIDRecord[]) ?? []
 }

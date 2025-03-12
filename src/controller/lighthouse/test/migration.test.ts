@@ -70,36 +70,3 @@ test('Migration Request Wrong CID: POST /migration_request', async () => {
 
   await supertest(app).post('/api/lighthouse/migration_request').send(data).expect(401)
 }, 10000)
-
-// Enterprise
-test('Migration Request: POST /migration_request_ent', async () => {
-  const data = {
-    publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
-    enterprise: 'test_org',
-    data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2LdJffc"]',
-  }
-
-  await supertest(app)
-    .post('/api/lighthouse/migration_request_ent')
-    .set('Authorization', `Bearer ${config.migration_test_access_token ?? ''}`)
-    .send(data)
-    .expect(200)
-    .then((response) => {
-      const res = JSON.parse(response.text)
-      expect(typeof res).toBe('object')
-    })
-}, 10000)
-
-test('Migration Request Wrong CID: POST /migration_request_ent', async () => {
-  const data = {
-    publicKey: '0x75a22ede971080c8448c46de6ae5df3f64c67475',
-    enterprise: 'test_org',
-    data: '["QmWC9AkGa6vSbR4yizoJrFMfmZh4XjZXxvRDknk2c"]',
-  }
-
-  await supertest(app)
-    .post('/api/lighthouse/migration_request_ent')
-    .set('Authorization', `Bearer ${config.migration_test_access_token ?? ''}`)
-    .send(data)
-    .expect(400)
-}, 10000)

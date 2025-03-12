@@ -1,5 +1,4 @@
 import supertest from 'supertest'
-import ethers from 'ethers'
 import app from '../../../app.js'
 
 // get_active_plan_list

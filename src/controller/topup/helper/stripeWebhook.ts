@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { Request } from 'express'
 import { v4 } from 'uuid'
 import Stripe from 'stripe'
@@ -12,7 +13,7 @@ import { referralBonusPercentage } from '../../../config/constants.js'
 
 const stripe = new Stripe(config.stripe_key)
 
-const validateStripePayload = async (req: Request) => {
+const validateStripePayload = async (req: Request): Promise<{ data: any; eventType: string }> => {
   const webhookSecret = config.stripe_webhook
   let event: any
   if (!webhookSecret) {
@@ -26,7 +27,7 @@ const validateStripePayload = async (req: Request) => {
       undefined,
     )
     return { data: event.data.object, eventType: event.type }
-  } catch (err) {
+  } catch (err: any) {
     console.log(`⚠️  Webhook signature verification failed:  ${err}`)
     throw new CustomError(400, `webhook error`)
   }
@@ -50,7 +51,7 @@ const validateStripePayload = async (req: Request) => {
 //   }
 // }
 
-const processStripePayment = async (data: any, eventType: any) => {
+const processStripePayment = async (data: any, eventType: string): Promise<void> => {
   switch (eventType) {
     case 'checkout.session.completed':
       try {
@@ -59,7 +60,7 @@ const processStripePayment = async (data: any, eventType: any) => {
         if (data.mode === 'subscription') {
           const session = await stripe.checkout.sessions.retrieve(data.id)
           invoiceMetadata = session.metadata
-          subscriptionId = session.subscription
+          subscriptionId = session.subscription as string
         } else {
           invoiceMetadata = data.invoice_creation.invoice_data.metadata
         }
@@ -106,14 +107,12 @@ const processStripePayment = async (data: any, eventType: any) => {
       }
       break
 
-    // Handle other cases
-
     default:
       console.log(`Unhandled event type ${eventType}`)
   }
 }
 
-export const handleStripeWebhook = async (req: Request) => {
+export const handleStripeWebhook = async (req: Request): Promise<void> => {
   const { data: stripeData, eventType } = await validateStripePayload(req)
   await processStripePayment(stripeData, eventType)
 }

@@ -3,7 +3,7 @@ import { lighthouse_encryption_nodes } from '../../../config/constants.js'
 import config from '../../../config/index.js'
 import logger from '../../../utils/logger.js'
 
-export const sendMessageToEnc = async (publicKey: string, message: string) => {
+export const sendMessageToEnc = async (publicKey: string, message: string): Promise<(any | null)[]> => {
   const data = await Promise.all(
     lighthouse_encryption_nodes.map((url, index) =>
       axios({

@@ -11,18 +11,13 @@ import checkApiKey from '../db/user/auth/checkApiKey.js'
 
 import { getCache, removeCache } from '../db/db/cacheClient.js'
 import { NextFunction, Request, Response } from 'express'
-
-const verifyAccessToken = async (accessToken: string) => {}
-
-const verifySig = async (accessToken: string) => {}
-
 /*
   req.body.publicKey: only to pass public key
   req.body.user to pass full user object
 */
 
 export default (rule: string, clauses: string[] = []) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       switch (rule) {
         case 'verifysignature':
@@ -77,8 +72,8 @@ export default (rule: string, clauses: string[] = []) => {
           break
 
         case 'verifyMigrationRequest':
-          const requestId = req.query.requestId
-          const requestInfo = await getMigrationRequestInfo(requestId as string)
+          const requestId = req.query.requestId as string
+          const requestInfo = await getMigrationRequestInfo(requestId)
           if (!requestInfo) {
             throw new CustomError(404, 'User Not Found.')
           }
@@ -89,24 +84,6 @@ export default (rule: string, clauses: string[] = []) => {
           }
           req.body.info = requestInfo
           req.body.user = recordMigrationBlock
-          break
-
-        case 'enterpriseRoute':
-          const routeAccessToken = req.headers['authorization']?.split(' ')[1]
-          let verificationToken = null
-          if (req.body.enterprise === 'ocean_protocol') {
-            verificationToken = config.migration_ocean_access_token
-            if (req.body.publicKey) {
-              req.body.publicKey = oceanPublicKey
-            }
-          }
-          if (req.body.enterprise === 'test_org') {
-            verificationToken = config.migration_test_access_token
-          }
-          if (routeAccessToken !== verificationToken || !verificationToken) {
-            throw new CustomError(404, 'User Not Found.')
-          }
-          req.body.network = getNetwork(req.body.publicKey)
           break
 
         case 'transactionProtectRoute':

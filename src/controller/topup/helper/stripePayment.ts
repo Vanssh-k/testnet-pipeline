@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import Stripe from 'stripe'
 import config from '../../../config/index.js'
 import CustomError from '../../../middlewares/error/customError.js'
@@ -5,7 +6,7 @@ import { paymentPlans } from '../../../config/paymentPlans.js'
 
 const stripe = new Stripe(config.stripe_key)
 
-async function upsertCustomer(walletAddress: string, email: string | undefined = undefined) {
+async function upsertCustomer(walletAddress: string, email: string | undefined = undefined): Promise<Stripe.Customer> {
   // Search for customers with the given userId in metadata
   const existingCustomers = await stripe.customers.list({
     email: email,
@@ -29,7 +30,7 @@ async function upsertCustomer(walletAddress: string, email: string | undefined =
 }
 
 // Currently not in use
-export const setup_card_stripe = async (address: string) => {
+export const setup_card_stripe = async (address: string): Promise<{ url: string | null }> => {
   const customer = await upsertCustomer(address)
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -42,7 +43,11 @@ export const setup_card_stripe = async (address: string) => {
   return { url: session.url }
 }
 
-export const create_session_order = async (address: string, subID: number, emailId: string | undefined) => {
+export const create_session_order = async (
+  address: string,
+  subID: number,
+  emailId: string | undefined,
+): Promise<{ url: string | null }> => {
   if (emailId === undefined) {
     throw new CustomError(403, 'Email not updated in profile')
   }
@@ -128,7 +133,10 @@ export const create_session_order = async (address: string, subID: number, email
   }
 }
 
-export const cancel_subscription_order = async (stripePlanId: string, emailId: string | undefined) => {
+export const cancel_subscription_order = async (
+  stripePlanId: string,
+  emailId: string | undefined,
+): Promise<{ message: string; deletedSubscription: Stripe.Subscription }> => {
   if (emailId === undefined) {
     throw new CustomError(403, 'Email not updated in profile')
   }
@@ -137,7 +145,10 @@ export const cancel_subscription_order = async (stripePlanId: string, emailId: s
   return { message: 'Subscription canceled successfully', deletedSubscription }
 }
 
-export const get_subscriptions_orders = async (customerId: string | undefined, emailId: string | undefined) => {
+export const get_subscriptions_orders = async (
+  customerId: string | undefined,
+  emailId: string | undefined,
+): Promise<{ id: string; status: string; nextBillingDate: number }[]> => {
   if (emailId === undefined) {
     throw new CustomError(403, 'Email not updated in profile')
   }

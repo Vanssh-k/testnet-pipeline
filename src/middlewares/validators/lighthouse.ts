@@ -1,32 +1,32 @@
-import joi from 'joi'
+import joi, { Schema } from 'joi'
 
-export const symbolSchema = joi.object({
+export const symbolSchema: Schema = joi.object({
   symbol: joi.string().required().messages({
     'any.required': `token symbol not found`,
   }),
 })
 
-export const cidSchema = joi.object({
+export const cidSchema: Schema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `cid not found`,
   }),
   network: joi.string().optional(),
 })
 
-export const dealIdSchema = joi.object({
+export const dealIdSchema: Schema = joi.object({
   dealId: joi.string().required().messages({
     'any.required': `deal ID not found`,
   }),
   network: joi.string().optional(),
 })
 
-export const bundleSchema = joi.object({
+export const bundleSchema: Schema = joi.object({
   bundleId: joi.string().required().messages({
     'any.required': `bundle ID not found`,
   }),
 })
 
-export const addCidSchema = joi.object({
+export const addCidSchema: Schema = joi.object({
   name: joi.string().required().messages({
     'any.required': `file name not found`,
   }),
@@ -35,7 +35,7 @@ export const addCidSchema = joi.object({
   }),
 })
 
-export const pinningSchema = joi.object({
+export const pinningSchema: Schema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `cid not found`,
   }),
@@ -43,13 +43,13 @@ export const pinningSchema = joi.object({
   raas: joi.any(),
 })
 
-export const migrationRequestSchema = joi.object({
+export const migrationRequestSchema: Schema = joi.object({
   data: joi.string().required().messages({
     'any.required': `data not found`,
   }),
 })
 
-export const migrationRequestEntSchema = joi.object({
+export const migrationRequestEntSchema: Schema = joi.object({
   data: joi.string().required().messages({
     'any.required': `data not found`,
   }),
@@ -61,13 +61,13 @@ export const migrationRequestEntSchema = joi.object({
   }),
 })
 
-export const migrationRequestIdSchema = joi.object({
+export const migrationRequestIdSchema: Schema = joi.object({
   requestId: joi.string().required().messages({
     'any.required': `requestId not found`,
   }),
 })
 
-export const addCIDToQueueSchema = joi.object({
+export const addCIDToQueueSchema: Schema = joi.object({
   publicKey: joi.string().required().messages({
     'any.required': `publicKey not found`,
   }),
@@ -86,7 +86,7 @@ export const addCIDToQueueSchema = joi.object({
   }),
 })
 
-export const pinningStatusSchema = joi.object({
+export const pinningStatusSchema: Schema = joi.object({
   cid: joi.string().required().messages({
     'any.required': `cid not found`,
   }),

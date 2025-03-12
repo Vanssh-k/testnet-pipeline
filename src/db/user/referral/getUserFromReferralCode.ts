@@ -2,13 +2,9 @@ import dbbClient from '../../db/ddbClient.js'
 import logger from '../../../utils/logger.js'
 import { referralCodeTable } from '../../../config/constants.js'
 import CustomError from '../../../middlewares/error/customError.js'
+import { ReferralCode } from 'src/types/user.js'
 
-type Referral = {
-  publicKey: string
-  referralCode: string
-}
-
-export default async (referralCode: string): Promise<Referral[]> => {
+export default async (referralCode: string): Promise<ReferralCode[]> => {
   try {
     const params = {
       TableName: referralCodeTable,
@@ -21,7 +17,7 @@ export default async (referralCode: string): Promise<Referral[]> => {
 
     const record = await dbbClient.query(params)
     const Items = record.Items ? record.Items : []
-    return Items as Referral[]
+    return Items as ReferralCode[]
   } catch (error) {
     logger.error('In checkAPIKey: ' + error)
     throw new CustomError(500, `Internal Server Error.`)

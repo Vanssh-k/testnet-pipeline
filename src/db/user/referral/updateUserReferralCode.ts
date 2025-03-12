@@ -3,7 +3,7 @@ import logger from '../../../utils/logger.js'
 import { referralCodeTable } from '../../../config/constants.js'
 import CustomError from '../../../middlewares/error/customError.js'
 
-export default async (publicKey: string, referralCode: string) => {
+export default async (publicKey: string, referralCode: string): Promise<string> => {
   try {
     const params = {
       TableName: referralCodeTable,

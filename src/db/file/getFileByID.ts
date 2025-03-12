@@ -4,7 +4,7 @@ import { FileSchema } from '../../types/file.js'
 import { fileTable } from '../../config/constants.js'
 import CustomError from '../../middlewares/error/customError.js'
 
-export default async (id: string): Promise<FileSchema | null> => {
+export default async (id: string): Promise<FileSchema | undefined> => {
   try {
     const params = {
       TableName: fileTable,
@@ -14,9 +14,9 @@ export default async (id: string): Promise<FileSchema | null> => {
     }
 
     const record = await dbbClient.get(params)
-    return (record.Item as FileSchema) ?? null
+    return (record.Item as FileSchema) ?? undefined
   } catch (error: any) {
     logger.error('Error get file details by ID: ' + error)
-    throw new CustomError(500, `Internal Server Error.`)
+    throw new CustomError(500, `Invalid lastkey.`)
   }
 }
