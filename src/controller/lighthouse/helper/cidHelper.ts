@@ -3,6 +3,7 @@ import { legacyDealInfo } from './legacyDeals.js'
 import getDealInfoCG from '../../../db/filecoin/getDealInfoCG.js'
 import getFFRecord from '../../../db/filecoin/getFFRecord.js'
 import { FFCIDRecord } from '../../../types/filecoin.js'
+import getDeals from '../../../db/filecoin/getDeals.js'
 
 const ffDeal = async (cid: string): Promise<any> => {
   try {
@@ -30,6 +31,15 @@ const ffDeal = async (cid: string): Promise<any> => {
 
 export const cidDealStatus = async (cid: string): Promise<any[]> => {
   try {
+    const directDeal = await getDeals(cid)
+    if (directDeal) {
+      return [
+        {
+          pieceCID: directDeal.pieceCID,
+          deal: directDeal.dealInfo,
+        },
+      ]
+    }
     const ffDeals = await ffDeal(cid)
     if (ffDeals.length === 0) {
       const legacyDeals = await legacyDealInfo(cid)

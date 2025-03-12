@@ -29,6 +29,7 @@ const ffTransactions = isDevelopment ? 'tn-ff-transactions' : 'ff-transactions'
 const historicRecords = isDevelopment ? 'tn-historic-records' : 'ff-historic-records'
 
 const ipnsTable = isDevelopment ? 'tn-user-ipns-records' : 'user-ipns-records'
+const cidDealsTable = 'cid-deals'
 
 const fileTableEncryption = isDevelopment ? 'tn-file-table-encryption' : 'file-table-encryption'
 const oceanPublicKey = '0x7c4fe89219e3078c85766ea5f0d448e9b15b78d4'
@@ -113,4 +114,5 @@ export {
   lighthouse_encryption_nodes,
   oceanPublicKey,
   referralBonusPercentage,
+  cidDealsTable,
 }
