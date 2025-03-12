@@ -17,6 +17,7 @@ import migrationRequestInfo from '../../db/migration/migrationRequestInfo.js'
 import listMigrationRequests from '../../db/migration/listMigrationRequests.js'
 import cidPinStatus from '../../db/migration/cidPinStatus.js'
 import { getCache, removeCache, setExCache } from '../../db/db/cacheClient.js'
+import { MigrationStatus } from '../../types/status.js'
 
 // get ticker of a token by its symbol as input
 export const get_ticker = async (req: Request, res: Response, next: NextFunction) => {
@@ -213,7 +214,7 @@ export const cid_pin_status = async (req: Request, res: Response, next: NextFunc
     let fileSize = '0'
     let requestId = ''
     for (let i = 0; i < pinStatus.length; i++) {
-      if (pinStatus[i].cidStatus === 'pinned') {
+      if (pinStatus[i].cidStatus === MigrationStatus.Pinned) {
         pinned = 'pinned'
         fileSize = pinStatus[i].fileSizeInBytes
         requestId = pinStatus[i].requestID
