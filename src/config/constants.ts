@@ -10,7 +10,7 @@ const jwtExpire = '12h'
 
 const cacheTime = 300 // 5 minutes
 const filesPageSize = isDevelopment ? 100 : 1000
-const freeDataLimitInBytes = 1073741824
+const freeDataLimitInBytes = 5368709120 // 5 GB
 const messageString = 'Please prove you are the owner of this wallet by signing this message, nonce='
 
 const userTable = isDevelopment ? 'tn-user-record' : 'user-record'
