@@ -69,37 +69,40 @@ const processStripePayment = async (data: any, eventType: string): Promise<void>
         //   await createAdditionalSubscription(data.customer)
         // }
 
-        // Check type of wallet
-        const network = getNetwork(invoiceMetadata.walletAddress)
-        if (network === 'evm') {
-          invoiceMetadata.walletAddress = invoiceMetadata.walletAddress.toLowerCase()
-        }
+        // check if wallet address is present means lighthouse webhook otherwise nft.storage webhook
+        if (invoiceMetadata.walletAddress && invoiceMetadata.storageInGB) {
+          // Check type of wallet
+          const network = getNetwork(invoiceMetadata.walletAddress)
+          if (network === 'evm') {
+            invoiceMetadata.walletAddress = invoiceMetadata.walletAddress.toLowerCase()
+          }
 
-        // Add transaction to DB
-        await recordTransactions({
-          id: v4().toString(),
-          txHash: data.id,
-          publicKey: invoiceMetadata.walletAddress,
-          tokenAddress: 'Fiat Payment',
-          planID: invoiceMetadata.planID.toString(),
-          subscriptionID: subscriptionId,
-          amount: invoiceMetadata.amount,
-          network: 'stripe',
-          createdAt: Date.now(),
-        })
+          // Add transaction to DB
+          await recordTransactions({
+            id: v4().toString(),
+            txHash: data.id,
+            publicKey: invoiceMetadata.walletAddress,
+            tokenAddress: 'Fiat Payment',
+            planID: invoiceMetadata.planID.toString(),
+            subscriptionID: subscriptionId,
+            amount: invoiceMetadata.amount,
+            network: 'stripe',
+            createdAt: Date.now(),
+          })
 
-        //Add paid data cap to DB
-        const dataCapPurchased = parseInt(`${invoiceMetadata.storageInGB ?? 0}`, 10) * 1073741824 //GB converted to bytes
-        if (dataCapPurchased) {
-          await updateUserDataLimit(invoiceMetadata.walletAddress, dataCapPurchased)
-          console.log('plan updated')
+          //Add paid data cap to DB
+          const dataCapPurchased = parseInt(`${invoiceMetadata.storageInGB ?? 0}`, 10) * 1073741824 //GB converted to bytes
+          if (dataCapPurchased) {
+            await updateUserDataLimit(invoiceMetadata.walletAddress, dataCapPurchased)
+            console.log('plan updated')
 
-          // Fetch referred_by from the database
-          const referral = await getReferral(invoiceMetadata.walletAddress)
-          if (referral && referral.referredBy) {
-            const bonusDataCap = dataCapPurchased * referralBonusPercentage
-            await updateUserDataLimit(referral.referredBy, bonusDataCap)
-            console.log('referral bonus updated')
+            // Fetch referred_by from the database
+            const referral = await getReferral(invoiceMetadata.walletAddress)
+            if (referral && referral.referredBy) {
+              const bonusDataCap = dataCapPurchased * referralBonusPercentage
+              await updateUserDataLimit(referral.referredBy, bonusDataCap)
+              console.log('referral bonus updated')
+            }
           }
         }
       } catch (err: any) {
