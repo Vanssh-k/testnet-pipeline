@@ -37,12 +37,10 @@ const directDeal = async (cid: string) => {
     if (cacheDeal) {
       return cacheDeal
     }
-    const response = await axios.get(`https://filecoin-first.lighthouse.storage/api/deal_status?cid=${cid}`, {
-      timeout: 5000, // 2 seconds timeout
-    })
-    if (response.data.result.file.details.state === 'offloaded') {
-      setExCache(`deal-${cid}`, 3000, response.data.result.file.details)
-      return response.data.result.file.details
+    const response = await axios.get(`https://filecoin-first.lighthouse.storage/api/deal_status?cid=${cid}`)
+    if (response.data.length > 0) {
+      setExCache(`deal-${cid}`, 3000, response.data)
+      return response.data
     }
     return false
   } catch {
@@ -54,12 +52,7 @@ export const cidDealStatus = async (cid: string): Promise<any[]> => {
   try {
     const response = await directDeal(cid)
     if (response) {
-      return [
-        {
-          pieceCID: response.groups[0].pieceCid,
-          deal: response.groups[0].deals,
-        },
-      ]
+      return response
     }
     const ffDeals = await ffDeal(cid)
     if (ffDeals.length === 0) {
