@@ -95,6 +95,11 @@ jobs:
           
           # Remove old images
           sudo docker rmi lighthouse-backend:latest || true
+
+          # Clone or pull the repository
+            echo "Cloning repository..."
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
+          
           
           # Start services using docker-compose
           sudo docker-compose up -d --build
@@ -104,9 +109,6 @@ jobs:
           
           # Create directory on server first
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p /opt/lighthouse-backend && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
-          
-          # Copy the entire codebase to server
-          scp -o StrictHostKeyChecking=no -i private_key -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
           
           # Copy .env file to server
           scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
