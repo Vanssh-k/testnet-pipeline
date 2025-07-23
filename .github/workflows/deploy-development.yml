@@ -91,18 +91,18 @@ jobs:
           cd /opt/lighthouse-backend
           
           # Clone or pull the repository
-          if [ ! -d ".git" ]; then
-            echo "Cloning repository..."
-            echo "Clone URL: https://x-access-token:***@github.com/Vanssh-k/testnet-pipeline.git"
-            git clone https://x-access-token:${{ secrets.TOKEN }}@github.com/Vanssh-k/testnet-pipeline.git .
-          else
-            echo "Pulling latest changes..."
-            echo "Remote URL: https://x-access-token:***@github.com/Vanssh-k/testnet-pipeline.git"
-            # Configure git to use token for all operations
-            git remote set-url origin https://x-access-token:${{ secrets.TOKEN }}@github.com/Vanssh-k/testnet-pipeline.git
-            git fetch origin
-            git reset --hard origin/development
+          echo "Checking repository status..."
+          
+          # Remove existing repository if it exists (force clean clone)
+          if [ -d ".git" ]; then
+            echo "Removing existing repository for clean clone..."
+            rm -rf .git
+            rm -rf *
           fi
+          
+          echo "Cloning repository..."
+          echo "Clone URL: https://x-access-token:***@github.com/Vanssh-k/testnet-pipeline.git"
+          git clone https://x-access-token:${{ secrets.TOKEN }}@github.com/Vanssh-k/testnet-pipeline.git .
           
           # Stop existing containers
           sudo docker-compose down || true
