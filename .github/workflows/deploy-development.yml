@@ -99,16 +99,16 @@ jobs:
           # Clone or pull the repository
           echo "Current directory: $(pwd)"
           echo "Git directory exists: $([ -d ".git" ] && echo "YES" || echo "NO")"
-          if [ ! -d ".git" ]; then
-            echo "Cloning repository..."
-            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
-          else
+          # if [ ! -d ".git" ]; then
+          #   echo "Cloning repository..."
+          #   git clone https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
+          # else
             echo "Pulling latest changes..."
             # Configure git to use token for all operations
             git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git
             git fetch origin
             git reset --hard origin/development
-          fi
+          # fi
           # Start services using docker-compose
           sudo docker-compose up -d --build
           
