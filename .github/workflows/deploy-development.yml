@@ -10,7 +10,29 @@ env:
   NODE_VERSION: '22'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run linting
+        run: npm run lint
+
   build-and-deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -78,6 +100,25 @@ jobs:
           
           echo "Starting deployment..."
           
+          # Create application directory if it doesn't exist
+          sudo mkdir -p /opt/lighthouse-backend
+          sudo chown ubuntu:ubuntu /opt/lighthouse-backend
+          
+          # Fix Docker permissions
+          sudo usermod -aG docker ubuntu || true
+          sudo systemctl start docker || true
+          sudo systemctl enable docker || true
+          
+          # Navigate to application directory
+          cd /opt/lighthouse-backend
+          
+          # Clone repository if it doesn't exist
+          if [ ! -d ".git" ]; then
+            git clone https://github.com/your-username/lighthouse-backend.git .
+          else
+            git pull origin development || git pull origin main || true
+          fi
+          
           # Stop existing containers
           docker-compose down || true
           
@@ -96,10 +137,8 @@ jobs:
           
           # Execute deployment on server using the SSH key file
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'SSHEOF'
-            cd /opt/lighthouse-backend
-            
             # Copy .env file
-            cp /tmp/.env .
+            cp /tmp/.env /opt/lighthouse-backend/ || true
             
             # Make deployment script executable and run
             chmod +x /tmp/deploy.sh
