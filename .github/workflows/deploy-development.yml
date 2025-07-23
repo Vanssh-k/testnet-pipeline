@@ -90,6 +90,18 @@ jobs:
           # Navigate to application directory
           cd /opt/lighthouse-backend
           
+          # Clone or pull the repository
+          if [ ! -d ".git" ]; then
+            echo "Cloning repository..."
+            git clone https://${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
+          else
+            echo "Pulling latest changes..."
+            # Configure git to use token for all operations
+            git remote set-url origin https://${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git
+            git fetch origin
+            git reset --hard origin/development
+          fi
+          
           # Stop existing containers
           sudo docker-compose down || true
           
@@ -104,9 +116,6 @@ jobs:
           
           # Create directory on server first
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p /opt/lighthouse-backend && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
-          
-          # Copy the entire codebase to server
-          scp -o StrictHostKeyChecking=no -i private_key -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
           
           # Copy .env file to server
           scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
