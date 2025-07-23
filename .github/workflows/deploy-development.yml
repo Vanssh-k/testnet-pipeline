@@ -37,10 +37,6 @@ jobs:
           
           echo "Starting deployment..."
           
-          # Create application directory if it doesn't exist
-          sudo mkdir -p lighthouse-backend-testnet
-          sudo chown ubuntu:ubuntu lighthouse-backend-testnet
-          
           # Fix Docker permissions
           sudo usermod -aG docker ubuntu || true
           sudo systemctl start docker || true
