@@ -112,13 +112,6 @@ jobs:
           # Navigate to application directory
           cd /opt/lighthouse-backend
           
-          # Clone repository if it doesn't exist
-          if [ ! -d ".git" ]; then
-            git clone https://github.com/your-username/lighthouse-backend.git .
-          else
-            git pull origin development || git pull origin main || true
-          fi
-          
           # Stop existing containers
           docker-compose down || true
           
@@ -131,15 +124,17 @@ jobs:
           echo "Deployment completed successfully!"
           EOF
           
-          # Copy files to server using the SSH key file
-          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
+          # Copy the entire codebase to server
+          scp -o StrictHostKeyChecking=no -i private_key -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
+          
+          # Copy .env file to server
+          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
+          
+          # Copy deployment script to server
           scp -o StrictHostKeyChecking=no -i private_key deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
           
           # Execute deployment on server using the SSH key file
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'SSHEOF'
-            # Copy .env file
-            cp /tmp/.env /opt/lighthouse-backend/ || true
-            
             # Make deployment script executable and run
             chmod +x /tmp/deploy.sh
             /tmp/deploy.sh
