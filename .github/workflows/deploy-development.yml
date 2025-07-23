@@ -23,6 +23,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Write SSH key to file
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+
       - name: Deploy to Ubuntu instance
         run: |
           # Create .env file for docker-compose
@@ -85,12 +90,12 @@ jobs:
           echo "Deployment completed successfully!"
           EOF
           
-          # Copy files to server
-          scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
-          scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
+          # Copy files to server using the SSH key file
+          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
+          scp -o StrictHostKeyChecking=no -i private_key deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
           
-          # Execute deployment on server
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'SSHEOF'
+          # Execute deployment on server using the SSH key file
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'SSHEOF'
             cd /opt/lighthouse-backend
             
             # Copy .env file
