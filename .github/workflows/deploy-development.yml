@@ -116,10 +116,10 @@ jobs:
           EOF
           
           # Create directory on server first
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p /opt/lighthouse-backend && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p lighthouse-backend-testnet && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
           
           # Copy .env file to server
-          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
+          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:lighthouse-backend-testnet
           
           # Copy deployment script to server
           scp -o StrictHostKeyChecking=no -i private_key deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
