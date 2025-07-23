@@ -30,47 +30,6 @@ jobs:
 
       - name: Deploy to Ubuntu instance
         run: |
-          # Create .env file for docker-compose
-          cat > .env << 'EOF'
-          PORT=${{ secrets.PORT }}
-          ENVIRONMENT=${{ secrets.ENVIRONMENT }}
-          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION=${{ secrets.AWS_REGION }}
-          TEST_WALLET1_PRIVATE_KEY=${{ secrets.TEST_WALLET1_PRIVATE_KEY }}
-          TEST_WALLET2_PRIVATE_KEY=${{ secrets.TEST_WALLET2_PRIVATE_KEY }}
-          TEST_WALLET3_PRIVATE_KEY=${{ secrets.TEST_WALLET3_PRIVATE_KEY }}
-          TEST_WALLET4_PRIVATE_KEY=${{ secrets.TEST_WALLET4_PRIVATE_KEY }}
-          TEST_WALLET5_PRIVATE_KEY=${{ secrets.TEST_WALLET5_PRIVATE_KEY }}
-          TEST_WALLET6_PRIVATE_KEY=${{ secrets.TEST_WALLET6_PRIVATE_KEY }}
-          TEST_WALLET6_API_KEY=${{ secrets.TEST_WALLET6_API_KEY }}
-          TEST_WALLET7_API_KEY=${{ secrets.TEST_WALLET7_API_KEY }}
-          TEST_WALLET7_API_KEY_DEVELOPMENT=${{ secrets.TEST_WALLET7_API_KEY_DEVELOPMENT }}
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
-          LIGHTHOUSE_IPNS_NODE=${{ secrets.LIGHTHOUSE_IPNS_NODE }}
-          LIGHTHOUSE_PUBLIC_NODE_TOKEN=${{ secrets.LIGHTHOUSE_PUBLIC_NODE_TOKEN }}
-          ROUTE_ACCESS_TOKEN=${{ secrets.ROUTE_ACCESS_TOKEN }}
-          TRANSACTION_ROUTE_TOKEN=${{ secrets.TRANSACTION_ROUTE_TOKEN }}
-          POLYGON_RPC=${{ secrets.POLYGON_RPC }}
-          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-          REDIS_URL=${{ secrets.REDIS_URL }}
-          LIGHTHOUSE_BILLING_ADDRESS=${{ secrets.LIGHTHOUSE_BILLING_ADDRESS }}
-          LIGHTHOUSE_ENC_MESSAGE_TOKENS=${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
-          SMTP_EMAIL_HOST=${{ secrets.SMTP_EMAIL_HOST }}
-          SMTP_EMAIL_PASSWORD=${{ secrets.SMTP_EMAIL_PASSWORD }}
-          SMTP_EMAIL_ID=${{ secrets.SMTP_EMAIL_ID }}
-          STRIPE_KEY=${{ secrets.STRIPE_KEY }}
-          PAYMENT_URL=${{ secrets.PAYMENT_URL }}
-          STRIPE_WEBHOOK=${{ secrets.STRIPE_WEBHOOK }}
-          LIGHTHOUSE_COREUM_ADDRESS=${{ secrets.LIGHTHOUSE_COREUM_ADDRESS }}
-          FILECOIN_RPC=${{ secrets.FILECOIN_RPC }}
-          RADIX_DAPP_DEFINATION=${{ secrets.RADIX_DAPP_DEFINATION }}
-          RADIX_NETWORK_ID=${{ secrets.RADIX_NETWORK_ID }}
-          RADIX_EXPECTED_ORIGIN=${{ secrets.RADIX_EXPECTED_ORIGIN }}
-          LIGHTHOUSE_RADIX_ADDRESS=${{ secrets.LIGHTHOUSE_RADIX_ADDRESS }}
-          EOF
-          
           # Create deployment script
           cat > deploy.sh << 'EOF'
           #!/bin/bash
@@ -116,10 +75,7 @@ jobs:
           EOF
           
           # Create directory on server first
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p lighthouse-backend-testnet && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
-          
-          # Copy .env file to server
-          scp -o StrictHostKeyChecking=no -i private_key .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:lighthouse-backend-testnet
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p lighthouse-backend-testnet && sudo chown ubuntu:ubuntu lighthouse-backend-testnet"
           
           # Copy deployment script to server
           scp -o StrictHostKeyChecking=no -i private_key deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/tmp/
@@ -128,6 +84,46 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'SSHEOF'
             # Make deployment script executable and run
             chmod +x /tmp/deploy.sh
+            
+            # Export environment variables for the deployment
+            export PORT=${{ secrets.PORT }}
+            export ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            export AWS_REGION=${{ secrets.AWS_REGION }}
+            export TEST_WALLET1_PRIVATE_KEY=${{ secrets.TEST_WALLET1_PRIVATE_KEY }}
+            export TEST_WALLET2_PRIVATE_KEY=${{ secrets.TEST_WALLET2_PRIVATE_KEY }}
+            export TEST_WALLET3_PRIVATE_KEY=${{ secrets.TEST_WALLET3_PRIVATE_KEY }}
+            export TEST_WALLET4_PRIVATE_KEY=${{ secrets.TEST_WALLET4_PRIVATE_KEY }}
+            export TEST_WALLET5_PRIVATE_KEY=${{ secrets.TEST_WALLET5_PRIVATE_KEY }}
+            export TEST_WALLET6_PRIVATE_KEY=${{ secrets.TEST_WALLET6_PRIVATE_KEY }}
+            export TEST_WALLET6_API_KEY=${{ secrets.TEST_WALLET6_API_KEY }}
+            export TEST_WALLET7_API_KEY=${{ secrets.TEST_WALLET7_API_KEY }}
+            export TEST_WALLET7_API_KEY_DEVELOPMENT=${{ secrets.TEST_WALLET7_API_KEY_DEVELOPMENT }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            export JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+            export LIGHTHOUSE_IPNS_NODE=${{ secrets.LIGHTHOUSE_IPNS_NODE }}
+            export LIGHTHOUSE_PUBLIC_NODE_TOKEN=${{ secrets.LIGHTHOUSE_PUBLIC_NODE_TOKEN }}
+            export ROUTE_ACCESS_TOKEN=${{ secrets.ROUTE_ACCESS_TOKEN }}
+            export TRANSACTION_ROUTE_TOKEN=${{ secrets.TRANSACTION_ROUTE_TOKEN }}
+            export POLYGON_RPC=${{ secrets.POLYGON_RPC }}
+            export REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            export REDIS_URL=${{ secrets.REDIS_URL }}
+            export LIGHTHOUSE_BILLING_ADDRESS=${{ secrets.LIGHTHOUSE_BILLING_ADDRESS }}
+            export LIGHTHOUSE_ENC_MESSAGE_TOKENS=${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
+            export SMTP_EMAIL_HOST=${{ secrets.SMTP_EMAIL_HOST }}
+            export SMTP_EMAIL_PASSWORD=${{ secrets.SMTP_EMAIL_PASSWORD }}
+            export SMTP_EMAIL_ID=${{ secrets.SMTP_EMAIL_ID }}
+            export STRIPE_KEY=${{ secrets.STRIPE_KEY }}
+            export PAYMENT_URL=${{ secrets.PAYMENT_URL }}
+            export STRIPE_WEBHOOK=${{ secrets.STRIPE_WEBHOOK }}
+            export LIGHTHOUSE_COREUM_ADDRESS=${{ secrets.LIGHTHOUSE_COREUM_ADDRESS }}
+            export FILECOIN_RPC=${{ secrets.FILECOIN_RPC }}
+            export RADIX_DAPP_DEFINATION=${{ secrets.RADIX_DAPP_DEFINATION }}
+            export RADIX_NETWORK_ID=${{ secrets.RADIX_NETWORK_ID }}
+            export RADIX_EXPECTED_ORIGIN=${{ secrets.RADIX_EXPECTED_ORIGIN }}
+            export LIGHTHOUSE_RADIX_ADDRESS=${{ secrets.LIGHTHOUSE_RADIX_ADDRESS }}
+            
             /tmp/deploy.sh
           SSHEOF
 
