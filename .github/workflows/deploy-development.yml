@@ -91,13 +91,13 @@ jobs:
           cd /opt/lighthouse-backend
           
           # Stop existing containers
-          docker-compose down || true
+          sudo docker-compose down || true
           
           # Remove old images
-          docker rmi lighthouse-backend:latest || true
+          sudo docker rmi lighthouse-backend:latest || true
           
           # Start services using docker-compose
-          docker-compose up -d --build
+          sudo docker-compose up -d --build
           
           echo "Deployment completed successfully!"
           EOF
