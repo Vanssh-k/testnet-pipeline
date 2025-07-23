@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  nginx:
+    image: openresty/openresty:alpine
+    container_name: lighthouse-nginx
+    volumes:
+      - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - lighthouse-backend
   lighthouse-backend:
     container_name: lighthouse-backend
     build:

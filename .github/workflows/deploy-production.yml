@@ -1,0 +1,137 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Security audit
+        run: npm audit --audit-level moderate
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to Production server
+        run: |
+          # Create .env file for docker-compose
+          cat > .env << 'EOF'
+          PORT=${{ secrets.PORT }}
+          ENVIRONMENT=production
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION=${{ secrets.AWS_REGION }}
+          TEST_WALLET1_PRIVATE_KEY=${{ secrets.TEST_WALLET1_PRIVATE_KEY }}
+          TEST_WALLET2_PRIVATE_KEY=${{ secrets.TEST_WALLET2_PRIVATE_KEY }}
+          TEST_WALLET3_PRIVATE_KEY=${{ secrets.TEST_WALLET3_PRIVATE_KEY }}
+          TEST_WALLET4_PRIVATE_KEY=${{ secrets.TEST_WALLET4_PRIVATE_KEY }}
+          TEST_WALLET5_PRIVATE_KEY=${{ secrets.TEST_WALLET5_PRIVATE_KEY }}
+          TEST_WALLET6_PRIVATE_KEY=${{ secrets.TEST_WALLET6_PRIVATE_KEY }}
+          TEST_WALLET6_API_KEY=${{ secrets.TEST_WALLET6_API_KEY }}
+          TEST_WALLET7_API_KEY=${{ secrets.TEST_WALLET7_API_KEY }}
+          TEST_WALLET7_API_KEY_DEVELOPMENT=${{ secrets.TEST_WALLET7_API_KEY_DEVELOPMENT }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          LIGHTHOUSE_IPNS_NODE=${{ secrets.LIGHTHOUSE_IPNS_NODE }}
+          LIGHTHOUSE_PUBLIC_NODE_TOKEN=${{ secrets.LIGHTHOUSE_PUBLIC_NODE_TOKEN }}
+          ROUTE_ACCESS_TOKEN=${{ secrets.ROUTE_ACCESS_TOKEN }}
+          TRANSACTION_ROUTE_TOKEN=${{ secrets.TRANSACTION_ROUTE_TOKEN }}
+          POLYGON_RPC=${{ secrets.POLYGON_RPC }}
+          REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          REDIS_URL=${{ secrets.REDIS_URL }}
+          LIGHTHOUSE_BILLING_ADDRESS=${{ secrets.LIGHTHOUSE_BILLING_ADDRESS }}
+          LIGHTHOUSE_ENC_MESSAGE_TOKENS=${{ secrets.LIGHTHOUSE_ENC_MESSAGE_TOKENS }}
+          SMTP_EMAIL_HOST=${{ secrets.SMTP_EMAIL_HOST }}
+          SMTP_EMAIL_PASSWORD=${{ secrets.SMTP_EMAIL_PASSWORD }}
+          SMTP_EMAIL_ID=${{ secrets.SMTP_EMAIL_ID }}
+          STRIPE_KEY=${{ secrets.STRIPE_KEY }}
+          PAYMENT_URL=${{ secrets.PAYMENT_URL }}
+          STRIPE_WEBHOOK=${{ secrets.STRIPE_WEBHOOK }}
+          LIGHTHOUSE_COREUM_ADDRESS=${{ secrets.LIGHTHOUSE_COREUM_ADDRESS }}
+          FILECOIN_RPC=${{ secrets.FILECOIN_RPC }}
+          RADIX_DAPP_DEFINATION=${{ secrets.RADIX_DAPP_DEFINATION }}
+          RADIX_NETWORK_ID=${{ secrets.RADIX_NETWORK_ID }}
+          RADIX_EXPECTED_ORIGIN=${{ secrets.RADIX_EXPECTED_ORIGIN }}
+          LIGHTHOUSE_RADIX_ADDRESS=${{ secrets.LIGHTHOUSE_RADIX_ADDRESS }}
+          EOF
+          
+          # Create deployment script
+          cat > deploy.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          
+          echo "Starting production deployment..."
+          
+          # Stop existing containers
+          docker-compose down || true
+          
+          # Remove old images
+          docker rmi lighthouse-backend:production || true
+          
+          # Start services using docker-compose
+          docker-compose up -d --build
+          
+          echo "Production deployment completed successfully!"
+          EOF
+          
+          # Copy files to production server
+          scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} .env ${{ secrets.SSH_USER }}@${{ secrets.PRODUCTION_SSH_HOST }}:/tmp/
+          scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} deploy.sh ${{ secrets.SSH_USER }}@${{ secrets.PRODUCTION_SSH_HOST }}:/tmp/
+          
+          # Execute deployment on production server
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.PRODUCTION_SSH_HOST }} << 'SSHEOF'
+            cd /opt/lighthouse-backend
+            
+            # Copy .env file
+            cp /tmp/.env .
+            
+            # Make deployment script executable and run
+            chmod +x /tmp/deploy.sh
+            /tmp/deploy.sh
+          SSHEOF
+
+      - name: Production health check
+        run: |
+          sleep 30
+          curl -f http://${{ secrets.PRODUCTION_SSH_HOST }}:13001/health || exit 1
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "Production deployment completed successfully!"
+          # Add notification logic here (Slack, email, etc.) 
