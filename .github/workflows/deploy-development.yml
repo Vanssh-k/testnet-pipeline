@@ -10,8 +10,6 @@ env:
   NODE_VERSION: '22'
 
 jobs:
-
-
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -103,6 +101,9 @@ jobs:
           
           echo "Deployment completed successfully!"
           EOF
+          
+          # Create directory on server first
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo mkdir -p /opt/lighthouse-backend && sudo chown ubuntu:ubuntu /opt/lighthouse-backend"
           
           # Copy the entire codebase to server
           scp -o StrictHostKeyChecking=no -i private_key -r . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/lighthouse-backend/
