@@ -126,4 +126,4 @@ jobs:
       - name: Health check
         run: |
           sleep 30
-          curl -f http://${{ secrets.SSH_HOST }}:13001/health || exit 1 
+          curl -f http://${{ secrets.SSH_HOST }}:8081/health || exit 1 
