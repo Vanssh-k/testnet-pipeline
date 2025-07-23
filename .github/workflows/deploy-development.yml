@@ -77,21 +77,10 @@ jobs:
           set -e
           
           echo "Starting deployment..."
-          echo "Current directory: $(pwd)"
-          echo "Current user: $(whoami)"
-          echo "Listing current directory contents:"
-          ls -la
           
           # Create application directory if it doesn't exist
-          echo "Creating directory lighthouse-backend1..."
-          sudo mkdir -p lighthouse-backend1
-          echo "Directory created. Listing contents:"
-          ls -la
-          
-          echo "Changing ownership..."
-          sudo chown ubuntu:ubuntu lighthouse-backend1
-          echo "Ownership changed. Listing contents:"
-          ls -la
+          sudo mkdir -p lighthouse-backend-testnet
+          sudo chown ubuntu:ubuntu lighthouse-backend-testnet
           
           # Fix Docker permissions
           sudo usermod -aG docker ubuntu || true
@@ -99,11 +88,7 @@ jobs:
           sudo systemctl enable docker || true
           
           # Navigate to application directory
-          echo "Navigating to lighthouse-backend1..."
-          cd lighthouse-backend1
-          echo "Current directory after cd: $(pwd)"
-          echo "Listing contents of lighthouse-backend1:"
-          ls -la
+          cd lighthouse-backend-testnet
           
           # Stop existing containers
           sudo docker-compose down || true
@@ -112,11 +97,18 @@ jobs:
           sudo docker rmi lighthouse-backend:latest || true
 
           # Clone or pull the repository
-          echo "Cloning repository..."
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
-          echo "Repository cloned. Listing contents:"
-          ls -la
-          
+          echo "Current directory: $(pwd)"
+          echo "Git directory exists: $([ -d ".git" ] && echo "YES" || echo "NO")"
+          if [ ! -d ".git" ]; then
+            echo "Cloning repository..."
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git .
+          else
+            echo "Pulling latest changes..."
+            # Configure git to use token for all operations
+            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN_DEPLOY }}@github.com/Vanssh-k/testnet-pipeline.git
+            git fetch origin
+            git reset --hard origin/development
+          fi
           # Start services using docker-compose
           sudo docker-compose up -d --build
           
