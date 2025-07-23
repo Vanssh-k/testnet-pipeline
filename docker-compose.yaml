@@ -6,7 +6,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
     ports:
-      - '80:80'
+      - '8081:80'
     depends_on:
       - lighthouse-backend
   lighthouse-backend:
