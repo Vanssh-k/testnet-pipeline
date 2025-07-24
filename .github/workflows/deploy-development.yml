@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - development
+  pull_request:
+    branches:
+      - development
   workflow_dispatch:
 
 env:
@@ -48,9 +51,6 @@ jobs:
           # Stop existing containers
           sudo docker-compose down || true
           
-          # Remove old images
-          sudo docker rmi lighthouse-backend:latest || true
-
           # Clone or pull the repository
           echo "Current directory: $(pwd)"
           echo "Git directory exists: $([ -d ".git" ] && echo "YES" || echo "NO")"
@@ -65,7 +65,8 @@ jobs:
             git reset --hard origin/development
           fi
           # Start services using docker-compose
-          sudo docker-compose up -d --build
+          sudo docker-compose build --no-cache
+          sudo docker-compose up -d
           
           echo "Deployment completed successfully!"
           EOF
