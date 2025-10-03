@@ -36,6 +36,7 @@ import {
 } from './topup.js'
 import { apiKeyName, verifySignerSchema, tweetRechargeSchema, apiKeyIdSchema } from './auth.js'
 import { verifyPublishSchema, verifyRemoveSchema } from './ipns.js'
+import { bandwidthQuerySchema } from './bandwidth.js'
 
 export default {
   apiKeyName,
@@ -75,4 +76,5 @@ export default {
   userAddressSchema,
   coreumPurchaseSchema,
   radixPurchaseSchema,
+  bandwidthQuerySchema,
 }

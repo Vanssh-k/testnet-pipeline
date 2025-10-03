@@ -23,6 +23,7 @@ const gatewayTable = isDevelopment ? 'tn-dedicated-gateway' : 'dedicatedGatewayR
 const migrationCIDs = isDevelopment ? 'tn-migration-cids' : 'migration-cid'
 const migrationRequestTable = isDevelopment ? 'tn-migration-request' : 'migration-request'
 const userTransactions = isDevelopment ? 'tn-user-transactions' : 'userTransactions'
+const bandwidthTable = isDevelopment ? 'tn-gateway-metrics' : 'bandwidth-metric'
 
 const ffUserRecord = isDevelopment ? 'tn-ff-user-record' : 'ff-user-record'
 const ffTransactions = isDevelopment ? 'tn-ff-transactions' : 'ff-transactions'
@@ -100,6 +101,7 @@ export {
   migrationCIDs,
   migrationRequestTable,
   userTransactions,
+  bandwidthTable,
   messageString,
   FilecoinLegacyTables,
   fileTableEncryption,
